@@ -1,0 +1,15 @@
+
+*.ini
+*.keystore
+*.pub
+*.token
+.bash_history
+.gitconfig
+.CFUserTextEncoding
+.android/
+.vscode/
+.idea/
+.DS_Store
+node_modules/
+bin/
+obj/
