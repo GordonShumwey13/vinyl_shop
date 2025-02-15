@@ -1,0 +1,52 @@
+@model VinylShop.Models.Album
+
+@{
+    ViewData["Title"] = "Create Album";
+}
+
+<link rel="stylesheet" href="~/css/album.css" asp-append-version="true" />
+
+<div class="container">
+    <h1>Create Album</h1>
+
+    <form asp-action="Create">
+        <div class="form-group">
+            <label asp-for="Title">Album Title</label>
+            <input asp-for="Title" class="form-control" />
+            <span asp-validation-for="Title" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="ArtistId">Artist</label>
+            <select asp-for="ArtistId" class="form-control" asp-items="ViewBag.Artists"></select>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="GenreId">Genre</label>
+            <select asp-for="GenreId" class="form-control" asp-items="ViewBag.Genres"></select>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="ImageUrl">Image URL</label>
+            <input asp-for="ImageUrl" class="form-control" />
+            <span asp-validation-for="ImageUrl" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Url">External URL</label>
+            <input asp-for="Url" class="form-control" />
+            <span asp-validation-for="Url" class="text-danger"></span>
+        </div>
+        
+        <div class="form-group mt-3">
+            <button type="submit" class="btn btn-primary">Create</button>
+            <a href="@Url.Action("Index", "Albums")" class="btn btn-secondary">Back to List</a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
