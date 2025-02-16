@@ -15,6 +15,7 @@ namespace VinylShop.Controllers
             _context = context;
         }
 
+        //Read
         public async Task<IActionResult> Index()
         {
             var albums = await _context.Albums
@@ -24,6 +25,7 @@ namespace VinylShop.Controllers
             return View(albums);
         }
 
+        //Cereate
         public IActionResult Create()
         {
             ViewBag.Artists = new SelectList(_context.Artists, "Id", "Name");
@@ -33,19 +35,94 @@ namespace VinylShop.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Album album)
+        public async Task<IActionResult> Create(Album album, IFormFile? ImageFile, string ArtistName)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                _context.Add(album);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                foreach (var modelState in ModelState.Values)
+                {
+                    foreach (var error in modelState.Errors)
+                    {
+                        Console.WriteLine(error.ErrorMessage);
+                    }
+                }
+
+                // Якщо є помилки, повертай форму зі списком жанрів
+                ViewBag.Genres = new SelectList(_context.Genres, "Id", "Name");
+                return View(album);
             }
 
-            ViewBag.Artists = new SelectList(_context.Artists, "Id", "Name");
-            ViewBag.Genres = new SelectList(_context.Genres, "Id", "Name");
+            var artist = await _context.Artists.FirstOrDefaultAsync(a => a.Name == ArtistName);
+            if (artist == null)
+            {
+                artist = new Artist { Name = ArtistName };
+                _context.Artists.Add(artist);
+                await _context.SaveChangesAsync();
+            }
+            album.Artist = artist;
+
+            if (ImageFile != null && ImageFile.Length > 0)
+            {
+                var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/img");
+                var uniqueFileName = Guid.NewGuid().ToString() + "_" + Path.GetFileName(ImageFile.FileName);
+                var filePath = Path.Combine(uploadsFolder, uniqueFileName);
+
+                using (var fileStream = new FileStream(filePath, FileMode.Create))
+                {
+                    await ImageFile.CopyToAsync(fileStream);
+                }
+
+                album.ImagePath = "/img/" + uniqueFileName;
+            }
+            else
+            {
+                album.ImagePath = null;
+            }
+
+            _context.Add(album);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
+
+
+
+        //Delete
+        public async Task<IActionResult> Delete(int? id)
+        {
+            if (id == null || _context.Albums == null)
+            {
+                return NotFound();
+            }
+
+            var album = await _context.Albums
+                .Include(a => a.Artist)
+                .Include(a => a.Genre)
+                .FirstOrDefaultAsync(m => m.Id == id);
+
+            if (album == null)
+            {
+                return NotFound();
+            }
 
             return View(album);
+        }
+
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            if (_context.Albums == null)
+            {
+                return Problem("Entity set 'VinylShopContext.Albums' is null.");
+            }
+
+            var album = await _context.Albums.FindAsync(id);
+            if (album != null)
+            {
+                _context.Albums.Remove(album);
+                await _context.SaveChangesAsync();
+            }
+            return RedirectToAction(nameof(Index));
         }
     }
 }

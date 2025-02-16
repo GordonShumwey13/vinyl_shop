@@ -19,11 +19,10 @@
             <th>Artist</th>
             <th>Genre</th>
             <th>Image</th>
-            <th>Url</th>
             <th>Actions</th>
         </tr>
     </thead>
-    
+
     <tbody>
         @foreach (var item in Model)
         {
@@ -31,8 +30,16 @@
                 <td>@item.Title</td>
                 <td>@item.Artist.Name</td>
                 <td>@item.Genre.Name</td>
-                <td><img src="@item.ImageUrl" alt="@item.Title" width="50" /></td>
-                <td><a href="@item.Url" target="_blank">Link</a></td>
+                <td>
+                    @if (!string.IsNullOrEmpty(item.ImagePath))
+                    {
+                        <img src="@item.ImagePath" alt="@item.Title" width="50" />
+                    }
+                    else
+                    {
+                        <span>No Image</span>
+                    }
+                </td>
                 <td>
                     <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-primary action-btn">Edit</a>
                     <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-delete action-btn">Delete</a>
