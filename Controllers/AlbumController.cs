@@ -37,21 +37,6 @@ namespace VinylShop.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Album album, IFormFile? ImageFile, string ArtistName)
         {
-            if (!ModelState.IsValid)
-            {
-                foreach (var modelState in ModelState.Values)
-                {
-                    foreach (var error in modelState.Errors)
-                    {
-                        Console.WriteLine(error.ErrorMessage);
-                    }
-                }
-
-                // Якщо є помилки, повертай форму зі списком жанрів
-                ViewBag.Genres = new SelectList(_context.Genres, "Id", "Name");
-                return View(album);
-            }
-
             var artist = await _context.Artists.FirstOrDefaultAsync(a => a.Name == ArtistName);
             if (artist == null)
             {
@@ -84,8 +69,6 @@ namespace VinylShop.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-
-
         //Delete
         public async Task<IActionResult> Delete(int? id)
         {
@@ -113,7 +96,7 @@ namespace VinylShop.Controllers
         {
             if (_context.Albums == null)
             {
-                return Problem("Entity set 'VinylShopContext.Albums' is null.");
+                return Problem("Album was not found.");
             }
 
             var album = await _context.Albums.FindAsync(id);

@@ -6,7 +6,7 @@ namespace VinylShop.Models
     {
         public int Id { get; set; }
 
-        public string Title { get; set; } = string.Empty;
+        public string Title { get; set; } = string.Empty; // має бути маст, змінити з емпті
 
         public int AlbumId { get; set; }
 
