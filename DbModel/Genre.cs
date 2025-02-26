@@ -1,10 +1,15 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace VinylShop.Models
 {
     public class Genre
     {
+        [Key]
         public int Id { get; set; }
-        
-        public string Name { get; set; } = string.Empty; //зробити унік ключ + у артисті
+
+        [Required]
+        [StringLength(255)]
+        public string Name { get; set; } = string.Empty;
 
         public ICollection<Album> Albums { get; set; } = new List<Album>();
     }

@@ -1,7 +1,6 @@
 
 using Microsoft.EntityFrameworkCore;
 using VinylShop.Data;
-using VinylShop.SeedData;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,8 +18,7 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<VinylShopContext>();
-    dbContext.Database.Migrate(); 
-    DatabaseSeeder.Seed(dbContext);
+    dbContext.Database.Migrate();
 }
 
 app.UseStaticFiles();

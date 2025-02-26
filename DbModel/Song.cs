@@ -6,7 +6,8 @@ namespace VinylShop.Models
     {
         public int Id { get; set; }
 
-        public string Title { get; set; } = string.Empty; // має бути маст, змінити з емпті
+        [Required(ErrorMessage = "The title is required.")]
+        public string Title { get; set; } = string.Empty;
 
         public int AlbumId { get; set; }
 

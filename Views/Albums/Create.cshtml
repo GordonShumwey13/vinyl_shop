@@ -12,22 +12,44 @@
     <form asp-action="Create" enctype="multipart/form-data">
         <div class="form-group">
             <label asp-for="Title">Album Title</label>
-            <input asp-for="Title" class="form-control" />
+            <input asp-for="Title" class="form-control" required />
         </div>
 
+        <!-- Вибір існуючого артиста -->
         <div class="form-group">
-            <label for="ArtistName">Artist Name</label>
-            <input type="text" name="ArtistName" class="form-control" required />
+            <label for="ExistingArtist">Choose an Artist</label>
+            <select name="ExistingArtist" class="form-control" id="existingArtistSelect">
+                <option value="">-- Select an Artist --</option>
+                @foreach (var artist in ViewBag.Artists as IEnumerable<SelectListItem>)
+                {
+                    <option value="@artist.Value">@artist.Text</option>
+                }
+            </select>
         </div>
 
+        <!-- Поле для додавання нового артиста -->
+        <div class="form-group" id="newArtistDiv">
+            <label for="NewArtist">Or add a New Artist</label>
+            <input type="text" name="NewArtist" class="form-control" placeholder="For example, The Beatles" />
+        </div>
+
+        <!-- Вибір існуючого жанру -->
         <div class="form-group">
-            <label asp-for="GenreId">Genre</label>
-            <select asp-for="GenreId" class="form-control" asp-items="ViewBag.Genres"></select>
+            <label asp-for="GenreId">Choose a Genre</label>
+            <select name="GenreId" class="form-control" asp-items="ViewBag.Genres" id="genreSelect">
+                <option value="">-- Choose a Genre --</option>
+            </select>
+        </div>
+
+        <!-- Поле для додавання нового жанру -->
+        <div class="form-group" id="newGenreDiv">
+            <label for="NewGenre">Or add a New Genre</label>
+            <input type="text" name="NewGenre" class="form-control" placeholder="For example, Pop" />
         </div>
 
         <div class="form-group">
             <label for="ImageFile">Upload Image</label>
-            <input type="file" name="ImageFile" class="form-control" required />
+            <input type="file" name="ImageFile" class="form-control" />
         </div>
 
         <div class="form-group mt-3">
@@ -37,8 +59,26 @@
     </form>
 </div>
 
-@section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
-}
+<script>
+    console.log("Script loaded");
+    document.addEventListener("DOMContentLoaded", function () {
+        function toggleDiv(selectId, divId) {
+            var selectEl = document.getElementById(selectId);
+            var divEl = document.getElementById(divId);
+            divEl.style.display = selectEl.value === "" ? "block" : "none";
+        }
+
+        var togglePairs = [
+            { selectId: "existingArtistSelect", divId: "newArtistDiv" },
+            { selectId: "genreSelect", divId: "newGenreDiv" }
+        ];
+
+        togglePairs.forEach(function (pair) {
+            var selectEl = document.getElementById(pair.selectId);
+            selectEl.addEventListener("change", function () {
+                toggleDiv(pair.selectId, pair.divId);
+            });
+            toggleDiv(pair.selectId, pair.divId);
+        });
+    });
+</script>
