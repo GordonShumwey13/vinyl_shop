@@ -42,7 +42,9 @@ namespace VinylShop.Controllers
                 .Include(a => a.Songs)
                 .FirstOrDefaultAsync(m => m.Id == id);
 
-            return album == null ? NotFound() : View(album);
+            if (album == null) return NotFound();
+
+            return View(album);
         }
 
         // Create Album - GET
@@ -55,7 +57,8 @@ namespace VinylShop.Controllers
         // Create Album - POST
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Album album, IFormFile? ImageFile, string ExistingArtist, string NewArtist, string GenreId, string NewGenre)
+        public async Task<IActionResult> Create(Album album, IFormFile? ImageFile, string ExistingArtist, string NewArtist, string GenreId, string NewGenre, List<string> SongTitles,
+    List<string> SongDurations)
         {
             // Assign Artist
             var artist = await GetOrCreateArtist(ExistingArtist, NewArtist);
@@ -79,6 +82,22 @@ namespace VinylShop.Controllers
 
             // Image Upload
             album.ImagePath = await UploadImageAsync(ImageFile);
+
+            // Create Songs
+            if (SongTitles != null && SongDurations != null)
+            {
+                for (int i = 0; i < SongTitles.Count; i++)
+                {
+                    if (!string.IsNullOrWhiteSpace(SongTitles[i]) && !string.IsNullOrWhiteSpace(SongDurations[i]))
+                    {
+                        album.Songs.Add(new Song
+                        {
+                            Title = SongTitles[i],
+                            Duration = TimeSpan.TryParse(SongDurations[i], out TimeSpan duration) ? duration : TimeSpan.Zero
+                        });
+                    }
+                }
+            }
 
             // Save Album
             _context.Add(album);

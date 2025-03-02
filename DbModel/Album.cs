@@ -16,13 +16,15 @@ namespace VinylShop.Models
         public int ArtistId { get; set; }
 
         [ForeignKey("ArtistId")]
-        public Artist? Artist { get; set; }
+        public Artist Artist { get; set; } = null!;
 
+        [Required]
         public int GenreId { get; set; }
 
         [ForeignKey("GenreId")]
-        public Genre? Genre { get; set; }
+        public Genre Genre { get; set; } = null!;
 
+        [MaxLength(500)]
         public string? ImagePath { get; set; }
 
         public ICollection<Song> Songs { get; set; } = new List<Song>();

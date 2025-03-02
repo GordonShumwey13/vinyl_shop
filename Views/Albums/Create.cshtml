@@ -15,25 +15,22 @@
             <input asp-for="Title" class="form-control" required />
         </div>
 
-        <!-- Вибір існуючого артиста -->
         <div class="form-group">
             <label for="ExistingArtist">Choose an Artist</label>
             <select name="ExistingArtist" class="form-control" id="existingArtistSelect">
                 <option value="">-- Select an Artist --</option>
-                @foreach (var artist in ViewBag.Artists as IEnumerable<SelectListItem>)
+                @foreach (var artist in (IEnumerable<SelectListItem>)ViewBag.Artists)
                 {
                     <option value="@artist.Value">@artist.Text</option>
                 }
             </select>
         </div>
 
-        <!-- Поле для додавання нового артиста -->
         <div class="form-group" id="newArtistDiv">
             <label for="NewArtist">Or add a New Artist</label>
             <input type="text" name="NewArtist" class="form-control" placeholder="For example, The Beatles" />
         </div>
 
-        <!-- Вибір існуючого жанру -->
         <div class="form-group">
             <label asp-for="GenreId">Choose a Genre</label>
             <select name="GenreId" class="form-control" asp-items="ViewBag.Genres" id="genreSelect">
@@ -41,7 +38,6 @@
             </select>
         </div>
 
-        <!-- Поле для додавання нового жанру -->
         <div class="form-group" id="newGenreDiv">
             <label for="NewGenre">Or add a New Genre</label>
             <input type="text" name="NewGenre" class="form-control" placeholder="For example, Pop" />
@@ -52,6 +48,18 @@
             <input type="file" name="ImageFile" class="form-control" />
         </div>
 
+        <h2>Songs</h2>
+        <div id="songsContainer">
+            <div class="form-group song-entry">
+                <input type="text" name="SongTitles" class="form-control mb-2" placeholder="Song Title" required />
+                <input type="text" name="SongDurations" class="form-control mb-2" placeholder="Duration (e.g., 03:45)"
+                    required />
+                <button type="button" class="btn btn-danger remove-song">Remove</button>
+            </div>
+        </div>
+
+        <button type="button" id="addSongBtn" class="btn btn-add-song">+ Add Song</button>
+
         <div class="form-group mt-3">
             <button type="submit" class="btn btn-primary">Create</button>
             <a href="@Url.Action("Index", "Albums")" class="btn btn-secondary">Back to List</a>
@@ -59,8 +67,8 @@
     </form>
 </div>
 
+
 <script>
-    console.log("Script loaded");
     document.addEventListener("DOMContentLoaded", function () {
         function toggleDiv(selectId, divId) {
             var selectEl = document.getElementById(selectId);
@@ -79,6 +87,24 @@
                 toggleDiv(pair.selectId, pair.divId);
             });
             toggleDiv(pair.selectId, pair.divId);
+        });
+
+        document.getElementById("addSongBtn").addEventListener("click", function () {
+            var container = document.getElementById("songsContainer");
+            var newSongEntry = document.createElement("div");
+            newSongEntry.classList.add("form-group", "song-entry");
+            newSongEntry.innerHTML = `
+                <input type="text" name="SongTitles[]" class="form-control mb-2" placeholder="Song Title" required />
+                <input type="text" name="SongDurations[]" class="form-control mb-2" placeholder="Duration (e.g., 03:45)" required />
+                <button type="button" class="btn btn-danger remove-song">Remove</button>
+            `;
+            container.appendChild(newSongEntry);
+        });
+
+        document.getElementById("songsContainer").addEventListener("click", function (event) {
+            if (event.target.classList.contains("remove-song")) {
+                event.target.parentElement.remove();
+            }
         });
     });
 </script>
