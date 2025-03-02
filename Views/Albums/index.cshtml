@@ -8,16 +8,22 @@
 
 <h1 class="mb-4">Vinyls Library</h1>
 
-<p>
+<div class="mb-3">
     <a asp-action="Create" class="btn btn-primary">Add New Album</a>
-</p>
+</div>
 
 <table class="table">
     <thead>
         <tr>
-            <th>@Html.DisplayNameFor(model => model.Title)</th>
-            <th>Artist</th>
-            <th>Genre</th>
+            <th>
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["TitleSortParam"]">Title</a>
+            </th>
+            <th>
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["ArtistSortParam"]">Artist</a>
+            </th>
+            <th>
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["GenreSortParam"]">Genre</a>
+            </th>
             <th>Image</th>
             <th>Actions</th>
         </tr>

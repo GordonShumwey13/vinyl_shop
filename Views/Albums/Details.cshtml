@@ -1,0 +1,51 @@
+@model VinylShop.Models.Album
+
+@{
+    ViewData["Title"] = Model.Title;
+}
+
+<link rel="stylesheet" href="~/css/album.css" asp-append-version="true" />
+
+<h1>@Model.Title</h1>
+<h3>by @Model.Artist.Name</h3>
+<h4>Genre: @Model.Genre.Name</h4>
+
+@if (!string.IsNullOrEmpty(Model.ImagePath))
+{
+    <img src="@Model.ImagePath" alt="@Model.Title" style="max-width: 400px; display: block; margin-bottom: 20px;" />
+}
+
+<h2>Songs</h2>
+@if (Model.Songs != null && Model.Songs.Any())
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Title</th>
+                <th>Duration</th>
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                int count = 1;
+            }
+            @foreach (var song in Model.Songs)
+            {
+                <tr>
+                    <td>@count</td>
+                    <td>@song.Title</td>
+                    <td>@song.Duration</td>
+                </tr>
+                count++;
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>No songs available for this album.</p>
+}
+<div class="details">
+    <a asp-action="Index" class="btn btn-secondary">Back to Albums</a>
+</div>

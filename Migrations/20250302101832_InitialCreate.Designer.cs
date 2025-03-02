@@ -12,7 +12,7 @@ using VinylShop.Data;
 namespace MyWebApp.Migrations
 {
     [DbContext(typeof(VinylShopContext))]
-    [Migration("20250215172044_InitialCreate")]
+    [Migration("20250302101832_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -39,23 +39,13 @@ namespace MyWebApp.Migrations
                     b.Property<int>("GenreId")
                         .HasColumnType("int");
 
-                    b.Property<string>("ImageUrl")
-                        .IsRequired()
+                    b.Property<string>("ImagePath")
                         .HasColumnType("longtext");
-
-                    b.Property<decimal>("Price")
-                        .HasColumnType("decimal(65,30)");
-
-                    b.Property<int>("Stock")
-                        .HasColumnType("int");
 
                     b.Property<string>("Title")
                         .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("Url")
-                        .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)");
 
                     b.HasKey("Id");
 
@@ -76,9 +66,13 @@ namespace MyWebApp.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
 
                     b.ToTable("Artists");
                 });
@@ -93,9 +87,13 @@ namespace MyWebApp.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
 
                     b.ToTable("Genres");
                 });
@@ -147,17 +145,12 @@ namespace MyWebApp.Migrations
             modelBuilder.Entity("VinylShop.Models.Song", b =>
                 {
                     b.HasOne("VinylShop.Models.Album", "Album")
-                        .WithMany("Songs")
+                        .WithMany()
                         .HasForeignKey("AlbumId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Album");
-                });
-
-            modelBuilder.Entity("VinylShop.Models.Album", b =>
-                {
-                    b.Navigation("Songs");
                 });
 
             modelBuilder.Entity("VinylShop.Models.Artist", b =>

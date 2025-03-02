@@ -86,6 +86,7 @@ img {
 .btn-secondary {
     background-color: #6c757d;
     color: white;
+    
 }
 
 .btn-secondary:hover {
@@ -94,6 +95,10 @@ img {
 
 .action-btn {
     margin-right: 10px;
+}
+
+.details {
+    margin-top: 15px;
 }
 
 .action-btn:last-child {
