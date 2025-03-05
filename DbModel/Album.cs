@@ -8,9 +8,9 @@ namespace VinylShop.Models
         [Key]
         public int Id { get; set; }
 
-        [Required]
-        [StringLength(255)]
-        public string Title { get; set; } = string.Empty;
+        [Required(ErrorMessage = "The title is required.")]
+        [StringLength(255, ErrorMessage = "The title must be at most 255 characters.")]
+        public string Title { get; set; } = string.Empty; //need to match by ArtistsID
 
         [Required]
         public int ArtistId { get; set; }

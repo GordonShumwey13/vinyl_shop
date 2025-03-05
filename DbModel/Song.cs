@@ -4,6 +4,7 @@ namespace VinylShop.Models
 {
     public class Song
     {
+        [Key]
         public int Id { get; set; }
 
         [Required(ErrorMessage = "The title is required.")]

@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using VinylShop.Data;
 using VinylShop.Models;
+
 using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace VinylShop.Controllers
