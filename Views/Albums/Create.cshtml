@@ -32,6 +32,11 @@
         </div>
 
         <div class="form-group">
+            <label for="ArtistImageFile">Upload Artist Image</label>
+            <input type="file" name="ArtistImageFile" class="form-control" id="artistImageUpload" />
+        </div>
+
+        <div class="form-group">
             <label asp-for="GenreId">Choose a Genre</label>
             <select name="GenreId" class="form-control" asp-items="ViewBag.Genres" id="genreSelect">
                 <option value="">-- Choose a Genre --</option>
@@ -76,6 +81,17 @@
             divEl.style.display = selectEl.value === "" ? "block" : "none";
         }
 
+        function toggleArtistImageUpload() {
+            var existingArtistSelect = document.getElementById("existingArtistSelect");
+            var artistImageUpload = document.getElementById("artistImageUpload");
+
+            if (existingArtistSelect.value === "") {
+                artistImageUpload.style.display = "block";
+            } else {
+                artistImageUpload.style.display = "none";
+            }
+        }
+
         var togglePairs = [
             { selectId: "existingArtistSelect", divId: "newArtistDiv" },
             { selectId: "genreSelect", divId: "newGenreDiv" }
@@ -88,6 +104,11 @@
             });
             toggleDiv(pair.selectId, pair.divId);
         });
+
+        // Додаємо слухача для приховування завантаження фото артиста
+        var existingArtistSelect = document.getElementById("existingArtistSelect");
+        existingArtistSelect.addEventListener("change", toggleArtistImageUpload);
+        toggleArtistImageUpload();
 
         document.getElementById("addSongBtn").addEventListener("click", function () {
             var container = document.getElementById("songsContainer");
@@ -108,3 +129,4 @@
         });
     });
 </script>
+

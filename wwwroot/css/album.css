@@ -20,7 +20,8 @@ h1 {
 
 }
 
-.table th, .table td {
+.table th,
+.table td {
     border: 1px solid #dee2e6;
     padding: 10px;
     text-align: left;
@@ -49,6 +50,12 @@ a:hover {
 /* Стилі для зображень */
 img {
     max-width: 50px;
+    height: auto;
+    border-radius: 4px;
+}
+
+.artist-img {
+    max-width: 100px !important;
     height: auto;
     border-radius: 4px;
 }
@@ -87,7 +94,7 @@ img {
 .btn-secondary {
     background-color: #6c757d;
     color: white;
-    
+
 }
 
 .btn-secondary:hover {
@@ -148,7 +155,8 @@ img {
 }
 
 /* Кнопки в формі */
-.form-group button, .form-group a {
+.form-group button,
+.form-group a {
     margin-right: 10px;
     display: inline-block;
 }

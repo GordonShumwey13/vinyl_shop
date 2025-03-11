@@ -58,11 +58,10 @@ namespace VinylShop.Controllers
         // Create Album - POST
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Album album, IFormFile? ImageFile, string ExistingArtist, string NewArtist, string GenreId, string NewGenre, List<string> SongTitles,
-    List<string> SongDurations)
+        public async Task<IActionResult> Create(Album album, IFormFile? ImageFile, IFormFile? ArtistImageFile, string ExistingArtist, string NewArtist, string GenreId, string NewGenre, List<string> SongTitles, List<string> SongDurations)
         {
             // Assign Artist
-            var artist = await GetOrCreateArtist(ExistingArtist, NewArtist);
+            var artist = await GetOrCreateArtist(ExistingArtist, NewArtist, ArtistImageFile);
             if (artist == null)
             {
                 ModelState.AddModelError("Artist", "Please select or enter an artist.");
@@ -82,7 +81,7 @@ namespace VinylShop.Controllers
             album.GenreId = genreId;
 
             // Image Upload
-            album.ImagePath = await UploadImageAsync(ImageFile);
+            album.ImagePath = await UploadImageAsync(ImageFile, "albums");
 
             // Create Songs
             if (SongTitles != null && SongDurations != null)
@@ -156,7 +155,7 @@ namespace VinylShop.Controllers
         }
 
         // Get or Create Artist
-        private async Task<Artist?> GetOrCreateArtist(string existingArtistId, string newArtistName)
+        private async Task<Artist?> GetOrCreateArtist(string existingArtistId, string newArtistName, IFormFile? artistImageFile)
         {
             if (!string.IsNullOrWhiteSpace(existingArtistId) && int.TryParse(existingArtistId, out int artistId))
             {
@@ -168,6 +167,12 @@ namespace VinylShop.Controllers
                 if (artist == null)
                 {
                     artist = new Artist { Name = newArtistName.Trim() };
+
+                    if (artistImageFile != null)
+                    {
+                        artist.ImagePath = await UploadImageAsync(artistImageFile, "artists");
+                    }
+
                     _context.Artists.Add(artist);
                     await _context.SaveChangesAsync();
                 }
@@ -198,11 +203,13 @@ namespace VinylShop.Controllers
         }
 
         // Image Upload
-        private async Task<string?> UploadImageAsync(IFormFile? imageFile)
+        private async Task<string?> UploadImageAsync(IFormFile? imageFile, string folderName)
         {
             if (imageFile == null || imageFile.Length == 0) return null;
 
-            var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/img");
+            var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), $"wwwroot/img/{folderName}");
+            Directory.CreateDirectory(uploadsFolder);
+
             var uniqueFileName = $"{Guid.NewGuid()}_{Path.GetFileName(imageFile.FileName)}";
             var filePath = Path.Combine(uploadsFolder, uniqueFileName);
 
@@ -211,7 +218,7 @@ namespace VinylShop.Controllers
                 await imageFile.CopyToAsync(fileStream);
             }
 
-            return "/img/" + uniqueFileName;
+            return $"/img/{folderName}/" + uniqueFileName;
         }
     }
 }

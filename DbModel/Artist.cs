@@ -11,6 +11,10 @@ namespace VinylShop.Models
         [StringLength(255, ErrorMessage = "The name must be at most 255 characters.")]
         public string Name { get; set; } = string.Empty;
 
+        [MaxLength(500)]
+        public string? ImagePath { get; set; }
+
         public ICollection<Album> Albums { get; set; } = new List<Album>();
     }
 }
+

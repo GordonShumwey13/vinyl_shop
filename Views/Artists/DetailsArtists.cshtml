@@ -1,0 +1,59 @@
+@model VinylShop.Models.Artist
+
+@{
+    ViewData["Title"] = Model.Name;
+}
+
+<link rel="stylesheet" href="~/css/album.css" asp-append-version="true" />
+
+<h1>@Model.Name</h1>
+
+@if (!string.IsNullOrEmpty(Model.ImagePath))
+{
+    <div class="mb-3">
+        <img src="@Model.ImagePath?v=@DateTime.Now.Ticks" alt="@Model.Name" style="max-width: 400px; max-height: 400px; display: block; margin-bottom: 20px;" />
+    </div>
+}
+else 
+{
+    <p>No Image Available</p>
+}
+
+<h2>Albums</h2>
+
+@if (Model.Albums.Any())
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Genre</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var album in Model.Albums)
+            {
+                <tr>
+                    <td>@album.Title</td>
+                    <td>@album.Genre.Name</td>
+                    <td>
+                        <a asp-controller="Albums" asp-action="Details" asp-route-id="@album.Id" class="btn btn-secondary">Details</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>This artist has no albums yet.</p>
+}
+
+<div class="details">
+    <a asp-action="Index" class="btn btn-primary">Back to Artists</a>
+</div>
+
+<div class="details">
+    <a asp-controller="Albums" asp-action="Index" class="btn btn-secondary">Back to Albums</a>
+</div>

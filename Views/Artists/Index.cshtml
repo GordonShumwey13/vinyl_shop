@@ -1,0 +1,44 @@
+@model IEnumerable<VinylShop.Models.Artist>
+
+@{
+    ViewData["Title"] = "Artists";
+}
+
+<link rel="stylesheet" href="~/css/album.css" asp-append-version="true" />
+
+<h1>Artists</h1>
+
+<div class="mb-3">
+    <a asp-controller="Albums" asp-action="Index" class="btn btn-secondary">Back to Albums</a>
+</div>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Image</th>
+            <th>Name</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var artist in Model)
+        {
+            <tr>
+                <td>
+                    @if (!string.IsNullOrEmpty(artist.ImagePath))
+                    {
+                        <img src="@artist.ImagePath" alt="@artist.Name" class="artist-img"/>
+                    }
+                    else
+                    {
+                        <span>No Image</span>
+                    }
+                </td>
+                <td>@artist.Name</td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@artist.Id" class="btn btn-secondary">Details</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
