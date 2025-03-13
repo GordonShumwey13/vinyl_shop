@@ -54,14 +54,7 @@
         </div>
 
         <h2>Songs</h2>
-        <div id="songsContainer">
-            <div class="form-group song-entry">
-                <input type="text" name="SongTitles" class="form-control mb-2" placeholder="Song Title" required />
-                <input type="text" name="SongDurations" class="form-control mb-2" placeholder="Duration (e.g., 03:45)"
-                    required />
-                <button type="button" class="btn btn-danger remove-song">Remove</button>
-            </div>
-        </div>
+        <div id="songsContainer"></div>
 
         <button type="button" id="addSongBtn" class="btn btn-add-song">+ Add Song</button>
 
@@ -71,7 +64,6 @@
         </div>
     </form>
 </div>
-
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
@@ -84,12 +76,7 @@
         function toggleArtistImageUpload() {
             var existingArtistSelect = document.getElementById("existingArtistSelect");
             var artistImageUpload = document.getElementById("artistImageUpload");
-
-            if (existingArtistSelect.value === "") {
-                artistImageUpload.style.display = "block";
-            } else {
-                artistImageUpload.style.display = "none";
-            }
+            artistImageUpload.style.display = existingArtistSelect.value === "" ? "block" : "none";
         }
 
         var togglePairs = [
@@ -105,28 +92,38 @@
             toggleDiv(pair.selectId, pair.divId);
         });
 
-        // Додаємо слухача для приховування завантаження фото артиста
-        var existingArtistSelect = document.getElementById("existingArtistSelect");
-        existingArtistSelect.addEventListener("change", toggleArtistImageUpload);
+        document.getElementById("existingArtistSelect").addEventListener("change", toggleArtistImageUpload);
         toggleArtistImageUpload();
 
-        document.getElementById("addSongBtn").addEventListener("click", function () {
-            var container = document.getElementById("songsContainer");
+        var container = document.getElementById("songsContainer");
+        var addSongBtn = document.getElementById("addSongBtn");
+
+        addSongBtn.addEventListener("click", function () {
+            var newIndex = container.querySelectorAll(".song-entry").length;
             var newSongEntry = document.createElement("div");
             newSongEntry.classList.add("form-group", "song-entry");
             newSongEntry.innerHTML = `
-                <input type="text" name="SongTitles[]" class="form-control mb-2" placeholder="Song Title" required />
-                <input type="text" name="SongDurations[]" class="form-control mb-2" placeholder="Duration (e.g., 03:45)" required />
+                <input type="text" name="SongTitles[${newIndex}]" class="form-control mb-2" placeholder="Song Title" required />
+                <input type="text" name="SongDurations[${newIndex}]" class="form-control mb-2" placeholder="Duration (e.g., 03:45)" required />
                 <button type="button" class="btn btn-danger remove-song">Remove</button>
             `;
             container.appendChild(newSongEntry);
+            updateSongIndexes();
         });
 
-        document.getElementById("songsContainer").addEventListener("click", function (event) {
+        container.addEventListener("click", function (event) {
             if (event.target.classList.contains("remove-song")) {
-                event.target.parentElement.remove();
+                event.target.closest(".song-entry").remove();
+                updateSongIndexes();
             }
         });
+
+        function updateSongIndexes() {
+            var songEntries = container.querySelectorAll(".song-entry");
+            songEntries.forEach((entry, index) => {
+                entry.querySelector("input[name^='SongTitles']").name = `SongTitles[${index}]`;
+                entry.querySelector("input[name^='SongDurations']").name = `SongDurations[${index}]`;
+            });
+        }
     });
 </script>
-

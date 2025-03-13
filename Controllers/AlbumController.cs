@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using VinylShop.Data;
 using VinylShop.Models;
+using VinylShop.DbModel;
 
 using Microsoft.AspNetCore.Mvc.Rendering;
 
@@ -103,6 +104,127 @@ namespace VinylShop.Controllers
             _context.Add(album);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
+        }
+
+        // Edit Album - GET
+        public async Task<IActionResult> Edit(int? id)
+        {
+            if (id == null) return NotFound();
+
+            var album = await _context.Albums
+                .Include(a => a.Artist)
+                .Include(a => a.Songs)
+                .FirstOrDefaultAsync(m => m.Id == id);
+
+            if (album == null) return NotFound();
+
+            var albumDto = new AlbumEditDto
+            {
+                Id = album.Id,
+                Title = album.Title,
+                ArtistId = album.ArtistId,
+                GenreId = album.GenreId,
+                ImagePath = album.ImagePath,
+                ArtistImagePath = album.Artist?.ImagePath,
+                Songs = album.Songs.Select(s => new SongDto
+                {
+                    Id = s.Id,
+                    Title = s.Title,
+                    Duration = s.Duration.ToString(@"hh\:mm\:ss")
+                }).ToList()
+            };
+
+
+            ViewBag.Artists = new SelectList(_context.Artists, "Id", "Name", album.ArtistId);
+            ViewBag.Genres = new SelectList(_context.Genres, "Id", "Name", album.GenreId);
+
+            return View(albumDto);
+        }
+        
+        // Edit Album - POST
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id, AlbumEditDto albumDto)
+        {
+            if (id != albumDto.Id) return NotFound();
+
+            var album = await _context.Albums
+                .Include(a => a.Artist)
+                .Include(a => a.Songs)
+                .FirstOrDefaultAsync(a => a.Id == id);
+
+            if (album == null) return NotFound();
+
+            if (!ModelState.IsValid)
+            {
+                ViewBag.Artists = new SelectList(_context.Artists, "Id", "Name", albumDto.ArtistId);
+                ViewBag.Genres = new SelectList(_context.Genres, "Id", "Name", albumDto.GenreId);
+                return View(albumDto);
+            }
+
+            try
+            {
+                // Оновлення загальних даних альбому
+                album.Title = albumDto.Title;
+                album.ArtistId = albumDto.ArtistId;
+                album.GenreId = albumDto.GenreId;
+
+                if (albumDto.ImageFile != null)
+                {
+                    album.ImagePath = await UploadImageAsync(albumDto.ImageFile, "albums");
+                }
+
+                if (albumDto.ArtistImageFile != null && album.Artist != null)
+                {
+                    album.Artist.ImagePath = await UploadImageAsync(albumDto.ArtistImageFile, "artists");
+                }
+
+                var existingSongs = album.Songs.ToList();
+                albumDto.Songs ??= new List<SongDto>();
+
+                foreach (var songDto in albumDto.Songs)
+                {
+                    if (songDto.Id.HasValue)
+                    {
+                        // Оновлення існуючої пісні
+                        var song = existingSongs.FirstOrDefault(s => s.Id == songDto.Id.Value);
+                        if (song != null)
+                        {
+                            song.Title = songDto.Title;
+                            song.Duration = TimeSpan.TryParse(songDto.Duration, out TimeSpan duration) ? duration : TimeSpan.Zero;
+                        }
+                    }
+                    else
+                    {
+                        // Додавання нової пісні
+                        album.Songs.Add(new Song
+                        {
+                            Title = songDto.Title,
+                            Duration = TimeSpan.TryParse(songDto.Duration, out TimeSpan duration) ? duration : TimeSpan.Zero
+                        });
+                    }
+                }
+
+                // Видалення пісень, яких більше немає в DTO
+                var songIds = albumDto.Songs.Where(s => s.Id.HasValue).Select(s => s.Id ?? 0).ToList();
+                var songsToRemove = existingSongs.Where(s => !songIds.Contains(s.Id)).ToList();
+
+                if (songsToRemove.Any())
+                {
+                    _context.Songs.RemoveRange(songsToRemove);
+                }
+
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error updating album: {ex.Message}");
+                ModelState.AddModelError("", "An error occurred while updating the album.");
+                ViewBag.Artists = new SelectList(_context.Artists, "Id", "Name", albumDto.ArtistId);
+                ViewBag.Genres = new SelectList(_context.Genres, "Id", "Name", albumDto.GenreId);
+                return View(albumDto);
+            }
         }
 
         // Delete Album - GET

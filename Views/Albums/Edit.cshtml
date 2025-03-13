@@ -1,35 +1,140 @@
-@model VinylShop.Models.Album
+@model VinylShop.DbModel.AlbumEditDto
 
 @{
     ViewData["Title"] = "Edit Album";
 }
 
+<link rel="stylesheet" href="~/css/album.css" asp-append-version="true" />
+
 <h1>Edit Album</h1>
 
-<form asp-action="Edit">
+<form asp-action="Edit" method="post" enctype="multipart/form-data">
     <input type="hidden" asp-for="Id" />
+
     <div class="form-group">
-        <label asp-for="Title" class="control-label"></label>
+        <label asp-for="Title" class="control-label">Album Title</label>
         <input asp-for="Title" class="form-control" />
+        <span asp-validation-for="Title" class="text-danger"></span>
     </div>
 
     <div class="form-group">
         <label asp-for="ArtistId" class="control-label">Artist</label>
-        <select asp-for="ArtistId" class="form-control"></select>
+        <select asp-for="ArtistId" class="form-control" asp-items="ViewBag.Artists"></select>
+        <span asp-validation-for="ArtistId" class="text-danger"></span>
     </div>
 
     <div class="form-group">
         <label asp-for="GenreId" class="control-label">Genre</label>
         <select asp-for="GenreId" class="form-control" asp-items="ViewBag.Genres"></select>
+        <span asp-validation-for="GenreId" class="text-danger"></span>
     </div>
-    
+
+    <div class="form-group">
+        <label>Current Album Cover</label>
+        <div>
+            @if (!string.IsNullOrEmpty(Model.ImagePath))
+            {
+                <img src="@Model.ImagePath" alt="Album Cover" class="img-thumbnail" style="max-width: 200px;" />
+            }
+            else
+            {
+                <span>No image available</span>
+            }
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="ImageFile">Change Album Cover</label>
+        <input type="file" name="ImageFile" class="form-control" accept="image/*" />
+    </div>
+
+    <h3>Artist Image</h3>
+    <div class="form-group">
+        <label>Current Artist Image</label>
+        <div>
+            @if (!string.IsNullOrEmpty(Model.ArtistImagePath))
+            {
+                <img src="@Model.ArtistImagePath" alt="Artist Image" class="img-thumbnail" style="max-width: 200px;" />
+            }
+            else
+            {
+                <span>No image available</span>
+            }
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="ArtistImageFile">Change Artist Image</label>
+        <input type="file" name="ArtistImageFile" class="form-control" accept="image/*" />
+    </div>
+
+    <h2>Songs</h2>
+    <div id="songsContainer">
+        @for (int i = 0; i < Model.Songs.Count; i++)
+        {
+            <div class="form-group song-entry">
+                <input type="hidden" asp-for="Songs[i].Id" />
+                <label>Song Title</label>
+                <input asp-for="Songs[i].Title" class="form-control mb-2" required />
+
+                <label>Duration (hh:mm:ss)</label>
+                <input asp-for="Songs[i].Duration" class="form-control mb-2" required />
+
+                <button type="button" class="btn btn-danger remove-song">Remove</button>
+            </div>
+        }
+    </div>
+
+    <button type="button" id="addSongBtn" class="btn btn-add-song">+ Add Song</button>
+
     <div class="form-group mt-3">
         <button type="submit" class="btn btn-primary">Save</button>
+        <a asp-action="Index" class="btn btn-secondary">Cancel</a>
     </div>
 </form>
 
-@section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
-}
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var container = document.getElementById("songsContainer");
+        var addSongBtn = document.getElementById("addSongBtn");
+
+        addSongBtn.addEventListener("click", function () {
+            var newIndex = container.querySelectorAll(".song-entry").length;
+
+            var newSongEntry = document.createElement("div");
+            newSongEntry.classList.add("form-group", "song-entry");
+            newSongEntry.innerHTML = `
+                <input type="hidden" name="Songs[${newIndex}].Id" value="" />
+                <label>Song Title</label>
+                <input type="text" name="Songs[${newIndex}].Title" class="form-control mb-2" required />
+
+                <label>Duration (hh:mm:ss)</label>
+                <input type="text" name="Songs[${newIndex}].Duration" class="form-control mb-2" required />
+
+                <button type="button" class="btn btn-danger remove-song">Remove</button>
+            `;
+
+            container.appendChild(newSongEntry);
+            updateSongIndexes();
+        });
+
+        container.addEventListener("click", function (event) {
+            if (event.target.classList.contains("remove-song")) {
+                event.target.closest(".song-entry").remove();
+                updateSongIndexes();
+            }
+        });
+
+        function updateSongIndexes() {
+            var songEntries = container.querySelectorAll(".song-entry");
+            songEntries.forEach((entry, index) => {
+                entry.querySelector("input[type='hidden']").name = `Songs[${index}].Id`;
+                entry.querySelector("input[type='text']").name = `Songs[${index}].Title`;
+                entry.querySelectorAll("input[type='text']")[1].name = `Songs[${index}].Duration`;
+            });
+        }
+    });
+</script>
+
+
+
