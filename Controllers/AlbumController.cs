@@ -61,30 +61,42 @@ namespace VinylShop.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Album album, IFormFile? ImageFile, IFormFile? ArtistImageFile, string ExistingArtist, string NewArtist, string GenreId, string NewGenre, List<string> SongTitles, List<string> SongDurations)
         {
-            // Assign Artist
+            // Визначаємо артиста
             var artist = await GetOrCreateArtist(ExistingArtist, NewArtist, ArtistImageFile);
             if (artist == null)
             {
-                ModelState.AddModelError("Artist", "Please select or enter an artist.");
+                ModelState.AddModelError("ArtistId", "Please select or enter an artist.");
                 PopulateDropDowns();
                 return View(album);
             }
             album.Artist = artist;
+            album.ArtistId = artist.Id;
 
-            // Assign Genre
+            // Перевіряємо, чи альбом вже існує для цього артиста
+            var existingAlbum = await _context.Albums
+                .FirstOrDefaultAsync(a => a.Title.ToLower() == album.Title.ToLower() && a.ArtistId == album.ArtistId);
+
+            if (existingAlbum != null)
+            {
+                ModelState.AddModelError("Title", "An album with this title already exists for the selected artist.");
+                PopulateDropDowns();
+                return View(album);
+            }
+
+            // Визначаємо жанр
             int genreId = await GetOrCreateGenre(GenreId, NewGenre);
             if (genreId == 0)
             {
-                ModelState.AddModelError("Genre", "Please select or enter a genre.");
+                ModelState.AddModelError("GenreId", "Please select or enter a genre.");
                 PopulateDropDowns();
                 return View(album);
             }
             album.GenreId = genreId;
 
-            // Image Upload
+            // Завантаження зображення альбому
             album.ImagePath = await UploadImageAsync(ImageFile, "albums");
 
-            // Create Songs
+            // Додаємо пісні
             if (SongTitles != null && SongDurations != null)
             {
                 for (int i = 0; i < SongTitles.Count; i++)
@@ -100,11 +112,12 @@ namespace VinylShop.Controllers
                 }
             }
 
-            // Save Album
+            // Збереження альбому
             _context.Add(album);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
+
 
         // Edit Album - GET
         public async Task<IActionResult> Edit(int? id)
@@ -155,76 +168,68 @@ namespace VinylShop.Controllers
 
             if (album == null) return NotFound();
 
-            if (!ModelState.IsValid)
+            // Перевіряємо, чи існує альбом з таким же ім'ям у цього артиста (окрім самого себе)
+            var existingAlbum = await _context.Albums
+                .FirstOrDefaultAsync(a => a.Title.ToLower() == albumDto.Title.ToLower() && a.ArtistId == albumDto.ArtistId && a.Id != albumDto.Id);
+
+            if (existingAlbum != null)
             {
+                ModelState.AddModelError("Title", "An album with this title already exists for the selected artist.");
                 ViewBag.Artists = new SelectList(_context.Artists, "Id", "Name", albumDto.ArtistId);
                 ViewBag.Genres = new SelectList(_context.Genres, "Id", "Name", albumDto.GenreId);
                 return View(albumDto);
             }
 
-            try
+            // Оновлюємо дані альбому
+            album.Title = albumDto.Title;
+            album.ArtistId = albumDto.ArtistId;
+            album.GenreId = albumDto.GenreId;
+
+            if (albumDto.ImageFile != null)
             {
-                // Оновлення загальних даних альбому
-                album.Title = albumDto.Title;
-                album.ArtistId = albumDto.ArtistId;
-                album.GenreId = albumDto.GenreId;
+                album.ImagePath = await UploadImageAsync(albumDto.ImageFile, "albums");
+            }
 
-                if (albumDto.ImageFile != null)
+            if (albumDto.ArtistImageFile != null && album.Artist != null)
+            {
+                album.Artist.ImagePath = await UploadImageAsync(albumDto.ArtistImageFile, "artists");
+            }
+
+            // Оновлення пісень
+            var existingSongs = album.Songs.ToList();
+            albumDto.Songs ??= new List<SongDto>();
+
+            foreach (var songDto in albumDto.Songs)
+            {
+                if (songDto.Id.HasValue)
                 {
-                    album.ImagePath = await UploadImageAsync(albumDto.ImageFile, "albums");
-                }
-
-                if (albumDto.ArtistImageFile != null && album.Artist != null)
-                {
-                    album.Artist.ImagePath = await UploadImageAsync(albumDto.ArtistImageFile, "artists");
-                }
-
-                var existingSongs = album.Songs.ToList();
-                albumDto.Songs ??= new List<SongDto>();
-
-                foreach (var songDto in albumDto.Songs)
-                {
-                    if (songDto.Id.HasValue)
+                    var song = existingSongs.FirstOrDefault(s => s.Id == songDto.Id.Value);
+                    if (song != null)
                     {
-                        // Оновлення існуючої пісні
-                        var song = existingSongs.FirstOrDefault(s => s.Id == songDto.Id.Value);
-                        if (song != null)
-                        {
-                            song.Title = songDto.Title;
-                            song.Duration = TimeSpan.TryParse(songDto.Duration, out TimeSpan duration) ? duration : TimeSpan.Zero;
-                        }
-                    }
-                    else
-                    {
-                        // Додавання нової пісні
-                        album.Songs.Add(new Song
-                        {
-                            Title = songDto.Title,
-                            Duration = TimeSpan.TryParse(songDto.Duration, out TimeSpan duration) ? duration : TimeSpan.Zero
-                        });
+                        song.Title = songDto.Title;
+                        song.Duration = TimeSpan.TryParse(songDto.Duration, out TimeSpan duration) ? duration : TimeSpan.Zero;
                     }
                 }
-
-                // Видалення пісень, яких більше немає в DTO
-                var songIds = albumDto.Songs.Where(s => s.Id.HasValue).Select(s => s.Id ?? 0).ToList();
-                var songsToRemove = existingSongs.Where(s => !songIds.Contains(s.Id)).ToList();
-
-                if (songsToRemove.Any())
+                else
                 {
-                    _context.Songs.RemoveRange(songsToRemove);
+                    album.Songs.Add(new Song
+                    {
+                        Title = songDto.Title,
+                        Duration = TimeSpan.TryParse(songDto.Duration, out TimeSpan duration) ? duration : TimeSpan.Zero
+                    });
                 }
+            }
 
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            catch (Exception ex)
+            var songIds = albumDto.Songs.Where(s => s.Id.HasValue).Select(s => s.Id ?? 0).ToList();
+            var songsToRemove = existingSongs.Where(s => !songIds.Contains(s.Id)).ToList();
+
+            if (songsToRemove.Any())
             {
-                Console.WriteLine($"Error updating album: {ex.Message}");
-                ModelState.AddModelError("", "An error occurred while updating the album.");
-                ViewBag.Artists = new SelectList(_context.Artists, "Id", "Name", albumDto.ArtistId);
-                ViewBag.Genres = new SelectList(_context.Genres, "Id", "Name", albumDto.GenreId);
-                return View(albumDto);
+                _context.Songs.RemoveRange(songsToRemove);
             }
+
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
         }
 
         // Delete Album - GET

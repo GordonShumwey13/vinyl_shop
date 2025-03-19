@@ -12,8 +12,8 @@ using VinylShop.Data;
 namespace MyWebApp.Migrations
 {
     [DbContext(typeof(VinylShopContext))]
-    [Migration("20250302143547_UpdateSongModel")]
-    partial class UpdateSongModel
+    [Migration("20250318162120_Baseline")]
+    partial class Baseline
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -64,6 +64,10 @@ namespace MyWebApp.Migrations
                         .HasColumnType("int");
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ImagePath")
+                        .HasMaxLength(500)
+                        .HasColumnType("varchar(500)");
 
                     b.Property<string>("Name")
                         .IsRequired()
