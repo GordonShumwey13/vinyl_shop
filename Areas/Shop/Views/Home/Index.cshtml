@@ -1,15 +1,32 @@
 @model IEnumerable<VinylShop.Models.Album>
 
-<div class="album-grid">
+@{
+    ViewData["Title"] = "Vinyl Shop";
+}
+
+<link rel="stylesheet" href="~/css/shop.css" asp-append-version="true" />
+
+<h1>Welcome to the Vinyl Shop</h1>
+
+<div class="row">
     @foreach (var album in Model)
     {
-        <div class="album-card">
-            <img src="@album.ImagePath" alt="@album.Title" />
-            <div class="album-info">
-                <h3>@album.Title</h3>
-                <p>Artist: @album.Artist.Name</p>
-                <p>Genre: @album.Genre.Name</p>
-                <a class="buy-button" asp-controller="Albums" asp-action="Details" asp-route-id="@album.Id">View Album</a>
+        <div class="card">
+            @if (!string.IsNullOrEmpty(album.ImagePath))
+            {
+                <img class="card-img-top" src="@album.ImagePath" alt="@album.Title" />
+            }
+            <div class="card-body">
+                <h5 class="card-title">@album.Title</h5>
+                <p class="card-text">
+                    <strong>Artist:</strong> @album.Artist.Name <br />
+                    <strong>Genre:</strong> @album.Genre.Name <br />
+                    <strong>Price:</strong> $@album.Price
+                </p>
+            </div>
+            <div class="card-footer">
+                <a asp-area="Shop" asp-action="Details" asp-route-id="@album.Id" class="btn btn-sm btn-outline-primary">Details</a>
+                <a asp-area="Shop" asp-controller="Order" asp-action="Create" asp-route-albumId="@album.Id" class="btn btn-sm btn-success">Buy</a>
             </div>
         </div>
     }

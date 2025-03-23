@@ -30,7 +30,6 @@ app.MapControllerRoute(
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}",
-    defaults: new { area = "Shop" });
+    pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();
