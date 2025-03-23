@@ -6,8 +6,9 @@ using VinylShop.DbModel;
 
 using Microsoft.AspNetCore.Mvc.Rendering;
 
-namespace VinylShop.Controllers
-{
+namespace VinylShop.Areas.Admin.Controllers
+{   
+    [Area("Admin")]
     public class AlbumsController : Controller
     {
         private readonly VinylShopContext _context;
@@ -138,7 +139,7 @@ namespace VinylShop.Controllers
                 ArtistId = album.ArtistId,
                 GenreId = album.GenreId,
                 ImagePath = album.ImagePath,
-                ArtistImagePath = album.Artist?.ImagePath,
+                Price = album.Price,
                 Songs = album.Songs.Select(s => new SongDto
                 {
                     Id = s.Id,
@@ -184,15 +185,11 @@ namespace VinylShop.Controllers
             album.Title = albumDto.Title;
             album.ArtistId = albumDto.ArtistId;
             album.GenreId = albumDto.GenreId;
+            album.Price = albumDto.Price;
 
             if (albumDto.ImageFile != null)
             {
                 album.ImagePath = await UploadImageAsync(albumDto.ImageFile, "albums");
-            }
-
-            if (albumDto.ArtistImageFile != null && album.Artist != null)
-            {
-                album.Artist.ImagePath = await UploadImageAsync(albumDto.ArtistImageFile, "artists");
             }
 
             // Оновлення пісень

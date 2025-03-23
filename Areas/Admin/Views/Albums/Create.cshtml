@@ -33,7 +33,7 @@
             <input type="text" name="NewArtist" class="form-control" placeholder="For example, The Beatles" />
         </div>
 
-        <div class="form-group">
+        <div class="form-group" id="artistImageUploadGroup">
             <label for="ArtistImageFile">Upload Artist Image</label>
             <input type="file" name="ArtistImageFile" class="form-control" id="artistImageUpload" />
         </div>
@@ -53,6 +53,12 @@
         <div class="form-group">
             <label for="ImageFile">Upload Image</label>
             <input type="file" name="ImageFile" class="form-control" />
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Price">Price</label>
+            <input asp-for="Price" class="form-control" step="0.01" type="number" min="0" required />
+            <span asp-validation-for="Price" class="text-danger"></span>
         </div>
 
         <h2>Songs</h2>

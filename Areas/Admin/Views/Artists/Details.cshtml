@@ -19,6 +19,16 @@ else
     <p>No Image Available</p>
 }
 
+@if (!string.IsNullOrEmpty(Model.Biography))
+{
+    <h3>Biography</h3>
+    <p>@Model.Biography</p>
+}
+else
+{
+    <p><em>No biography available.</em></p>
+}
+
 <h2>Albums</h2>
 
 @if (Model.Albums.Any())
@@ -51,9 +61,10 @@ else
 }
 
 <div class="details">
-    <a asp-action="Index" class="btn btn-primary">Back to Artists</a>
+    <a asp-action="EditArtist" asp-route-id="@Model.Id" class="btn btn-primary">Edit</a>
 </div>
 
 <div class="details">
+    <a asp-action="Index" class="btn btn-secondary">Back to Artists</a>
     <a asp-controller="Albums" asp-action="Index" class="btn btn-secondary">Back to Albums</a>
 </div>

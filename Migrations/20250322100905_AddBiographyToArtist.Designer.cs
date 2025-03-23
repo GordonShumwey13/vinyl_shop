@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using VinylShop.Data;
 
@@ -11,9 +12,11 @@ using VinylShop.Data;
 namespace MyWebApp.Migrations
 {
     [DbContext(typeof(VinylShopContext))]
-    partial class VinylShopContextModelSnapshot : ModelSnapshot
+    [Migration("20250322100905_AddBiographyToArtist")]
+    partial class AddBiographyToArtist
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -39,9 +42,6 @@ namespace MyWebApp.Migrations
                     b.Property<string>("ImagePath")
                         .HasMaxLength(500)
                         .HasColumnType("varchar(500)");
-
-                    b.Property<decimal>("Price")
-                        .HasColumnType("decimal(10,2)");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -86,24 +86,6 @@ namespace MyWebApp.Migrations
                     b.ToTable("Artists");
                 });
 
-            modelBuilder.Entity("VinylShop.Models.Buyer", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("varchar(255)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Buyers");
-                });
-
             modelBuilder.Entity("VinylShop.Models.Genre", b =>
                 {
                     b.Property<int>("Id")
@@ -123,35 +105,6 @@ namespace MyWebApp.Migrations
                         .IsUnique();
 
                     b.ToTable("Genres");
-                });
-
-            modelBuilder.Entity("VinylShop.Models.Order", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("AlbumId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("BuyerId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("OrderDate")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<decimal>("Price")
-                        .HasColumnType("decimal(10,2)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AlbumId");
-
-                    b.HasIndex("BuyerId");
-
-                    b.ToTable("Orders");
                 });
 
             modelBuilder.Entity("VinylShop.Models.Song", b =>
@@ -199,25 +152,6 @@ namespace MyWebApp.Migrations
                     b.Navigation("Genre");
                 });
 
-            modelBuilder.Entity("VinylShop.Models.Order", b =>
-                {
-                    b.HasOne("VinylShop.Models.Album", "Album")
-                        .WithMany()
-                        .HasForeignKey("AlbumId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("VinylShop.Models.Buyer", "Buyer")
-                        .WithMany("Orders")
-                        .HasForeignKey("BuyerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Album");
-
-                    b.Navigation("Buyer");
-                });
-
             modelBuilder.Entity("VinylShop.Models.Song", b =>
                 {
                     b.HasOne("VinylShop.Models.Album", "Album")
@@ -237,11 +171,6 @@ namespace MyWebApp.Migrations
             modelBuilder.Entity("VinylShop.Models.Artist", b =>
                 {
                     b.Navigation("Albums");
-                });
-
-            modelBuilder.Entity("VinylShop.Models.Buyer", b =>
-                {
-                    b.Navigation("Orders");
                 });
 
             modelBuilder.Entity("VinylShop.Models.Genre", b =>

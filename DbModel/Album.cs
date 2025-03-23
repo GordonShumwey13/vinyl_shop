@@ -24,6 +24,10 @@ namespace VinylShop.Models
         [ForeignKey("GenreId")]
         public Genre Genre { get; set; } = null!;
 
+        [Required]
+        [Column(TypeName = "decimal(10,2)")]
+        public decimal Price { get; set; }
+
         [MaxLength(500)]
         public string? ImagePath { get; set; }
 

@@ -9,6 +9,7 @@
 <h1>@Model.Title</h1>
 <h3>by @Model.Artist.Name</h3>
 <h4>Genre: @Model.Genre.Name</h4>
+<h4>Price: $@Model.Price</h4>
 
 @if (!string.IsNullOrEmpty(Model.ImagePath))
 {
@@ -48,4 +49,5 @@ else
 }
 <div class="details">
     <a asp-action="Index" class="btn btn-secondary">Back to Albums</a>
+    <a asp-controller="Artists" asp-action="Details" asp-route-id="@Model.Artist.Id" class="btn btn-secondary action-btn">Details Artist</a>
 </div>

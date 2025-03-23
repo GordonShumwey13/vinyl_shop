@@ -50,7 +50,7 @@
                     <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-primary action-btn">Edit</a>
                     <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-delete action-btn">Delete</a>
                     <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-secondary action-btn">Details Album</a>
-                    <a asp-controller="Artists" asp-action="Details" asp-route-id="@item.Artist.Id" class="btn btn-secondary action-btn">Details Artist</a>
+                    <a asp-area="Admin" asp-controller="Artists" asp-action="Details" asp-route-id="@item.Artist.Id" class="btn btn-secondary action-btn">Details Artist</a>
                 </td>
             </tr>
         }

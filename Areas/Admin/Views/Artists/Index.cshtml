@@ -34,11 +34,23 @@
                         <span>No Image</span>
                     }
                 </td>
-                <td>@artist.Name</td>
                 <td>
+                    <strong>@artist.Name</strong><br />
+                    @if (!string.IsNullOrEmpty(artist.Biography))
+                    {
+                        @(artist.Biography.Length > 100 
+                            ? artist.Biography.Substring(0, 100) + "..." 
+                            : artist.Biography)
+                    }
+                    else
+                    {
+                        <em>No biography available.</em>
+                    }
+                </td>
+                <td>
+                    <a asp-action="EditArtist" asp-route-id="@artist.Id" class="btn btn-primary">Edit</a>
                     <a asp-action="Details" asp-route-id="@artist.Id" class="btn btn-secondary">Details</a>
                 </td>
             </tr>
         }
-    </tbody>
-</table>
+</tbody>

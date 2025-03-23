@@ -14,6 +14,9 @@ namespace VinylShop.Models
         [MaxLength(500)]
         public string? ImagePath { get; set; }
 
+        [MaxLength(3000)]
+        public string? Biography { get; set; }
+
         public ICollection<Album> Albums { get; set; } = new List<Album>();
     }
 }

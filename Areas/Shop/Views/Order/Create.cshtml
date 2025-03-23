@@ -1,0 +1,17 @@
+@{
+    ViewData["Title"] = "Buy Album";
+    var album = ViewBag.Album as VinylShop.Models.Album;
+}
+
+<h2>Buy Album: @album.Title</h2>
+<p>by @album.Artist.Name</p>
+<p>Price: <strong>$@album.Price</strong></p>
+
+<form asp-action="Create" method="post">
+    <input type="hidden" name="albumId" value="@album.Id" />
+    <div class="form-group">
+        <label for="email">Your Email</label>
+        <input name="email" class="form-control" required type="email" />
+    </div>
+    <button type="submit" class="btn btn-primary">Place Order</button>
+</form>
