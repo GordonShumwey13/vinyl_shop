@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using VinylShop.Data;
 using VinylShop.Models;
@@ -32,22 +33,29 @@ namespace VinylShop.Areas.Shop.Controllers
         // POST: Shop/Order/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(int albumId, string email)
+        public async Task<IActionResult> Create(int albumId, string buyerEmail)
         {
             var album = await _context.Albums.FindAsync(albumId);
-            if (album == null) return NotFound();
+            if (album == null || album.Stock <= 0)
+            {
+                ModelState.AddModelError("", "This album is out of stock.");
+                ViewBag.Albums = new SelectList(await _context.Albums.ToListAsync(), "Id", "Title", albumId);
+                return View();
+            }
 
-            var buyer = await _context.Buyers.FirstOrDefaultAsync(b => b.Email == email);
+            var buyer = await _context.Buyers.FirstOrDefaultAsync(b => b.Email == buyerEmail);
             if (buyer == null)
             {
-                buyer = new Buyer { Email = email };
+                buyer = new Buyer { Email = buyerEmail };
                 _context.Buyers.Add(buyer);
                 await _context.SaveChangesAsync();
             }
 
+            album.Stock--;
+
             var order = new Order
             {
-                AlbumId = album.Id,
+                AlbumId = albumId,
                 Price = album.Price,
                 BuyerId = buyer.Id,
                 OrderDate = DateTime.UtcNow
@@ -57,6 +65,7 @@ namespace VinylShop.Areas.Shop.Controllers
             await _context.SaveChangesAsync();
 
             return RedirectToAction("Success");
+
         }
 
         public IActionResult Success()

@@ -8,7 +8,8 @@ namespace VinylShop.Models
         [Key]
         public int Id { get; set; }
 
-        [Required, EmailAddress, MaxLength(255)]
+        [Required(ErrorMessage = "The email is required.")]
+        [StringLength(255, ErrorMessage = "The email must be at most 255 characters.")]
         public string Email { get; set; } = string.Empty;
 
         public ICollection<Order> Orders { get; set; } = new List<Order>();

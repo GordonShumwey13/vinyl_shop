@@ -28,6 +28,9 @@ namespace VinylShop.Models
         [Column(TypeName = "decimal(10,2)")]
         public decimal Price { get; set; }
 
+        [Required]
+        public int Stock { get; set; }
+
         [MaxLength(500)]
         public string? ImagePath { get; set; }
 

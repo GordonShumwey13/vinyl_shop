@@ -1,17 +1,26 @@
 @{
-    ViewData["Title"] = "Buy Album";
-    var album = ViewBag.Album as VinylShop.Models.Album;
+    ViewData["Title"] = "Place Order";
+    var album = (VinylShop.Models.Album)ViewBag.Album;
 }
 
-<h2>Buy Album: @album.Title</h2>
-<p>by @album.Artist.Name</p>
-<p>Price: <strong>$@album.Price</strong></p>
+<link rel="stylesheet" href="~/css/order.css" asp-append-version="true" />
 
-<form asp-action="Create" method="post">
-    <input type="hidden" name="albumId" value="@album.Id" />
-    <div class="form-group">
-        <label for="email">Your Email</label>
-        <input name="email" class="form-control" required type="email" />
-    </div>
-    <button type="submit" class="btn btn-primary">Place Order</button>
-</form>
+<div class="order-container"> 
+    <h2>Order: @album.Title</h2>
+    <p><strong>Artist:</strong> @album.Artist.Name</p>
+    <p><strong>Price:</strong> $@album.Price</p>
+    <p><strong>In Stock:</strong> @album.Stock</p>
+
+    <form asp-action="Create" method="post">
+        <input type="hidden" name="albumId" value="@album.Id" />
+
+        <div class="form-group narrow-input">
+            <label for="buyerEmail">Your Email</label>
+            <input type="email" name="buyerEmail" class="text-danger" required />
+        </div>
+
+        <button type="submit" class="btn btn-primary">Submit Order</button>
+    </form>
+</div>
+
+

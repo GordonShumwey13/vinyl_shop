@@ -140,6 +140,7 @@ namespace VinylShop.Areas.Admin.Controllers
                 GenreId = album.GenreId,
                 ImagePath = album.ImagePath,
                 Price = album.Price,
+                Stock = album.Stock,
                 Songs = album.Songs.Select(s => new SongDto
                 {
                     Id = s.Id,

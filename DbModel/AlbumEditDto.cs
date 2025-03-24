@@ -23,6 +23,9 @@ namespace VinylShop.DbModel
         [Range(0.01, 999999.99, ErrorMessage = "Price must be between 0.01 and 999999.99.")]
         public decimal Price { get; set; }
 
+        [Required]
+        public int Stock { get; set; }
+
         public List<SongDto> Songs { get; set; } = new();
     }
 
