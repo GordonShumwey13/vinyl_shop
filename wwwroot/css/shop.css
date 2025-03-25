@@ -1,8 +1,8 @@
 body {
-    font-family: "Segoe UI", sans-serif;
+    font-family: "Montserrat", sans-serif;
     background-color: #f6f8fa;
     color: #333;
-    padding: 20px;
+    padding: 20px;    
 }
 
 h1 {
@@ -16,15 +16,19 @@ h1 {
 
 .layout {
     display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
     gap: 40px;
 }
 
 .sidebar {
     width: 250px;
+    height: fit-content;
     background: #fff;
     padding: 20px;
     border-radius: 12px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    
 }
 
 .sidebar h4 {
@@ -261,11 +265,11 @@ h1 {
 }
 
 .btn-success {
-    background-color: #198754;
+    background-color: royalblue;
 }
 
 .btn-success:hover {
-    background-color: #157347;
+    background-color: #475ca0;
 }
 
 .btn-qty {
@@ -290,7 +294,7 @@ h1 {
 .price-highlight {
     font-size: 1.4rem;
     font-weight: 700;
-    color: #000;
+    color: green;
     background-color: #f0f0f0;
     padding: 8px 16px;
     border-radius: 8px;
@@ -307,7 +311,7 @@ h1 {
 .album-details-grid {
     display: flex;
     max-width: 1000px;
-    margin: 0 auto 40px auto;
+    margin: 0 auto 10px auto;
     gap: 40px;
     justify-content: center;
     align-items: stretch;
