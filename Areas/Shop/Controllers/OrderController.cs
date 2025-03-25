@@ -18,7 +18,7 @@ namespace VinylShop.Areas.Shop.Controllers
 
         // GET: Shop/Order/Create
         [HttpGet]
-        public async Task<IActionResult> Create(int albumId)
+        public async Task<IActionResult> OrderForm(int albumId, int quantity = 1)
         {
             var album = await _context.Albums
                 .Include(a => a.Artist)
@@ -27,19 +27,21 @@ namespace VinylShop.Areas.Shop.Controllers
             if (album == null) return NotFound();
 
             ViewBag.Album = album;
-            return View();
+            ViewBag.Quantity = quantity;
+            return View("Create");
         }
 
         // POST: Shop/Order/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(int albumId, string buyerEmail)
+        public async Task<IActionResult> Create(int albumId, string buyerEmail, int quantity = 1)
         {
             var album = await _context.Albums.FindAsync(albumId);
-            if (album == null || album.Stock <= 0)
+            if (album == null || album.Stock < quantity)
             {
                 ModelState.AddModelError("", "This album is out of stock.");
-                ViewBag.Albums = new SelectList(await _context.Albums.ToListAsync(), "Id", "Title", albumId);
+                ViewBag.Album = album;
+                ViewBag.Quantity = quantity;
                 return View();
             }
 
@@ -51,23 +53,27 @@ namespace VinylShop.Areas.Shop.Controllers
                 await _context.SaveChangesAsync();
             }
 
-            album.Stock--;
+            album.Stock -= quantity;
 
-            var order = new Order
+            // Create multiple orders or just one with quantity? Choose your approach:
+            for (int i = 0; i < quantity; i++)
             {
-                AlbumId = albumId,
-                Price = album.Price,
-                BuyerId = buyer.Id,
-                OrderDate = DateTime.UtcNow
-            };
+                _context.Orders.Add(new Order
+                {
+                    AlbumId = albumId,
+                    Price = album.Price,
+                    BuyerId = buyer.Id,
+                    OrderDate = DateTime.UtcNow
+                });
+            }
 
-            _context.Orders.Add(order);
             await _context.SaveChangesAsync();
 
             return RedirectToAction("Success");
-
         }
 
+        // GET: Shop/Order/Success
+        [HttpGet]
         public IActionResult Success()
         {
             return View();

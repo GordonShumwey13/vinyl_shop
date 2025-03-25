@@ -11,23 +11,96 @@
 <div class="row">
     @foreach (var album in Model)
     {
-        <div class="card">
+        <div class="card" data-href="@Url.Action("Details", "Home", new { area = "Shop", id = album.Id })">
             @if (!string.IsNullOrEmpty(album.ImagePath))
             {
                 <img class="card-img-top" src="@album.ImagePath" alt="@album.Title" />
             }
             <div class="card-body">
                 <h5 class="card-title">@album.Title</h5>
-                <p class="card-text">
-                    <strong>Artist:</strong> @album.Artist.Name <br />
-                    <strong>Genre:</strong> @album.Genre.Name <br />
-                    <strong>Price:</strong> $@album.Price
-                </p>
+                <div class="card-text">
+                    <div class="info-row">
+                        <div class="info-label">Artist:</div>
+                        <div class="info-value">@album.Artist.Name</div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">Genre:</div>
+                        <div class="info-value">@album.Genre.Name</div>
+                    </div>
+                </div>
             </div>
-            <div class="card-footer">
-                <a asp-area="Shop" asp-action="Details" asp-route-id="@album.Id" class="btn btn-sm btn-outline-primary">Details</a>
-                <a asp-area="Shop" asp-controller="Order" asp-action="Create" asp-route-albumId="@album.Id" class="btn btn-sm btn-success">Buy</a>
+
+            <div class="price-center">
+                <div class="info-row">
+                    <span class="price-highlight unit-price" data-price="@album.Price">$@album.Price</span>
+                </div>
+            </div>
+
+            <div>
+                <div class="card-text">Quantity:</div>
+            </div>
+            <div class="quantity-selector stop-click">
+                <button type="button" class="btn-qty minus">−</button>
+                <input type="number" name="quantity" value="1" min="1" class="qty-input" />
+                <button type="button" class="btn-qty plus">+</button>
+            </div>
+            <div class="card-footer stop-click">
+                <form asp-area="Shop" asp-controller="Order" asp-action="OrderForm" method="get" onsubmit="return setQuantity(this)">
+                    <input type="hidden" name="albumId" value="@album.Id" />
+                    <input type="hidden" name="quantity" value="1" />
+                    <button type="submit" class="btn btn-success">Buy Album</button>
+                </form>
             </div>
         </div>
     }
 </div>
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.qty-input').forEach(input => {
+            input.value = 1;
+        });
+
+        function updatePrice(container) {
+            const input = container.querySelector('.qty-input');
+            const unitPrice = parseFloat(container.querySelector('.unit-price').dataset.price);
+            const display = container.querySelector('.unit-price');
+            const quantity = parseInt(input.value);
+            const total = (unitPrice * quantity).toFixed(2);
+            display.textContent = `$${total}`;
+        }
+
+        // Quantity logic
+        document.querySelectorAll('.btn-qty').forEach(btn => {
+            btn.addEventListener('click', function (e) {
+                e.stopPropagation();
+                const container = this.closest('.card');
+                const input = container.querySelector('.qty-input');
+                let current = parseInt(input.value);
+                if (this.classList.contains('plus')) current++;
+                else if (this.classList.contains('minus') && current > 1) current--;
+                input.value = current;
+                updatePrice(container);
+            });
+        });
+
+        // Card click handler
+        document.querySelectorAll('.card').forEach(card => {
+            card.addEventListener('click', function (e) {
+                if (!e.target.closest('.stop-click')) {
+                    window.location.href = this.dataset.href;
+                }
+            });
+        });
+    });
+</script>
+<script>
+    function setQuantity(form) {
+        const input = form.closest('.card').querySelector('.qty-input');
+        if (input) {
+            form.querySelector('input[name="quantity"]').value = input.value;
+        }
+        return true;
+    }
+</script>

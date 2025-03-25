@@ -1,6 +1,7 @@
 @{
     ViewData["Title"] = "Place Order";
     var album = (VinylShop.Models.Album)ViewBag.Album;
+    var quantity = ViewBag.Quantity ?? 1;
 }
 
 <link rel="stylesheet" href="~/css/order.css" asp-append-version="true" />
@@ -8,19 +9,21 @@
 <div class="order-container"> 
     <h2>Order: @album.Title</h2>
     <p><strong>Artist:</strong> @album.Artist.Name</p>
-    <p><strong>Price:</strong> $@album.Price</p>
+    <p><strong>Price:</strong> $@((album.Price * quantity).ToString("0.00"))</p>
     <p><strong>In Stock:</strong> @album.Stock</p>
+    <p><strong>Selected Quantity:</strong> @quantity</p>
 
-    <form asp-action="Create" method="post">
+    <form asp-area="Shop" asp-controller="Order" asp-action="Create" method="post">
         <input type="hidden" name="albumId" value="@album.Id" />
+        <input type="hidden" name="quantity" value="@quantity" />
 
         <div class="form-group narrow-input">
             <label for="buyerEmail">Your Email</label>
             <input type="email" name="buyerEmail" class="text-danger" required />
         </div>
 
-        <button type="submit" class="btn btn-primary">Submit Order</button>
+        <button type="submit" class="btn btn-success">Submit Order</button>
+        <a asp-area="Shop" asp-controller="Home" asp-action="Index" class="btn btn-secondary">Back to Shop</a>
+
     </form>
 </div>
-
-
