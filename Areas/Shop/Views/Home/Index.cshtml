@@ -6,76 +6,83 @@
 
 <link rel="stylesheet" href="~/css/shop.css" asp-append-version="true" />
 
-<h1>Welcome to the Vinyl Shop</h1>
+<h1 class="title">Welcome to the Vinyl Shop</h1>
 
-<div class="row">
-    @foreach (var album in Model)
-    {
-        <div class="card" data-href="@Url.Action("Details", "Home", new { area = "Shop", id = album.Id })">
-            @if (!string.IsNullOrEmpty(album.ImagePath))
+<div class="layout">
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <h4>Search</h4>
+        <input type="text" placeholder="Search albums..." class="form-control" />
+
+        <h4 style="margin-top: 20px;">Artists</h4>
+        <ul class="artist-filter">
+            @foreach (var artist in Model.Select(a => a.Artist.Name).Distinct().OrderBy(name => name))
             {
-                <img class="card-img-top" src="@album.ImagePath" alt="@album.Title" />
+                <li>
+                    <a href="#">@artist</a>
+                </li>
             }
-            <div class="card-body">
-                <h5 class="card-title">@album.Title</h5>
-                <div class="card-text">
-                    <div class="info-row">
-                        <div class="info-label">Artist:</div>
-                        <div class="info-value">@album.Artist.Name</div>
-                    </div>
-                    <div class="info-row">
-                        <div class="info-label">Genre:</div>
-                        <div class="info-value">@album.Genre.Name</div>
-                    </div>
-                </div>
-            </div>
+        </ul>
+    </div>
 
-            <div class="price-center">
-                <div class="info-row">
+    <!-- Main Album Grid -->
+    <div class="shop-grid">
+        @foreach (var album in Model)
+        {
+            <div class="album-card" data-href="@Url.Action("Details", "Home", new { area = "Shop", id = album.Id })">
+                @if (!string.IsNullOrEmpty(album.ImagePath))
+                {
+                    <img class="album-image" src="@album.ImagePath" alt="@album.Title" />
+                }
+
+                <div class="album-info">
+                    <div class="album-genre">@album.Genre.Name</div>
+                    <h5 class="album-title">@album.Title</h5>
+                    <div class="album-artist">@album.Artist.Name</div>
+                </div>
+
+                <div class="price-wrapper">
                     <span class="price-highlight unit-price" data-price="@album.Price">$@album.Price</span>
                 </div>
-            </div>
 
-            <div>
-                <div class="card-text">Quantity:</div>
+                <div class="quantity-section stop-click">
+                    <label>Quantity:</label>
+                    <div class="quantity-selector">
+                        <button type="button" class="btn-qty minus">−</button>
+                        <input type="number" name="quantity" value="1" min="1" class="qty-input" />
+                        <button type="button" class="btn-qty plus">+</button>
+                    </div>
+                </div>
+
+                <div class="card-footer stop-click">
+                    <form asp-area="Shop" asp-controller="Order" asp-action="OrderForm" method="get" onsubmit="return setQuantity(this)">
+                        <input type="hidden" name="albumId" value="@album.Id" />
+                        <input type="hidden" name="quantity" value="1" />
+                        <button type="submit" class="btn btn-success">Buy Album</button>
+                    </form>
+                </div>
             </div>
-            <div class="quantity-selector stop-click">
-                <button type="button" class="btn-qty minus">−</button>
-                <input type="number" name="quantity" value="1" min="1" class="qty-input" />
-                <button type="button" class="btn-qty plus">+</button>
-            </div>
-            <div class="card-footer stop-click">
-                <form asp-area="Shop" asp-controller="Order" asp-action="OrderForm" method="get" onsubmit="return setQuantity(this)">
-                    <input type="hidden" name="albumId" value="@album.Id" />
-                    <input type="hidden" name="quantity" value="1" />
-                    <button type="submit" class="btn btn-success">Buy Album</button>
-                </form>
-            </div>
-        </div>
-    }
+        }
+    </div>
 </div>
 
-
+<!-- JavaScript: Quantity logic + dynamic pricing -->
 <script>
     document.addEventListener('DOMContentLoaded', () => {
-        document.querySelectorAll('.qty-input').forEach(input => {
-            input.value = 1;
-        });
+        document.querySelectorAll('.qty-input').forEach(input => input.value = 1);
 
         function updatePrice(container) {
             const input = container.querySelector('.qty-input');
             const unitPrice = parseFloat(container.querySelector('.unit-price').dataset.price);
             const display = container.querySelector('.unit-price');
             const quantity = parseInt(input.value);
-            const total = (unitPrice * quantity).toFixed(2);
-            display.textContent = `$${total}`;
+            display.textContent = `$${(unitPrice * quantity).toFixed(2)}`;
         }
 
-        // Quantity logic
         document.querySelectorAll('.btn-qty').forEach(btn => {
             btn.addEventListener('click', function (e) {
                 e.stopPropagation();
-                const container = this.closest('.card');
+                const container = this.closest('.album-card');
                 const input = container.querySelector('.qty-input');
                 let current = parseInt(input.value);
                 if (this.classList.contains('plus')) current++;
@@ -85,8 +92,7 @@
             });
         });
 
-        // Card click handler
-        document.querySelectorAll('.card').forEach(card => {
+        document.querySelectorAll('.album-card').forEach(card => {
             card.addEventListener('click', function (e) {
                 if (!e.target.closest('.stop-click')) {
                     window.location.href = this.dataset.href;
@@ -94,10 +100,9 @@
             });
         });
     });
-</script>
-<script>
+
     function setQuantity(form) {
-        const input = form.closest('.card').querySelector('.qty-input');
+        const input = form.closest('.album-card').querySelector('.qty-input');
         if (input) {
             form.querySelector('input[name="quantity"]').value = input.value;
         }
