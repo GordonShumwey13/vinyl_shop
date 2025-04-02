@@ -1,0 +1,22 @@
+@page
+@model VinylShop.Areas.Shop.Pages.Orders.CreateModel
+
+<link rel="stylesheet" href="~/css/order.css"/>
+
+<h1>Order Album</h1>
+
+<div>
+    <h2>@Model.Album.Title</h2>
+    <p>Artist: @Model.Album.Artist.Name</p>
+    <p>Genre: @Model.Album.Genre.Name</p>
+    <p>Price per item: $@Model.Album.Price</p>
+    <p>Total Price: $@(Model.Album.Price * Model.Quantity)</p>
+    
+    <form method="post">
+        <input type="hidden" name="albumId" value="@Model.Album.Id" />
+        <label>Quantity:</label>
+        <input type="number" name="Quantity" value="@Model.Quantity" min="1" />
+
+        <button type="submit" class="btn btn-success">Confirm Order</button>
+    </form>
+</div>
