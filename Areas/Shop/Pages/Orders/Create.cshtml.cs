@@ -21,7 +21,8 @@ namespace VinylShop.Areas.Shop.Pages.Orders
         [BindProperty]
         public int Quantity { get; set; } = 1;
 
-        public decimal TotalPrice { get; set; }
+        [BindProperty]
+        public string BuyerEmail { get; set; } = string.Empty;
 
         public async Task<IActionResult> OnGetAsync(int albumId, int quantity = 1)
         {
@@ -30,27 +31,55 @@ namespace VinylShop.Areas.Shop.Pages.Orders
                 .Include(a => a.Genre)
                 .FirstOrDefaultAsync(a => a.Id == albumId);
 
-            if (Album == null) return NotFound();
+            if (Album == null)
+            {
+                return NotFound();
+            }
 
             Quantity = quantity;
-            TotalPrice = Album.Price * Quantity;
-
             return Page();
         }
 
-        public async Task<IActionResult> OnPostAsync(int albumId)
+        public async Task<IActionResult> OnPostAsync()
         {
-            Album = await _context.Albums.FindAsync(albumId);
-            if (Album == null || Album.Stock < Quantity)
+            if (!ModelState.IsValid)
             {
-                ModelState.AddModelError(string.Empty, "Insufficient stock.");
                 return Page();
             }
 
-            Album.Stock -= Quantity;
+            var album = await _context.Albums.FindAsync(Album.Id);
+
+            if (album == null || album.Stock < Quantity)
+            {
+                ModelState.AddModelError(string.Empty, "Not enough stock available.");
+                return Page();
+            }
+
+            var buyer = await _context.Buyers.FirstOrDefaultAsync(b => b.Email == BuyerEmail);
+            if (buyer == null)
+            {
+                buyer = new Buyer { Email = BuyerEmail };
+                _context.Buyers.Add(buyer);
+                await _context.SaveChangesAsync();
+            }
+
+            album.Stock -= Quantity;
+
+            for (int i = 0; i < Quantity; i++)
+            {
+                var order = new Order
+                {
+                    AlbumId = album.Id,
+                    BuyerId = buyer.Id,
+                    Price = album.Price,
+                    OrderDate = DateTime.UtcNow
+                };
+                _context.Orders.Add(order);
+            }
+
             await _context.SaveChangesAsync();
 
-            return RedirectToPage("/Orders/Success");
+            return RedirectToPage("Success");
         }
     }
 }

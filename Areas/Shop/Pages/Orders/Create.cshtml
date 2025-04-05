@@ -3,20 +3,122 @@
 
 <link rel="stylesheet" href="~/css/order.css"/>
 
-<h1>Order Album</h1>
-
-<div>
-    <h2>@Model.Album.Title</h2>
-    <p>Artist: @Model.Album.Artist.Name</p>
-    <p>Genre: @Model.Album.Genre.Name</p>
-    <p>Price per item: $@Model.Album.Price</p>
-    <p>Total Price: $@(Model.Album.Price * Model.Quantity)</p>
-    
-    <form method="post">
-        <input type="hidden" name="albumId" value="@Model.Album.Id" />
-        <label>Quantity:</label>
-        <input type="number" name="Quantity" value="@Model.Quantity" min="1" />
-
-        <button type="submit" class="btn btn-success">Confirm Order</button>
-    </form>
+<div class="banner-section">
+    <img src="~/img/vinyl_header.jpg" alt="Vinyl Header" class="banner-image"/>
 </div>
+
+<div class="order-container">
+
+
+    <h1 class="order-title">Деталі замовлення</h1>
+
+    <div class="order-grid">
+        <div class="image-section">
+            <img src="@Model.Album.ImagePath" alt="@Model.Album.Title" class="order-album-image"/>
+        </div>
+
+        <div class="order-details-block">
+            <div class="album-info">
+                <div class="info-row">
+                    <span>Альбом:</span>
+                    <span>@Model.Album.Title</span>
+                </div>
+
+                <div class="info-row">
+                    <span>Артист:</span>
+                    <span>@Model.Album.Artist.Name</span>
+                </div>
+
+                <div class="info-row">
+                    <span>Жанр:</span>
+                    <span>@Model.Album.Genre.Name</span>
+                </div>
+
+                <div class="info-row">
+                    <span>Ціна платівки:</span>
+                    <span id="pricePerOne">@Model.Album.Price грн.</span>
+                </div>
+
+                <div class="info-row">
+                    <span>Наявність:</span>
+                    @if (Model.Album.Stock > 0)
+                    {
+                        <span class="in-stock">В наявності</span>
+                    }
+                    else
+                    {
+                        <span class="out-of-stock">Немає в наявності</span>
+                    }
+                </div>
+                
+                <div class="info-row quantity-wrapper">
+                    <span>Кількість:</span>
+                    <div class="quantity-selector">
+                        <button type="button" class="btn-qty minus">-</button>
+                        <input type="number" name="Quantity" value="@Model.Quantity" min="1" class="qty-input" readonly/>
+                        <button type="button" class="btn-qty plus">+</button>
+                    </div>
+                </div>
+                <div class="info-row"><span>Загальна ціна:</span><span id="totalPrice">@Model.Album.Price грн.</span></span></div>
+            </div>
+
+            <div class="form-group">
+                <form method="post">
+                    <label for="buyerEmail">Введіть ваш імейл:</label>
+                    <input type="email" name="BuyerEmail" class="email-input" required/>
+                    
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-success">Купити</button>
+                        <a asp-page="/Home/Index" class="btn btn-secondary">Повернутись</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const minusBtns = document.querySelectorAll('.btn-qty.minus');
+        const plusBtns = document.querySelectorAll('.btn-qty.plus');
+        const qtyInputs = document.querySelectorAll('.qty-input');
+        const pricePerOne = parseFloat(document.getElementById('pricePerOne').textContent);
+        const totalPriceElement = document.getElementById('totalPrice');
+
+        function updateTotalPrice(qty) {
+            const totalPrice = (pricePerOne * qty).toFixed(2);
+            totalPriceElement.textContent = totalPrice;
+        }
+
+        minusBtns.forEach((btn, index) => {
+            btn.addEventListener('click', () => {
+                const qtyInput = qtyInputs[index];
+                const currentVal = parseInt(qtyInput.value);
+                if (currentVal > 1) {
+                    const newQty = currentVal - 1;
+                    qtyInput.value = newQty;
+                    updateTotalPrice(newQty);
+                }
+            });
+        });
+
+        plusBtns.forEach((btn, index) => {
+            btn.addEventListener('click', () => {
+                const qtyInput = qtyInputs[index];
+                const currentVal = parseInt(qtyInput.value);
+                const newQty = currentVal + 1;
+                qtyInput.value = newQty;
+                updateTotalPrice(newQty);
+            });
+        });
+
+        qtyInputs.forEach((input) => {
+            input.addEventListener('input', () => {
+                const qty = parseInt(input.value);
+                if (qty > 0) {
+                    updateTotalPrice(qty);
+                }
+            });
+        });
+    });
+</script>

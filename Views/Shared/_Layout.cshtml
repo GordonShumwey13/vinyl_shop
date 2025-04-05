@@ -2,16 +2,32 @@
 <html>
 <head>
     <title>@ViewData["Title"] - VinylShop</title>
-    <link rel="stylesheet" href="~/css/site.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap">
+    <link rel="stylesheet" href="~/css/shop.css"/>
 </head>
 <body>
-    <!-- <header>
-        <nav>
-            <a asp-area="" asp-controller="Home" asp-action="Index">Home</a> |
-            <a asp-area="Shop" asp-page="/Home/Index">Shop</a> |
-            <a asp-area="Admin" asp-controller="Albums" asp-action="Index">Admin</a>
-        </nav>
-    </header> -->
+    <header class="main-header">
+        <div class="header-container">
+            <div class="logo">
+                <img src="~/img/logo.png" alt="Vinyl Place Logo">
+                <span>VINYL SHOP</span>
+            </div>
+            <nav class="navigation">
+                <a href="/Shop/Home/Main">ГОЛОВНА</a>
+                <a href="/Shop/Home">КАТАЛОГ ПЛАТІВОК</a>
+                <a href="#">ДОСТАВКА ТА ОПЛАТА</a>
+                <a href="#">СТАТТІ ТА ОГЛЯДИ</a>
+            </nav>
+            <div class="cart">
+                <button class="cart-button">
+                    <span>480 ГРН.</span>
+                    <span class="cart-icon">🛒</span>
+                    <span class="cart-count">1</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
     <div class="container">
         @RenderBody()
     </div>

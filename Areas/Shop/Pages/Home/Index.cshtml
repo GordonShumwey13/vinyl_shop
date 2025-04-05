@@ -6,15 +6,17 @@
 
 <link rel="stylesheet" href="~/css/shop.css"/>
 
-<h1 class="title">Welcome to the Vinyl Shop</h1>
+<div class="banner-section">
+    <img src="~/img/vinyl_header.jpg" alt="Vinyl Header" class="banner-image"/>
+    <div class="banner-text">КАТАЛОГ ПЛАТІВОК</div>
+</div>
 
 <div class="layout">
-    <!-- Sidebar -->
     <div class="sidebar">
-        <h4>Search</h4>
+        <h4>Пошук</h4>
         <input type="text" placeholder="Search albums..." class="form-control" />
 
-        <h4 style="margin-top: 20px;">Artists</h4>
+        <h4 style="margin-top: 20px;">Артист</h4>
         <ul class="artist-filter">
             @foreach (var artist in Model.Albums.Select(a => a.Artist.Name).Distinct().OrderBy(name => name))
             {
@@ -25,7 +27,6 @@
         </ul>
     </div>
 
-    <!-- Main Album Grid -->
     <div class="shop-grid">
         @foreach (var album in Model.Albums)
         {
@@ -41,23 +42,61 @@
                     <div class="album-artist">@album.Artist.Name</div>
                 </div>
 
-                <div class="price-wrapper">
-                    <span class="price-highlight">$@album.Price</span>
-                </div>
-
-                <div class="card-footer">
-                    <form method="get" asp-area="Shop" asp-page="/Orders/Create">
-                        <input type="hidden" name="albumId" value="@album.Id" />
-
-                        <div class="quantity-section">
-                            <label>Quantity:</label>
-                            <input type="number" name="quantity" value="1" min="1" class="qty-input" />
+                <div class="price-block">
+                        <div class="price-wrapper">
+                            <span class="price-highlight">@album.Price грн.</span>
                         </div>
 
-                        <button type="submit" class="btn btn-success">Buy Album</button>
-                    </form>
+                        <div class="quantity-selector">
+                            <button type="button" class="btn-qty minus">−</button>
+                            <input type="number" name="quantity" value="1" min="1" class="qty-input" />
+                            <button type="button" class="btn-qty plus">+</button>
+                        </div>
+
+                        <form method="get" asp-area="Shop" asp-page="/Orders/Create">
+                            <input type="hidden" name="albumId" value="@album.Id" />
+                            <input type="hidden" name="quantity" value="1" class="hidden-quantity"/>
+                            <button type="submit" class="btn btn-success">Купити</button>
+                        </form>
                 </div>
             </div>
         }
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const qtyInputs = document.querySelectorAll('.qty-input');
+        const minusButtons = document.querySelectorAll('.btn-qty.minus');
+        const plusButtons = document.querySelectorAll('.btn-qty.plus');
+        const hiddenQuantities = document.querySelectorAll('.hidden-quantity');
+
+        minusButtons.forEach((minusBtn, index) => {
+            minusBtn.addEventListener('click', () => {
+                let qtyInput = qtyInputs[index];
+                let currentVal = parseInt(qtyInput.value);
+
+                if (currentVal > 1) {
+                    qtyInput.value = currentVal - 1;
+                    hiddenQuantities[index].value = qtyInput.value;
+                }
+            });
+        });
+
+        plusButtons.forEach((plusBtn, index) => {
+            plusBtn.addEventListener('click', () => {
+                let qtyInput = qtyInputs[index];
+                let currentVal = parseInt(qtyInput.value);
+                
+                qtyInput.value = currentVal + 1;
+                hiddenQuantities[index].value = qtyInput.value;
+            });
+        });
+
+        qtyInputs.forEach((input, index) => {
+            input.addEventListener('input', () => {
+                hiddenQuantities[index].value = input.value;
+            });
+        });
+    });
+</script>

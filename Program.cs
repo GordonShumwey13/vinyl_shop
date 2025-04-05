@@ -27,10 +27,14 @@ app.UseRouting();
 app.UseEndpoints(endpoints =>
 {
     endpoints.MapRazorPages();
-    
+
+    endpoints.MapControllerRoute(
+        name: "main",
+        pattern: "{area=Shop}/{controller=Home}/{action=Main}/{id?}");
+
     endpoints.MapControllerRoute(
         name: "areas",
-        pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
+        pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}"); 
 
     endpoints.MapControllerRoute(
         name: "default",

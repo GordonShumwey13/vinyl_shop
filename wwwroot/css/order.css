@@ -1,49 +1,139 @@
 body {
-    font-family: "Segoe UI", sans-serif;
+    font-family: 'Montserrat', sans-serif;
     background-color: #f6f8fa;
-    color: #333;
-    padding: 30px;
 }
 
-h2 {
-    font-size: 1.8rem;
-    margin-bottom: 20px;
+.banner-section {
+    position: relative;
+    height: 400px;
+    margin-bottom: 40px;
 }
 
-label {
-    font-weight: 600;
+.banner-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 
 .order-container {
-    max-width: 500px;
-    margin: 0 auto;
-    background-color: white;
+    max-width: 1000px;
+    margin: -300px auto 40px auto;
     padding: 30px;
-    border-radius: 12px;
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    background-color: white;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    position: relative;
+    z-index: 10;
 }
 
-.order-container p {
-    margin: 10px 0;
+.order-title {
+    text-align: center;
+    margin-bottom: 30px;
+    margin-top: -10px;
+}
+
+.order-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+}
+
+.image-section {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.order-album-image {
+    width: 100%;
+    border-radius: 12px;
+    object-fit: cover;
+}
+
+.order-details-block {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.album-info h4 {
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    border-bottom: 1px dotted #ccc;
+}
+
+.quantity-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.quantity-selector {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.qty-input::-webkit-outer-spin-button,
+.qty-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.in-stock {
+    color: green;
+    font-weight: 600;
+}
+
+.out-of-stock {
+    color: red;
+    font-weight: 600;
+}
+
+.qty-input {
+    text-align: center;
+    width: 50px;
+    height: 35px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
     font-size: 1rem;
 }
 
-.form-group {
+.btn-qty {
+    background: #eee;
+    font-size: 1.2rem;
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: #333;
+    border: 1px solid #ccc;
+    cursor: pointer;
+}
+
+.btn-qty:hover {
+    background-color: #ddd;
+}
+
+.email-input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
     margin-bottom: 20px;
 }
 
-.form-group input[type="email"] {
-    width: 100%;
-    max-width: 100%;
-    padding: 10px 12px;
-    border-radius: 6px;
-    border: 1px solid #ccc;
-    font-size: 1rem;
-    box-sizing: border-box;
+.form-actions {
+    display: flex;
+    justify-content: space-between;
 }
 
-/* === Base Button Style === */
 .btn {
+    font-family: 'Montserrat', sans-serif;
     padding: 10px 20px;
     font-size: 1rem;
     font-weight: 500;
@@ -57,22 +147,6 @@ label {
     color: white;
 }
 
-.btn-primary {
-    background-color: #0d6efd;
-}
-
-.btn-primary:hover {
-    background-color: #0b5ed7;
-}
-
-.btn-secondary {
-    background-color: #6c757d;
-}
-
-.btn-secondary:hover {
-    background-color: #5a6268;
-}
-
 .btn-success {
     background-color: #198754;
 }
@@ -81,48 +155,11 @@ label {
     background-color: #157347;
 }
 
-.narrow-input {
-    width: 100%;
-    max-width: 400px;
-}
-
-/* success screen styles */
-.success-screen {
-    max-width: 500px;
-    margin: 10% auto;
-    background-color: white;
-    padding: 40px;
-    border-radius: 16px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-    text-align: center;
-    animation: fadeIn 0.4s ease-in-out;
-}
-
-.success-screen h2 {
-    font-size: 2rem;
-    font-weight: 700;
-    color: #198754;
-    margin-bottom: 15px;
-}
-
-.success-screen p {
-    font-size: 1.1rem;
-    color: #555;
-    margin-bottom: 25px;
-}
-
-.success-screen .btn-primary {
-    background-color: #0d6efd;
-    padding: 10px 20px;
-    font-size: 1rem;
-    font-weight: 500;
-    border: none;
-    border-radius: 6px;
+.btn-secondary {
+    background-color: #6c757d;
     color: white;
-    text-decoration: none;
-    transition: background-color 0.2s ease-in-out;
 }
 
-.success-screen .btn-primary:hover {
-    background-color: #0b5ed7;
+.btn-secondary:hover {
+    background-color: #5a6268;
 }
