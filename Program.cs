@@ -41,9 +41,9 @@ app.UseEndpoints(endpoints =>
         pattern: "{controller=Home}/{action=Index}/{id?}");
 
     endpoints.MapControllerRoute(
-    name: "details",
-    pattern: "Shop/Albums/Details/{id:int}",
-    defaults: new { area = "Shop", page = "/Albums/Details"});
+        name: "details",
+        pattern: "Shop/Albums/Details/{id:int}",
+        defaults: new { area = "Shop", page = "/Albums/Details"});
 });
 
 app.Run();
