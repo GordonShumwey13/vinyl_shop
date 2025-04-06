@@ -22,6 +22,7 @@ namespace VinylShop.Areas.Shop.Pages.Home
             Albums = await _context.Albums
                 .Include(a => a.Artist)
                 .Include(a => a.Genre)
+                .OrderByDescending(a => a.Id)
                 .Take(3)
                 .ToListAsync();
         }
