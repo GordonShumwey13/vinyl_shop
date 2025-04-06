@@ -1,0 +1,74 @@
+@page "{id:int}"
+@model VinylShop.Areas.Shop.Pages.Albums.DetailsModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+<link rel="stylesheet" href="~/css/order.css"/>
+
+<div class="banner-section">
+    <img src="~/img/vinyl_header.jpg" alt="Vinyl Header" class="banner-image"/>
+</div>
+
+<div class="order-container">
+
+    <div class="order-grid">
+        <div class="image-section">
+            <img src="@Model.Album.ImagePath" alt="@Model.Album.Title" class="order-album-image"/>
+        </div>
+
+        <div class="order-details-block">
+            <div class="album-info">
+                <div class="info-row">
+                    <span>Альбом:</span>
+                    <span>@Model.Album.Title</span>
+                </div>
+
+                <div class="info-row">
+                    <span>Артист:</span>
+                    <span>@Model.Album.Artist.Name</span>
+                </div>
+
+                <div class="info-row">
+                    <span>Жанр:</span>
+                    <span>@Model.Album.Genre.Name</span>
+                </div>
+
+                <div class="info-row">
+                    <span>Ціна платівки:</span>
+                    <span id="pricePerOne">@Model.Album.Price грн.</span>
+                </div>
+
+                <div class="info-row">
+                    <span>Наявність:</span>
+                    @if (Model.Album.Stock > 0)
+                    {
+                        <span class="in-stock">В наявності</span>
+                    }
+                    else
+                    {
+                        <span class="out-of-stock">Немає в наявності</span>
+                    }
+                </div>
+            </div>
+
+            <div class="form-group">
+                <form method="get" asp-area="Shop" asp-page="/Orders/Create">
+                    <input type="hidden" name="albumId" value="@Model.Album.Id" />
+                    <input type="hidden" name="quantity" value="1" class="hidden-quantity"/>
+                    <button type="submit" class="btn btn-success">Купити</button>
+                    <a href="/Shop/Albums/Albums" class="btn btn-secondary">Повернутись</a>
+                </form>
+            </div>
+        </div>
+    <div class="details-content">
+        <h3>Список треків:</h3>
+        <ol class="track-list">
+            @foreach (var song in Model.Album.Songs)
+            {
+                <li>
+                    <span class="track-title">@song.Title</span>
+                    <span class="track-duration">@song.Duration.ToString(@"mm\:ss")</span>
+                </li>
+            }
+        </ol>
+    </div>
+</div>

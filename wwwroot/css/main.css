@@ -7,7 +7,7 @@ body {
 
 h1 {
     font-size: 3rem;
-    margin-bottom: 30px;
+    margin-bottom: 10px;
 }
 
 .fullscreen-bg {
@@ -23,6 +23,8 @@ h1 {
 }
 
 .fullscreen-content {
+    display: flex;
+    flex-direction: column; 
     top: -30%;
     position: relative;
     z-index: 2;
@@ -43,16 +45,6 @@ h1 {
 .albums-section {
     padding: 40px;
     text-align: center;
-}
-
-.main-text h1 {
-    font-size: 3rem;
-    margin-bottom: 10px;
-}
-
-.main-text p {
-    font-size: 1.2rem;
-    margin-bottom: 20px;
 }
 
 .btn {
@@ -88,8 +80,6 @@ h1 {
     ;
 }
 
-треба альбум карт інфо 
-
 .album-card {
     background: #fff;
     border-radius: 16px;
@@ -115,7 +105,9 @@ h1 {
 }
 
 .album-info {
+    margin-top: 8px;
     padding: 0px;
+    text-align: center;
 }
 
 .album-info h3 {

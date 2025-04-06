@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using VinylShop.Data;
 using VinylShop.Models;
 
-namespace VinylShop.Pages.Shop.Home
+namespace VinylShop.Areas.Shop.Pages.Albums
 {
     public class DetailsModel : PageModel
     {
@@ -15,7 +15,10 @@ namespace VinylShop.Pages.Shop.Home
             _context = context;
         }
 
-        public Album Album { get; set; } = null!;
+        public Album? Album { get; set; }
+
+        [BindProperty(SupportsGet = true)]
+        public int Quantity { get; set; } = 1;
 
         public async Task<IActionResult> OnGetAsync(int id)
         {

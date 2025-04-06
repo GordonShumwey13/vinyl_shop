@@ -3,8 +3,36 @@ body {
     padding-bottom: 50px;
     font-family: "Montserrat", sans-serif;
     background-color: #f6f8fa;
-    color: #333;  
+    color: #333; 
 }
+
+a {
+    text-decoration: none;
+    color: inherit; 
+}
+
+a:hover {
+    text-decoration: none;
+}
+
+.artist-filter li a {
+    text-decoration: none;
+    color: #333;
+}
+
+.artist-filter li a:hover {
+    text-decoration: none;
+}
+
+.album-title a {
+    text-decoration: none;
+    color: inherit;
+}
+
+.album-title a:hover {
+    text-decoration: none;
+}
+
 
 h1 {
     font-size: 2rem;
@@ -151,16 +179,26 @@ h1 {
     align-items: center;
 }
 
-.album-card:hover .album-image{
-    transform: translateY(-8px) scale(1.03);
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+.album-card:hover {
+    transform: scale(1.05);
 }
 
-.album-card img {
-    border-radius: 12px;
-    height: 200px;
-    object-fit: cover;
+.album-image {
     width: 100%;
+    height: 300px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.album-info {
+    margin-top: 8px;
+    padding: 0px;
+    text-align: center;
+}
+.album-info h3 {
+    font-size: 1.1rem;
+    margin-bottom: 5px;
+    font-weight: 700;
 }
 
 .album-title {
@@ -171,23 +209,7 @@ h1 {
 }
 
 .album-title:hover {
-    color: #0d6efd;
     transition: color 0.2s ease;
-}
-
-.album-image {
-    width: 100%;
-    height: 220px;
-    object-fit: cover;
-    border-radius: 12px;
-    margin-bottom: 16px;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
-}
-
-.album-info {
-    text-align: center;
-    margin-bottom: 12px;
 }
 
 .album-genre {
@@ -211,10 +233,6 @@ h1 {
 .artist-filter li a {
     color: #333;
     text-decoration: none;
-}
-
-.artist-filter li a:hover {
-    color: #0d6efd;
 }
 
 /* Ціна, кількість, кнопка */
@@ -273,7 +291,7 @@ h1 {
 .quantity-selector {
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: end;
     gap: 8px;
     width: 100%;
 }

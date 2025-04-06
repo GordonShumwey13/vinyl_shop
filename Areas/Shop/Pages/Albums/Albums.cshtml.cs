@@ -4,13 +4,13 @@ using Microsoft.EntityFrameworkCore;
 using VinylShop.Data;
 using VinylShop.Models;
 
-namespace VinylShop.Areas.Shop.Pages.Home
+namespace VinylShop.Areas.Shop.Pages.Albums
 {
-    public class MainModel : PageModel
+    public class AlbumsModel : PageModel
     {
         private readonly VinylShopContext _context;
 
-        public MainModel(VinylShopContext context)
+        public AlbumsModel(VinylShopContext context)
         {
             _context = context;
         }
@@ -22,7 +22,6 @@ namespace VinylShop.Areas.Shop.Pages.Home
             Albums = await _context.Albums
                 .Include(a => a.Artist)
                 .Include(a => a.Genre)
-                .Take(3)
                 .ToListAsync();
         }
     }

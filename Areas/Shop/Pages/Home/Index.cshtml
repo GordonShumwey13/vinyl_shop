@@ -1,35 +1,22 @@
 @page
 @model VinylShop.Areas.Shop.Pages.Home.IndexModel
-@{
-    ViewData["Title"] = "Vinyl Shop";
-}
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
-<link rel="stylesheet" href="~/css/shop.css"/>
+<link rel="stylesheet" href="~/css/main.css"/>
 
-<div class="banner-section">
-    <img src="~/img/vinyl_header.jpg" alt="Vinyl Header" class="banner-image"/>
-    <div class="banner-text">КАТАЛОГ ПЛАТІВОК</div>
+<div class="fullscreen-bg">
+    <div class="fullscreen-overlay"></div>
+    <div class="fullscreen-content">
+        <h1>VINYL SHOP</h1>
+        <p>Онлайн-магазин вінілових платівок</p>
+        <a href="/Shop/Albums/Albums" class="btn btn-success">🔍 Пошук в каталозі</a>
+    </div>
 </div>
 
-<div class="layout">
-    <div class="sidebar">
-        <h4>Пошук</h4>
-        <input type="text" placeholder="Search albums..." class="form-control" />
-
-        <h4 style="margin-top: 20px;">Артист</h4>
-        <ul class="artist-filter">
-            @foreach (var artist in Model.Albums.Select(a => a.Artist.Name).Distinct().OrderBy(name => name))
-            {
-                <li>
-                    <a href="#">@artist</a>
-                </li>
-            }
-        </ul>
-    </div>
-
-    <div class="shop-grid">
-        @foreach (var album in Model.Albums)
-        {
+<div class="albums-container">
+    @foreach (var album in Model.Albums)
+    {
+        <a asp-area="Shop" asp-page="/Albums/Details" asp-route-id="@album.Id">
             <div class="album-card">
                 @if (!string.IsNullOrEmpty(album.ImagePath))
                 {
@@ -46,57 +33,8 @@
                         <div class="price-wrapper">
                             <span class="price-highlight">@album.Price грн.</span>
                         </div>
-
-                        <div class="quantity-selector">
-                            <button type="button" class="btn-qty minus">−</button>
-                            <input type="number" name="quantity" value="1" min="1" class="qty-input" />
-                            <button type="button" class="btn-qty plus">+</button>
-                        </div>
-
-                        <form method="get" asp-area="Shop" asp-page="/Orders/Create">
-                            <input type="hidden" name="albumId" value="@album.Id" />
-                            <input type="hidden" name="quantity" value="1" class="hidden-quantity"/>
-                            <button type="submit" class="btn btn-success">Купити</button>
-                        </form>
                 </div>
             </div>
-        }
-    </div>
+        </a>
+    }
 </div>
-
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const qtyInputs = document.querySelectorAll('.qty-input');
-        const minusButtons = document.querySelectorAll('.btn-qty.minus');
-        const plusButtons = document.querySelectorAll('.btn-qty.plus');
-        const hiddenQuantities = document.querySelectorAll('.hidden-quantity');
-
-        minusButtons.forEach((minusBtn, index) => {
-            minusBtn.addEventListener('click', () => {
-                let qtyInput = qtyInputs[index];
-                let currentVal = parseInt(qtyInput.value);
-
-                if (currentVal > 1) {
-                    qtyInput.value = currentVal - 1;
-                    hiddenQuantities[index].value = qtyInput.value;
-                }
-            });
-        });
-
-        plusButtons.forEach((plusBtn, index) => {
-            plusBtn.addEventListener('click', () => {
-                let qtyInput = qtyInputs[index];
-                let currentVal = parseInt(qtyInput.value);
-                
-                qtyInput.value = currentVal + 1;
-                hiddenQuantities[index].value = qtyInput.value;
-            });
-        });
-
-        qtyInputs.forEach((input, index) => {
-            input.addEventListener('input', () => {
-                hiddenQuantities[index].value = input.value;
-            });
-        });
-    });
-</script>
