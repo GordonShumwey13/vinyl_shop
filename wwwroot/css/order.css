@@ -74,9 +74,10 @@ body {
     justify-content: space-between;
 }
 
-.quantity-selector {
+.quantity-selector-details {
     display: flex;
     align-items: center;
+    justify-content: end;
     gap: 5px;
 }
 
