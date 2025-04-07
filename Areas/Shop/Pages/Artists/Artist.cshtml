@@ -1,0 +1,52 @@
+@page "{id:int}"
+@model VinylShop.Areas.Shop.Pages.Artists.ArtistModel
+@{
+    ViewData["Title"] = Model.Artist?.Name ?? "Unknown Artist";
+}
+
+<link rel="stylesheet" href="~/css/shop.css"/>
+
+<div class="banner-section">
+    <img src="~/img/vinyl_header.jpg" alt="Vinyl Header" class="banner-image"/>
+</div>
+
+<div class="artist-card">
+    <h1>@Model.Artist.Name</h1>
+
+    <div class="artist-card-content">
+        <div class="artist-left-block">
+            @if (!string.IsNullOrEmpty(Model.Artist.ImagePath))
+            {
+                <img src="@Model.Artist.ImagePath" alt="@Model.Artist.Name" class="artist-image-large"/>
+            }
+        </div>
+
+        <div class="artist-right-block">
+            <div class="artist-biography-section">
+                <h2>Біографія</h2>
+                <p>@Model.Artist.Biography</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="albums-block">
+        <div class="albums-header">Альбоми</div>
+        <div class="albums-grid">
+            @foreach (var album in Model.Artist.Albums)
+            {
+                <div class="album-card">
+                    <a asp-area="Shop" asp-page="/Albums/Details" asp-route-id="@album.Id">
+                        @if (!string.IsNullOrEmpty(album.ImagePath))
+                        {
+                            <img src="@album.ImagePath" alt="@album.Title" class="album-image"/>
+                        }
+                        <div class="album-info">
+                            <h5>@album.Title</h5>
+                            <div>@album.Genre.Name</div>
+                        </div>
+                    </a>
+                </div>
+            }
+        </div>
+    </div>
+</div>

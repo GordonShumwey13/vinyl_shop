@@ -18,10 +18,10 @@
 
         <h4 style="margin-top: 20px;">Артист</h4>
         <ul class="artist-filter">
-            @foreach (var artist in Model.Albums.Select(a => a.Artist.Name).Distinct().OrderBy(name => name))
+            @foreach (var artist in Model.Albums.Select(a => a.Artist).Distinct().OrderBy(artist => artist.Name))
             {
                 <li>
-                    <a href="#">@artist</a>
+                    <a asp-area="Shop" asp-page="/Artists/Artist" asp-route-id="@artist.Id">@artist.Name</a>
                 </li>
             }
         </ul>
@@ -42,25 +42,25 @@
                         <h5 class="album-title">@album.Title</h5>
                         <div class="album-artist">@album.Artist.Name</div>
                     </div>
-
-                    <div class="price-block">
-                            <div class="price-wrapper">
-                                <span class="price-highlight">@album.Price грн.</span>
-                            </div>
-
-                            <div class="quantity-selector">
-                                <button type="button" class="btn-qty minus">−</button>
-                                <input type="number" name="quantity" value="1" min="1" class="qty-input" />
-                                <button type="button" class="btn-qty plus">+</button>
-                            </div>
-
-                            <form method="get" asp-area="Shop" asp-page="/Orders/Create">
-                                <input type="hidden" name="albumId" value="@album.Id" />
-                                <input type="hidden" name="quantity" value="1" class="hidden-quantity"/>
-                                <button type="submit" class="btn btn-success">Купити</button>
-                            </form>
-                    </div>
                 </a>
+
+                <div class="price-block">
+                        <div class="price-wrapper">
+                            <span class="price-highlight">@album.Price грн.</span>
+                        </div>
+
+                        <div class="quantity-selector">
+                            <button type="button" class="btn-qty minus">−</button>
+                            <input type="number" name="quantity" value="1" min="1" class="qty-input" />
+                            <button type="button" class="btn-qty plus">+</button>
+                        </div>
+
+                        <form method="get" asp-area="Shop" asp-page="/Orders/Create">
+                            <input type="hidden" name="albumId" value="@album.Id" />
+                            <input type="hidden" name="quantity" value="1" class="hidden-quantity"/>
+                            <button type="submit" class="btn btn-success">Купити</button>
+                        </form>
+                </div>
             </div>
         }
     </div>

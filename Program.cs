@@ -34,7 +34,7 @@ app.UseEndpoints(endpoints =>
 
     endpoints.MapControllerRoute(
         name: "areas",
-        pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}"); 
+        pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
 
     endpoints.MapControllerRoute(
         name: "default",
@@ -43,7 +43,8 @@ app.UseEndpoints(endpoints =>
     endpoints.MapControllerRoute(
         name: "details",
         pattern: "Shop/Albums/Details/{id:int}",
-        defaults: new { area = "Shop", page = "/Albums/Details"});
-});
+        defaults: new { area = "Shop", page = "/Albums/Details" });
 
+    endpoints.MapRazorPages(); // Додай це для Razor Pages!
+});
 app.Run();

@@ -48,6 +48,15 @@
                         <span class="out-of-stock">Немає в наявності</span>
                     }
                 </div>
+                <div class="info-row quantity-wrapper">
+                    <span>Кількість:</span>
+                    <div class="quantity-selector-details">
+                        <button type="button" class="btn-qty minus">-</button>
+                        <input type="number" name="Quantity" value="@Model.Quantity" min="1" class="qty-input" readonly/>
+                        <button type="button" class="btn-qty plus">+</button>
+                    </div>
+                </div>
+                <div class="info-row"><span>Загальна ціна:</span><span id="totalPrice">@Model.Album.Price грн.</span></span></div>
             </div>
 
             <div class="form-group">
@@ -72,3 +81,40 @@
         </ol>
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const qtyInputs = document.querySelectorAll('.qty-input');
+        const minusButtons = document.querySelectorAll('.btn-qty.minus');
+        const plusButtons = document.querySelectorAll('.btn-qty.plus');
+        const hiddenQuantities = document.querySelectorAll('.hidden-quantity');
+
+        minusButtons.forEach((minusBtn, index) => {
+            minusBtn.addEventListener('click', () => {
+                let qtyInput = qtyInputs[index];
+                let currentVal = parseInt(qtyInput.value);
+
+                if (currentVal > 1) {
+                    qtyInput.value = currentVal - 1;
+                    hiddenQuantities[index].value = qtyInput.value;
+                }
+            });
+        });
+
+        plusButtons.forEach((plusBtn, index) => {
+            plusBtn.addEventListener('click', () => {
+                let qtyInput = qtyInputs[index];
+                let currentVal = parseInt(qtyInput.value);
+                
+                qtyInput.value = currentVal + 1;
+                hiddenQuantities[index].value = qtyInput.value;
+            });
+        });
+
+        qtyInputs.forEach((input, index) => {
+            input.addEventListener('input', () => {
+                hiddenQuantities[index].value = input.value;
+            });
+        });
+    });
+</script>
