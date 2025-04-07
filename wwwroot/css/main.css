@@ -10,6 +10,19 @@ h1 {
     margin-bottom: 10px;
 }
 
+.fullscreen-content h1, .fullscreen-content p {
+    margin: 0;
+    padding: 0;
+}
+
+.fullscreen-content h1 {
+    margin-bottom: 20px;
+}
+
+.fullscreen-content p {
+    margin-bottom: 30px;
+}
+
 .fullscreen-bg {
     background: url('/img/main_1.jpg') no-repeat center center fixed;
     background-size: cover;
