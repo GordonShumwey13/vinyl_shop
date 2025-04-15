@@ -13,9 +13,7 @@
 <div class="order-container">
     <h1 class="order-title">Ваше замовлення</h1>
 
-    <div id="cart-items" class="cart-items-wrapper">
-        <!-- JS додасть товари з localStorage -->
-    </div>
+    <div id="cart-items" class="cart-items-wrapper"></div>
 
     <form method="post" class="checkout-form">
         <input type="text" name="FullName" placeholder="ПІБ" required />
@@ -58,29 +56,22 @@
         const cartContainer = document.getElementById('cart-items');
         const totalElement = document.getElementById('final-sum');
 
-        // Отримуємо дані кошика з localStorage
+        // Отримання даних кошика з localStorage
         let cart = JSON.parse(localStorage.getItem('cart')) || [];
 
         // Лог для перевірки даних, які зберігаються в localStorage
         console.log("Кошик у localStorage:", cart);
 
         function updateCartDisplay() {
-            // Очищаємо поточний вивід
             cartContainer.innerHTML = '';
             let totalSum = 0;
 
-            // Обробляємо кожен товар у кошику
+            // Обробка товару в кошику
             cart.forEach((item, index) => {
-                const subtotal = (item.qty * item.price).toFixed(2); // Підсумкова ціна за товар
-                totalSum += parseFloat(subtotal); // Додаємо до загальної суми
+                const subtotal = (item.qty * item.price).toFixed(2);
+                totalSum += parseFloat(subtotal);
 
-                // Перевірка наявності шляху до зображення і використання дефолтного, якщо відсутній
-                const itemImage = item.img || '/img/default.jpg'; // Якщо зображення відсутнє, використовуємо дефолтне
-
-                // Лог для перевірки шляху до зображення
-                console.log(`Товар: ${item.title}, Зображення: ${itemImage}`);
-
-                // Створюємо HTML для кожного елементу кошика
+                // Створення HTML для кожного елементу кошика
                 const itemDiv = document.createElement('div');
                 itemDiv.classList.add('cart-item');
                 itemDiv.innerHTML = `
@@ -99,7 +90,6 @@
                 cartContainer.appendChild(itemDiv);
             });
 
-            // Оновлюємо загальну суму
             totalElement.textContent = `${totalSum.toFixed(2)} грн.`;
         }
 
@@ -112,25 +102,30 @@
                 } else if (e.target.classList.contains('minus') && cart[index].qty > 1) {
                     cart[index].qty -= 1;
                 }
-                localStorage.setItem('cart', JSON.stringify(cart)); // Оновлюємо кошик в localStorage
-                updateCartDisplay(); // Оновлюємо відображення кошика
+                localStorage.setItem('cart', JSON.stringify(cart));
+                updateCartDisplay();
             }
 
             // Видалення товару з кошика
             if (e.target.classList.contains('btn-remove')) {
                 const index = parseInt(e.target.dataset.index);
-                cart.splice(index, 1); // Видаляємо товар
-                localStorage.setItem('cart', JSON.stringify(cart)); // Оновлюємо кошик в localStorage
-                updateCartDisplay(); // Оновлюємо відображення кошика
+                cart.splice(index, 1);
+                localStorage.setItem('cart', JSON.stringify(cart));
+                updateCartDisplay();
             }
         });
 
-        // Якщо кошик порожній, виводимо повідомлення
         if (!cart.length) {
             cartContainer.innerHTML = '<p>Ваш кошик порожній.</p>';
             totalElement.textContent = '0 грн.';
         } else {
-            updateCartDisplay(); // Оновлюємо відображення кошика
+            updateCartDisplay();
         }
     });
+</script>
+
+<script>
+    if (window.location.pathname.includes('Create')) {
+        document.querySelector('.cart-button').style.display = 'none';
+    }
 </script>
