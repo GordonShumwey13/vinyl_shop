@@ -56,22 +56,25 @@
         const cartContainer = document.getElementById('cart-items');
         const totalElement = document.getElementById('final-sum');
 
-        // Отримання даних кошика з localStorage
+        // Отримуємо дані кошика з localStorage
         let cart = JSON.parse(localStorage.getItem('cart')) || [];
 
         // Лог для перевірки даних, які зберігаються в localStorage
         console.log("Кошик у localStorage:", cart);
 
         function updateCartDisplay() {
+            // Очищаємо поточний вивід
             cartContainer.innerHTML = '';
             let totalSum = 0;
 
-            // Обробка товару в кошику
+            // Обробка коженого товару у кошику
             cart.forEach((item, index) => {
                 const subtotal = (item.qty * item.price).toFixed(2);
                 totalSum += parseFloat(subtotal);
 
-                // Створення HTML для кожного елементу кошика
+                const itemImage = item.img;
+
+                // Створюємо HTML для кожного елементу кошика
                 const itemDiv = document.createElement('div');
                 itemDiv.classList.add('cart-item');
                 itemDiv.innerHTML = `
