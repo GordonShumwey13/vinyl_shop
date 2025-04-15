@@ -2,7 +2,7 @@
 @model VinylShop.Areas.Shop.Pages.Albums.DetailsModel
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
-<link rel="stylesheet" href="~/css/order.css"/>
+<link rel="stylesheet" href="~/css/details.css"/>
 
 <div class="banner-section">
     <img src="~/img/vinyl_header.jpg" alt="Vinyl Header" class="banner-image"/>
@@ -60,12 +60,15 @@
             </div>
 
             <div class="form-group">
-                <form method="get" asp-area="Shop" asp-page="/Orders/Create">
-                    <input type="hidden" name="albumId" value="@Model.Album.Id" />
-                    <input type="hidden" name="quantity" value="1" class="hidden-quantity"/>
-                    <button type="submit" class="btn btn-success">Купити</button>
-                    <a href="/Shop/Albums/Albums" class="btn btn-secondary">Повернутись</a>
-                </form>
+                <button type="button"
+                        class="btn btn-success"
+                        id="addToCart"
+                        data-album-id="@Model.Album.Id"
+                        data-title="@Model.Album.Title"
+                        data-price="@Model.Album.Price"
+                        data-image="@Url.Content(Model.Album.ImagePath)">
+                    Купити
+                </button>
             </div>
         </div>
     <div class="details-content">
@@ -84,37 +87,55 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', () => {
-        const qtyInputs = document.querySelectorAll('.qty-input');
-        const minusButtons = document.querySelectorAll('.btn-qty.minus');
-        const plusButtons = document.querySelectorAll('.btn-qty.plus');
-        const hiddenQuantities = document.querySelectorAll('.hidden-quantity');
+        const minusBtn = document.querySelector('.btn-qty.minus');
+        const plusBtn = document.querySelector('.btn-qty.plus');
+        const qtyInput = document.querySelector('.qty-input');
+        const pricePerOne = parseFloat(document.getElementById('pricePerOne').textContent);
+        const totalPriceElement = document.getElementById('totalPrice');
 
-        minusButtons.forEach((minusBtn, index) => {
-            minusBtn.addEventListener('click', () => {
-                let qtyInput = qtyInputs[index];
-                let currentVal = parseInt(qtyInput.value);
+        function updateTotalPrice(qty) {
+            const totalPrice = (pricePerOne * qty).toFixed(2);
+            totalPriceElement.textContent = totalPrice;
+        }
 
-                if (currentVal > 1) {
-                    qtyInput.value = currentVal - 1;
-                    hiddenQuantities[index].value = qtyInput.value;
+        minusBtn.addEventListener('click', () => {
+            let val = parseInt(qtyInput.value);
+            if (val > 1) {
+                val -= 1;
+                qtyInput.value = val;
+                updateTotalPrice(val);
+            }
+        });
+
+        plusBtn.addEventListener('click', () => {
+            let val = parseInt(qtyInput.value);
+            val += 1;
+            qtyInput.value = val;
+            updateTotalPrice(val);
+        });
+
+        const addToCartBtn = document.getElementById('addToCart');
+        if (addToCartBtn) {
+            addToCartBtn.addEventListener('click', () => {
+                const id = parseInt(addToCartBtn.dataset.albumId);
+                const title = addToCartBtn.dataset.title;
+                const price = parseFloat(addToCartBtn.dataset.price);
+                const image = addToCartBtn.dataset.image;
+                const qty = parseInt(qtyInput.value);
+
+                let cart = JSON.parse(localStorage.getItem('cart')) || [];
+                let item = cart.find(i => i.id === id);
+
+                if (item) {
+                    item.qty += qty;
+                } else {
+                    cart.push({ id, title, qty, price, image });
                 }
-            });
-        });
 
-        plusButtons.forEach((plusBtn, index) => {
-            plusBtn.addEventListener('click', () => {
-                let qtyInput = qtyInputs[index];
-                let currentVal = parseInt(qtyInput.value);
-                
-                qtyInput.value = currentVal + 1;
-                hiddenQuantities[index].value = qtyInput.value;
+                localStorage.setItem('cart', JSON.stringify(cart));
+                if (typeof updateCartUI === 'function') updateCartUI();
             });
-        });
+        }
 
-        qtyInputs.forEach((input, index) => {
-            input.addEventListener('input', () => {
-                hiddenQuantities[index].value = input.value;
-            });
-        });
     });
 </script>

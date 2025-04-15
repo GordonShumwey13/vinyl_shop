@@ -1,124 +1,136 @@
 @page
 @model VinylShop.Areas.Shop.Pages.Orders.CreateModel
+@{
+    ViewData["Title"] = "Оформлення замовлення";
+}
 
-<link rel="stylesheet" href="~/css/order.css"/>
+<link rel="stylesheet" href="~/css/order.css" />
 
 <div class="banner-section">
-    <img src="~/img/vinyl_header.jpg" alt="Vinyl Header" class="banner-image"/>
+    <img src="~/img/vinyl_header.jpg" alt="Vinyl Header" class="banner-image" />
 </div>
 
 <div class="order-container">
+    <h1 class="order-title">Ваше замовлення</h1>
 
-
-    <h1 class="order-title">Деталі замовлення</h1>
-
-    <div class="order-grid">
-        <div class="image-section">
-            <img src="@Model.Album.ImagePath" alt="@Model.Album.Title" class="order-album-image"/>
-        </div>
-
-        <div class="order-details-block">
-            <div class="album-info">
-                <div class="info-row">
-                    <span>Альбом:</span>
-                    <span>@Model.Album.Title</span>
-                </div>
-
-                <div class="info-row">
-                    <span>Артист:</span>
-                    <span>@Model.Album.Artist.Name</span>
-                </div>
-
-                <div class="info-row">
-                    <span>Жанр:</span>
-                    <span>@Model.Album.Genre.Name</span>
-                </div>
-
-                <div class="info-row">
-                    <span>Ціна платівки:</span>
-                    <span id="pricePerOne">@Model.Album.Price грн.</span>
-                </div>
-
-                <div class="info-row">
-                    <span>Наявність:</span>
-                    @if (Model.Album.Stock > 0)
-                    {
-                        <span class="in-stock">В наявності</span>
-                    }
-                    else
-                    {
-                        <span class="out-of-stock">Немає в наявності</span>
-                    }
-                </div>
-                
-                <div class="info-row quantity-wrapper">
-                    <span>Кількість:</span>
-                    <div class="quantity-selector-details">
-                        <button type="button" class="btn-qty minus">-</button>
-                        <input type="number" name="Quantity" value="@Model.Quantity" min="1" class="qty-input" readonly/>
-                        <button type="button" class="btn-qty plus">+</button>
-                    </div>
-                </div>
-                <div class="info-row"><span>Загальна ціна:</span><span id="totalPrice">@Model.Album.Price грн.</span></span></div>
-            </div>
-
-            <div class="form-group">
-                <form method="post">
-                    <label for="buyerEmail">Введіть ваш імейл:</label>
-                    <input type="email" name="BuyerEmail" class="email-input" required/>
-                    
-                    <div class="form-actions">
-                        <button type="submit" class="btn btn-success">Купити</button>
-                        <a href="/Shop/Albums/Albums" class="btn btn-secondary">Повернутись</a>
-                    </div>
-                </form>
-            </div>
-        </div>
+    <div id="cart-items" class="cart-items-wrapper">
+        <!-- JS додасть товари з localStorage -->
     </div>
+
+    <form method="post" class="checkout-form">
+        <input type="text" name="FullName" placeholder="ПІБ" required />
+        <input type="tel" name="Phone" placeholder="Телефон" required />
+        <input type="email" name="BuyerEmail" placeholder="E-mail" required />
+        <input type="text" name="City" placeholder="Місто" required />
+        <input type="text" name="Address" placeholder="Адреса | Відділення Нової Пошти" required />
+
+        <fieldset>
+            <legend>Спосіб доставки</legend>
+            <label><input type="radio" name="DeliveryMethod" value="Самовивіз" checked /> Самовивіз</label>
+            <label><input type="radio" name="DeliveryMethod" value="По місту" /> По місту (від 299 грн)</label>
+            <label><input type="radio" name="DeliveryMethod" value="Нова Пошта" /> Нова Пошта</label>
+        </fieldset>
+
+        <fieldset>
+            <legend>Варіант упаковки</legend>
+            <label><input type="radio" name="Packaging" value="Стандартна" checked /> Стандартна упаковка</label>
+            <label><input type="radio" name="Packaging" value="Подарункова" /> Подарункова (від 399 грн)</label>
+        </fieldset>
+
+        <textarea name="Comment" placeholder="Коментар до замовлення"></textarea>
+        <input type="text" name="PromoCode" placeholder="Промокод" />
+
+        <fieldset>
+            <legend>Спосіб оплати</legend>
+            <label><input type="radio" name="PaymentMethod" value="Готівка" checked /> Готівковий розрахунок</label>
+            <label><input type="radio" name="PaymentMethod" value="Карта" /> Безготівкова оплата</label>
+        </fieldset>
+
+        <div class="order-footer">
+            <div class="final-total">Загальна сума: <span id="final-sum">0 грн.</span></div>
+            <button type="submit" class="btn btn-success full-width">Замовити</button>
+        </div>
+    </form>
 </div>
 
 <script>
     document.addEventListener('DOMContentLoaded', () => {
-        const minusBtns = document.querySelectorAll('.btn-qty.minus');
-        const plusBtns = document.querySelectorAll('.btn-qty.plus');
-        const qtyInputs = document.querySelectorAll('.qty-input');
-        const pricePerOne = parseFloat(document.getElementById('pricePerOne').textContent);
-        const totalPriceElement = document.getElementById('totalPrice');
+        const cartContainer = document.getElementById('cart-items');
+        const totalElement = document.getElementById('final-sum');
 
-        function updateTotalPrice(qty) {
-            const totalPrice = (pricePerOne * qty).toFixed(2);
-            totalPriceElement.textContent = totalPrice;
+        // Отримуємо дані кошика з localStorage
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+        // Лог для перевірки даних, які зберігаються в localStorage
+        console.log("Кошик у localStorage:", cart);
+
+        function updateCartDisplay() {
+            // Очищаємо поточний вивід
+            cartContainer.innerHTML = '';
+            let totalSum = 0;
+
+            // Обробляємо кожен товар у кошику
+            cart.forEach((item, index) => {
+                const subtotal = (item.qty * item.price).toFixed(2); // Підсумкова ціна за товар
+                totalSum += parseFloat(subtotal); // Додаємо до загальної суми
+
+                // Перевірка наявності шляху до зображення і використання дефолтного, якщо відсутній
+                const itemImage = item.img || '/img/default.jpg'; // Якщо зображення відсутнє, використовуємо дефолтне
+
+                // Лог для перевірки шляху до зображення
+                console.log(`Товар: ${item.title}, Зображення: ${itemImage}`);
+
+                // Створюємо HTML для кожного елементу кошика
+                const itemDiv = document.createElement('div');
+                itemDiv.classList.add('cart-item');
+                itemDiv.innerHTML = `
+                    <img src="${itemImage}" alt="${item.title}" width="80" height="80">
+                    <div class="cart-item-info">
+                        <a class="cart-item-title" href="/Shop/Albums/Details/${item.id}">${item.title}</a>
+                        <div class="quantity-control">
+                            <button class="btn-qty minus" data-index="${index}">-</button>
+                            <span class="item-qty">${item.qty}</span>
+                            <button class="btn-qty plus" data-index="${index}">+</button>
+                        </div>
+                        <div class="cart-item-price">${subtotal} грн.</div>
+                    </div>
+                    <button class="btn-remove" data-index="${index}" style="color: red; font-size: 20px; border: none; background: none;">🗑️</button>
+                `;
+                cartContainer.appendChild(itemDiv);
+            });
+
+            // Оновлюємо загальну суму
+            totalElement.textContent = `${totalSum.toFixed(2)} грн.`;
         }
 
-        minusBtns.forEach((btn, index) => {
-            btn.addEventListener('click', () => {
-                const qtyInput = qtyInputs[index];
-                const currentVal = parseInt(qtyInput.value);
-                if (currentVal > 1) {
-                    const newQty = currentVal - 1;
-                    qtyInput.value = newQty;
-                    updateTotalPrice(newQty);
+        // Обробка збільшення/зменшення кількості
+        cartContainer.addEventListener('click', function (e) {
+            if (e.target.classList.contains('btn-qty')) {
+                const index = parseInt(e.target.dataset.index);
+                if (e.target.classList.contains('plus')) {
+                    cart[index].qty += 1;
+                } else if (e.target.classList.contains('minus') && cart[index].qty > 1) {
+                    cart[index].qty -= 1;
                 }
-            });
+                localStorage.setItem('cart', JSON.stringify(cart)); // Оновлюємо кошик в localStorage
+                updateCartDisplay(); // Оновлюємо відображення кошика
+            }
+
+            // Видалення товару з кошика
+            if (e.target.classList.contains('btn-remove')) {
+                const index = parseInt(e.target.dataset.index);
+                cart.splice(index, 1); // Видаляємо товар
+                localStorage.setItem('cart', JSON.stringify(cart)); // Оновлюємо кошик в localStorage
+                updateCartDisplay(); // Оновлюємо відображення кошика
+            }
         });
 
-        plusBtns.forEach((btn, index) => {
-            btn.addEventListener('click', () => {
-                const qtyInput = qtyInputs[index];
-                const currentVal = parseInt(qtyInput.value);
-                const newQty = currentVal + 1;
-                qtyInput.value = newQty;
-                updateTotalPrice(newQty);
-            });
-        });
-
-        qtyInputs.forEach((input) => {
-            input.addEventListener('input', () => {
-                const qty = parseInt(input.value);
-                if (qty > 0) {
-                    updateTotalPrice(qty);
-                }
-            });
-        });
+        // Якщо кошик порожній, виводимо повідомлення
+        if (!cart.length) {
+            cartContainer.innerHTML = '<p>Ваш кошик порожній.</p>';
+            totalElement.textContent = '0 грн.';
+        } else {
+            updateCartDisplay(); // Оновлюємо відображення кошика
+        }
     });
 </script>

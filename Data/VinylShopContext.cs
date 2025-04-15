@@ -13,8 +13,9 @@ namespace VinylShop.Data
         public DbSet<Artist> Artists { get; set; }
         public DbSet<Genre> Genres { get; set; }
         public DbSet<Song> Songs { get; set; }
-        public DbSet<Order> Orders { get; set; }
         public DbSet<Buyer> Buyers { get; set; }
+        public DbSet<Order> Orders { get; set; }
+        public DbSet<OrderItem> OrderItems { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

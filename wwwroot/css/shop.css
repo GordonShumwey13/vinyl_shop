@@ -42,9 +42,15 @@ h1 {
 
 /* Main Header */
 .main-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
     background-color: #000;
     color: white;
     padding: 10px 0;
+    z-index: 1000;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
 }
 
 .header-container {
@@ -84,6 +90,11 @@ h1 {
 
 .navigation a:hover {
     color: #ddd;
+}
+
+.cart-button-link {
+    text-decoration: none;
+    color: inherit;
 }
 
 .cart-button {
@@ -135,6 +146,41 @@ h1 {
     font-weight: 700;
     color: white;
     text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
+}
+
+.shop-filter {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+    align-items: flex-end;
+    margin: 50px 50px 20px 0;
+    padding: 15px 20px;
+    font-family: "Montserrat", sans-serif;
+}
+
+.shop-filter select.form-control {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    
+    padding: 8px 36px 8px 12px;
+    background-color: transparent;
+    background-image: url("data:image/svg+xml;utf8,<svg fill='black' height='14' viewBox='0 0 24 24' width='14' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 14px;
+
+    border: none;
+    border-bottom: 2px solid #999;
+    width: calc(100% + 20px);
+    font-family: "Montserrat", sans-serif;
+    transition: border-color 0.3s ease;
+    outline: none;
+}
+
+.shop-filter select.form-control:hover {
+    border-color: #ff3f3f;
+    cursor: pointer;
 }
 
 .layout {

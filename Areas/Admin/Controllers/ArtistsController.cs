@@ -51,7 +51,7 @@ namespace VinylShop.Areas.Admin.Controllers
             return "/img/artists/" + uniqueFileName;
         }
 
-        // GET: Artists/Edit/5
+        // GET: Artists/Edit/
         public async Task<IActionResult> EditArtist(int? id)
         {
             if (id == null) return NotFound();
@@ -62,7 +62,7 @@ namespace VinylShop.Areas.Admin.Controllers
             return View("EditArtist", artist);
         }
 
-        // POST: Artists/Edit/5
+        // POST: Artists/Edit/
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditArtist(int id, [Bind("Id,Name,Biography,ImagePath")] Artist artist, IFormFile? imageFile)

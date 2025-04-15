@@ -1,125 +1,159 @@
-/* Загальний фон для картинки */
-.banner-background {
+body {
+    font-family: 'Montserrat', sans-serif;
+    background-color: #f6f8fa;
+}
+
+.banner-section {
     position: relative;
     height: 400px;
-    overflow: hidden;
+    margin-bottom: 40px;
 }
 
 .banner-image {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    position: absolute;
-    top: 0;
-    left: 0;
 }
 
-/* Основний контейнер для контенту поверх картинки */
-.details-wrapper {
-    position: absolute;
-    top: 120px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 75%;
-    background: white;
+.order-container {
+    max-width: 1000px;
+    margin: -300px auto 40px auto;
     padding: 30px;
-    border-radius: 12px;
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+    background-color: white;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    position: relative;
+    z-index: 10;
 }
 
-/* Внутрішній блок */
-.details-block {
+.order-title {
+    text-align: center;
+    margin-bottom: 30px;
+    margin-top: -10px;
+}
+
+.order-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+}
+
+.image-section {
     display: flex;
-    gap: 20px;
+    align-items: center;
+    justify-content: center;
 }
 
-/* Ліва частина (картинка альбому) */
-.details-left {
-    flex: 0.6;
-}
-
-/* Права частина (інформація про альбом) */
-.details-right {
-    flex: 1;
-    border: 1px solid #ddd;
-    padding: 20px;
-    border-radius: 8px;
-    background-color: white;
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-}
-
-.album-detail-image {
+.order-album-image {
     width: 100%;
-    height: -webkit-fill-available;
     border-radius: 12px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    object-fit: cover;
 }
 
-/* Рамка навколо блоків */
-.bordered-block {
-    border: 1px solid #ddd;
-    padding: 20px;
-    border-radius: 8px;
-    background-color: white;
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1); /* Додаємо тінь з усіх сторін */
+.order-details-block {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
-/* Стилі тексту та кнопок */
-.details-right h1 {
-    font-size: 1.8rem;
+.album-info h4 {
     margin-bottom: 10px;
+    font-weight: bold;
 }
 
 .info-row {
-    margin-bottom: 10px;
-    font-size: 1.1rem;
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    border-bottom: 1px dotted #ccc;
+}
+
+.quantity-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.quantity-selector-details {
+    display: flex;
+    align-items: center;
+    justify-content: end;
+    gap: 5px;
+}
+
+.qty-input::-webkit-outer-spin-button,
+.qty-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
 }
 
 .in-stock {
     color: green;
+    font-weight: 600;
 }
 
-.quantity-wrapper {
-    margin: 20px 0;
-}
-
-.quantity-selector {
-    display: flex;
-    align-items: center;
-    gap: 10px;
+.out-of-stock {
+    color: red;
+    font-weight: 600;
 }
 
 .qty-input {
-    width: 60px;
     text-align: center;
+    width: 50px;
+    height: 35px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 1rem;
 }
 
-.form-group {
-    margin-top: 20px;
+.btn-qty {
+    background: #eee;
+    font-size: 1.2rem;
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: #333;
+    border: 1px solid #ccc;
+    cursor: pointer;
+}
+
+.btn-qty:hover {
+    background-color: #ddd;
+}
+
+.email-input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    margin-bottom: 20px;
 }
 
 .form-actions {
-    margin-top: 20px;
     display: flex;
-    gap: 20px;
+    justify-content: space-between;
 }
 
 .btn {
+    font-family: 'Montserrat', sans-serif;
     padding: 10px 20px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
     font-size: 1rem;
-    transition: background-color 0.3s;
-}
-
-.btn-success {
-    background-color: #28a745;
+    font-weight: 500;
+    text-align: center;
+    border-radius: 6px;
+    display: inline-block;
+    transition: background-color 0.2s ease-in-out;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
     color: white;
 }
 
+.btn-success {
+    background-color: #198754;
+}
+
 .btn-success:hover {
-    background-color: #218838;
+    background-color: #157347;
 }
 
 .btn-secondary {
@@ -129,4 +163,36 @@
 
 .btn-secondary:hover {
     background-color: #5a6268;
+}
+
+.track-list {
+    padding-left: 0;
+    margin-top: 10px;
+    list-style-type: none; /* Вимикаємо стандартну нумерацію */
+    counter-reset: track-counter; /* Ініціалізація лічильника */
+}
+
+.track-list li {
+    display: grid;
+    grid-template-columns: 30px 1fr 60px; /* Додаємо колонку для нумерації */
+    gap: 10px;
+    margin-bottom: 5px;
+    align-items: center;
+}
+
+.track-list li::before {
+    counter-increment: track-counter; /* Збільшуємо лічильник */
+    content: counter(track-counter) "."; /* Відображення номера */
+    font-weight: bold;
+    text-align: right;
+}
+.track-title {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.track-duration {
+    text-align: left;
+    color: #666;
 }

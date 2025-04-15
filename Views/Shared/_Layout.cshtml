@@ -5,6 +5,31 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap">
     <link rel="stylesheet" href="~/css/shop.css"/>
 </head>
+
+<script>
+    function updateCartUI() {
+        const cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+        let totalQty = 0;
+        let totalPrice = 0;
+
+        cart.forEach(item => {
+            totalQty += parseInt(item.qty);
+            totalPrice += item.qty * item.price;
+        });
+
+        const countEl = document.querySelector('.cart-count');
+        const totalEl = document.querySelector('.cart-total');
+
+        if (countEl && totalEl) {
+            countEl.textContent = totalQty;
+            totalEl.textContent = `${totalPrice.toFixed(2)} грн.`;
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', updateCartUI);
+</script>
+
 <body>
     <header class="main-header">
         <div class="header-container">
@@ -18,13 +43,13 @@
                 <a href="#">ДОСТАВКА ТА ОПЛАТА</a>
                 <a href="#">СТАТТІ ТА ОГЛЯДИ</a>
             </nav>
-            <div class="cart">
-                <button class="cart-button">
-                    <span>480 ГРН.</span>
+            <a href="/Shop/Orders/Create" class="cart-button-link">
+                <div class="cart-button">
+                    <span class="cart-total">0 грн.</span>
                     <span class="cart-icon">🛒</span>
-                    <span class="cart-count">1</span>
-                </button>
-            </div>
+                    <span class="cart-count">0</span>
+                </div>
+            </a>
         </div>
     </header>
 

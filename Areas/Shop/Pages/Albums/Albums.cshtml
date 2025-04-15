@@ -2,6 +2,8 @@
 @model VinylShop.Areas.Shop.Pages.Albums.AlbumsModel
 @{
     ViewData["Title"] = "Vinyl Shop";
+    var currentSort = Request.Query["sort"].ToString();
+    var currentGenre = Request.Query["genre"].ToString();
 }
 
 <link rel="stylesheet" href="~/css/shop.css"/>
@@ -9,6 +11,36 @@
 <div class="banner-section">
     <img src="~/img/vinyl_header.jpg" alt="Vinyl Header" class="banner-image"/>
     <div class="banner-text">КАТАЛОГ ПЛАТІВОК</div>
+</div>
+
+<div class="shop-filter">
+    @{
+    var sortOptions = new Dictionary<string, string>
+    {
+         { "", "Сортування за замовчуванням" },
+         { "latest", "Сортувати за останніми" },
+         { "artist", "За артистом (А → Я)" },
+         { "genre", "За жанром (А → Я)" },
+         { "price_desc", "Ціна (від більшої)" },
+         { "price_asc", "Ціна (від меншої)" }
+    };
+    }
+    <form method="get">
+        <select name="sort" class="form-control" onchange="this.form.submit()">
+            @foreach (var option in sortOptions)
+            {
+                <option value="@option.Key" selected="@(currentSort == option.Key ? "selected" : null)">
+                    @option.Value
+                </option>
+            }
+            <option value="rating" disabled>Оцінка (недоступно)</option>
+        </select>
+
+        @if (!string.IsNullOrEmpty(currentGenre))
+        {
+            <input type="hidden" name="genre" value="@currentGenre" />
+        }
+    </form>
 </div>
 
 <div class="layout">
@@ -31,35 +63,39 @@
         @foreach (var album in Model.Albums)
         {
             <div class="album-card">
-                <a asp-area="Shop" asp-page="/Albums/Details" asp-route-id="@album.Id">
-                    @if (!string.IsNullOrEmpty(album.ImagePath))
-                    {
+                <div class="album-image-wrapper">
+                    <a asp-area="Shop" asp-page="/Albums/Details" asp-route-id="@album.Id">
                         <img class="album-image" src="@album.ImagePath" alt="@album.Title" />
-                    }
+                    </a>
+                </div>
 
-                    <div class="album-info">
+                <div class="album-info">
+                    <a asp-area="Shop" asp-page="/Albums/Details" asp-route-id="@album.Id">
                         <div class="album-genre">@album.Genre.Name</div>
                         <h5 class="album-title">@album.Title</h5>
                         <div class="album-artist">@album.Artist.Name</div>
-                    </div>
-                </a>
+                    </a>
+                </div>
 
                 <div class="price-block">
-                        <div class="price-wrapper">
-                            <span class="price-highlight">@album.Price грн.</span>
-                        </div>
+                    <div class="price-wrapper">
+                        <span class="price-highlight">@album.Price грн.</span>
+                    </div>
 
-                        <div class="quantity-selector">
-                            <button type="button" class="btn-qty minus">−</button>
-                            <input type="number" name="quantity" value="1" min="1" class="qty-input" />
-                            <button type="button" class="btn-qty plus">+</button>
-                        </div>
+                    <div class="quantity-selector">
+                        <button type="button" class="btn-qty minus">−</button>
+                        <input type="number" name="quantity" value="1" min="1" class="qty-input" />
+                        <button type="button" class="btn-qty plus">+</button>
+                    </div>
 
-                        <form method="get" asp-area="Shop" asp-page="/Orders/Create">
-                            <input type="hidden" name="albumId" value="@album.Id" />
-                            <input type="hidden" name="quantity" value="1" class="hidden-quantity"/>
-                            <button type="submit" class="btn btn-success">Купити</button>
-                        </form>
+                    <button type="button"
+                            class="btn btn-success add-to-cart-btn"
+                            data-album-id="@album.Id"
+                            data-title="@album.Title"
+                            data-price="@album.Price"
+                            data-image="@Url.Content(album.ImagePath)">
+                        Купити
+                    </button>
                 </div>
             </div>
         }
@@ -68,37 +104,56 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', () => {
-        const qtyInputs = document.querySelectorAll('.qty-input');
-        const minusButtons = document.querySelectorAll('.btn-qty.minus');
-        const plusButtons = document.querySelectorAll('.btn-qty.plus');
-        const hiddenQuantities = document.querySelectorAll('.hidden-quantity');
+        function updateAlbumPrice(priceBlock) {
+            const qty = parseInt(priceBlock.querySelector('.qty-input').value);
+            const basePrice = parseFloat(priceBlock.querySelector('.add-to-cart-btn').dataset.price);
+            const priceDisplay = priceBlock.querySelector('.price-highlight');
+            priceDisplay.textContent = `${(qty * basePrice).toFixed(2)} грн.`;
+        }
 
-        minusButtons.forEach((minusBtn, index) => {
-            minusBtn.addEventListener('click', () => {
-                let qtyInput = qtyInputs[index];
-                let currentVal = parseInt(qtyInput.value);
+        document.querySelectorAll('.btn-qty.plus').forEach((btn) => {
+            btn.addEventListener('click', () => {
+                const priceBlock = btn.closest('.price-block');
+                const qtyInput = priceBlock.querySelector('.qty-input');
+                qtyInput.value = parseInt(qtyInput.value) + 1;
+                updateAlbumPrice(priceBlock);
+            });
+        });
 
-                if (currentVal > 1) {
-                    qtyInput.value = currentVal - 1;
-                    hiddenQuantities[index].value = qtyInput.value;
+        document.querySelectorAll('.btn-qty.minus').forEach((btn) => {
+            btn.addEventListener('click', () => {
+                const priceBlock = btn.closest('.price-block');
+                const qtyInput = priceBlock.querySelector('.qty-input');
+                if (parseInt(qtyInput.value) > 1) {
+                    qtyInput.value = parseInt(qtyInput.value) - 1;
+                    updateAlbumPrice(priceBlock);
                 }
             });
         });
 
-        plusButtons.forEach((plusBtn, index) => {
-            plusBtn.addEventListener('click', () => {
-                let qtyInput = qtyInputs[index];
-                let currentVal = parseInt(qtyInput.value);
-                
-                qtyInput.value = currentVal + 1;
-                hiddenQuantities[index].value = qtyInput.value;
+        document.querySelectorAll('.add-to-cart-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const priceBlock = btn.closest('.price-block');
+                const id = parseInt(btn.dataset.albumId);
+                const title = btn.dataset.title;
+                const price = parseFloat(btn.dataset.price);
+                const qty = parseInt(priceBlock.querySelector('.qty-input').value);
+                const image = btn.dataset.image || '';
+
+                let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+                let item = cart.find(i => i.id === id);
+                if (item) {
+                    item.qty += qty;
+                } else {
+                    cart.push({ id, title, qty, price, image });
+                }
+
+                localStorage.setItem('cart', JSON.stringify(cart));
+                updateCartUI();
             });
         });
 
-        qtyInputs.forEach((input, index) => {
-            input.addEventListener('input', () => {
-                hiddenQuantities[index].value = input.value;
-            });
-        });
+        updateCartUI();
     });
 </script>
