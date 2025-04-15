@@ -127,15 +127,14 @@
                 let item = cart.find(i => i.id === id);
 
                 if (item) {
-                    item.qty += qty;
+                    item.qty += qty; // Якщо товар вже в кошику, просто збільшимо кількість
                 } else {
-                    cart.push({ id, title, qty, price, image });
+                    cart.push({ id, title, qty, price, image }); // Додаємо новий товар
                 }
 
-                localStorage.setItem('cart', JSON.stringify(cart));
-                if (typeof updateCartUI === 'function') updateCartUI();
+                localStorage.setItem('cart', JSON.stringify(cart)); // Зберігаємо кошик в localStorage
+                updateCartUI(); // Оновлюємо інтерфейс кошика
             });
         }
-
     });
 </script>
