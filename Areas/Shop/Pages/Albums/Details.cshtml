@@ -127,7 +127,7 @@
                 let item = cart.find(i => i.id === id);
 
                 if (item) {
-                    item.qty += qty; // Якщо товар вже в кошику, просто збільшимо кількість
+                    item.qty += qty;
                 } else {
                     cart.push({ id, title, qty, price, image }); // Додаємо новий товар
                 }

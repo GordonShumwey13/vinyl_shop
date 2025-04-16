@@ -111,27 +111,27 @@ namespace VinylShop.Areas.Shop.Pages.Orders
                 {
                     AlbumId = album.Id,
                     Quantity = item.Quantity,
-                    Price = album.Price * item.Quantity // Загальна ціна за цей товар
+                    Price = album.Price * item.Quantity // Загальна ціна за товар
                 };
 
                 orderItems.Add(orderItem);
-                newOrder.TotalPrice += orderItem.Price; // Додаємо в загальну вартість замовлення
+                newOrder.TotalPrice += orderItem.Price;
             }
 
-            // Додаємо замовлення в базу
+            // Додавання замовлення в базу
             _context.Orders.Add(newOrder);
             await _context.SaveChangesAsync();
 
-            // Додаємо товарні записи в базу
+            // Додавання запис товару в базу
             foreach (var orderItem in orderItems)
             {
-                orderItem.OrderId = newOrder.Id; // Прив'язуємо до конкретного замовлення
+                orderItem.OrderId = newOrder.Id;
                 _context.OrderItems.Add(orderItem);
             }
 
             await _context.SaveChangesAsync();
 
-            // Очищаємо кошик після оформлення замовлення
+            // Очищення кошику після оформлення замовлення
             Response.Cookies.Delete("cart");
 
             // Переадресація на сторінку успішного оформлення

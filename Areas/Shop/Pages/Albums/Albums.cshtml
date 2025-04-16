@@ -14,92 +14,106 @@
 </div>
 
 <div class="shop-filter">
-    @{
-    var sortOptions = new Dictionary<string, string>
-    {
-         { "", "Сортування за замовчуванням" },
-         { "latest", "Сортувати за останніми" },
-         { "artist", "За артистом (А → Я)" },
-         { "genre", "За жанром (А → Я)" },
-         { "price_desc", "Ціна (від більшої)" },
-         { "price_asc", "Ціна (від меншої)" }
-    };
-    }
-    <form method="get">
-        <select name="sort" class="form-control" onchange="this.form.submit()">
-            @foreach (var option in sortOptions)
-            {
-                <option value="@option.Key" selected="@(currentSort == option.Key ? "selected" : null)">
-                    @option.Value
-                </option>
-            }
-            <option value="rating" disabled>Оцінка (недоступно)</option>
-        </select>
-
-        @if (!string.IsNullOrEmpty(currentGenre))
+        @{
+        var sortOptions = new Dictionary<string, string>
         {
-            <input type="hidden" name="genre" value="@currentGenre" />
+            { "", "Сортування за замовчуванням" },
+            { "latest", "Сортувати за останніми" },
+            { "artist", "За артистом (А → Я)" },
+            { "genre", "За жанром (А → Я)" },
+            { "price_desc", "Ціна (від більшої)" },
+            { "price_asc", "Ціна (від меншої)" }
+        };
         }
-    </form>
+        <form method="get">
+            <select name="sort" class="form-control" onchange="this.form.submit()">
+                @foreach (var option in sortOptions)
+                {
+                    <option value="@option.Key" selected="@(currentSort == option.Key ? "selected" : null)">
+                        @option.Value
+                    </option>
+                }
+                <option value="rating" disabled>Оцінка (недоступно)</option>
+            </select>
+
+            @if (!string.IsNullOrEmpty(currentGenre))
+            {
+                <input type="hidden" name="genre" value="@currentGenre" />
+            }
+        </form>
 </div>
 
 <div class="layout">
-    <div class="sidebar">
-        <h4>Пошук</h4>
-        <input type="text" placeholder="Search albums..." class="form-control" />
+        <div class="sidebar">
+            <h4>Пошук</h4>
+            <form method="get" autocomplete="off" id="searchForm">
+                <input type="text" name="search" id="searchInput"
+                    placeholder="Пошук альбому або артиста..." class="form-control" />
+                <div id="searchDropdown" class="search-dropdown"></div>
 
-        <h4 style="margin-top: 20px;">Артист</h4>
-        <ul class="artist-filter">
-            @foreach (var artist in Model.Albums.Select(a => a.Artist).Distinct().OrderBy(artist => artist.Name))
+                @* Для збереження сортування і жанру *@
+                @if (!string.IsNullOrEmpty(currentGenre))
+                {
+                    <input type="hidden" name="genre" value="@currentGenre" />
+                }
+                @if (!string.IsNullOrEmpty(currentSort))
+                {
+                    <input type="hidden" name="sort" value="@currentSort" />
+                }
+            </form>
+
+            <h4 style="margin-top: 20px;">Артист</h4>
+            <ul class="artist-filter">
+                @foreach (var artist in Model.Albums.Select(a => a.Artist).Distinct().OrderBy(artist => artist.Name))
+                {
+                    <li>
+                        <a asp-area="Shop" asp-page="/Artists/Artist" asp-route-id="@artist.Id">@artist.Name</a>
+                    </li>
+                }
+            </ul>
+        </div>
+
+        <div class="shop-grid">
+            @foreach (var album in Model.Albums)
             {
-                <li>
-                    <a asp-area="Shop" asp-page="/Artists/Artist" asp-route-id="@artist.Id">@artist.Name</a>
-                </li>
+                <div class="album-card">
+                    <div class="album-image-wrapper">
+                        <a asp-area="Shop" asp-page="/Albums/Details" asp-route-id="@album.Id">
+                            <img class="album-image" src="@album.ImagePath" alt="@album.Title" />
+                        </a>
+                    </div>
+
+                    <div class="album-info">
+                        <a asp-area="Shop" asp-page="/Albums/Details" asp-route-id="@album.Id">
+                            <div class="album-genre">@album.Genre.Name</div>
+                            <h5 class="album-title">@album.Title</h5>
+                            <div class="album-artist">@album.Artist.Name</div>
+                        </a>
+                    </div>
+
+                    <div class="price-block">
+                        <div class="price-wrapper">
+                            <span class="price-highlight">@album.Price грн.</span>
+                        </div>
+
+                        <div class="quantity-selector">
+                            <button type="button" class="btn-qty minus">−</button>
+                            <input type="number" name="quantity" value="1" min="1" class="qty-input" />
+                            <button type="button" class="btn-qty plus">+</button>
+                        </div>
+
+                        <button type="button"
+                                class="btn btn-success add-to-cart-btn"
+                                data-album-id="@album.Id"
+                                data-title="@album.Title"
+                                data-price="@album.Price"
+                                data-image="@Url.Content(album.ImagePath)">
+                            Купити
+                        </button>
+                    </div>
+                </div>
             }
-        </ul>
-    </div>
-
-    <div class="shop-grid">
-        @foreach (var album in Model.Albums)
-        {
-            <div class="album-card">
-                <div class="album-image-wrapper">
-                    <a asp-area="Shop" asp-page="/Albums/Details" asp-route-id="@album.Id">
-                        <img class="album-image" src="@album.ImagePath" alt="@album.Title" />
-                    </a>
-                </div>
-
-                <div class="album-info">
-                    <a asp-area="Shop" asp-page="/Albums/Details" asp-route-id="@album.Id">
-                        <div class="album-genre">@album.Genre.Name</div>
-                        <h5 class="album-title">@album.Title</h5>
-                        <div class="album-artist">@album.Artist.Name</div>
-                    </a>
-                </div>
-
-                <div class="price-block">
-                    <div class="price-wrapper">
-                        <span class="price-highlight">@album.Price грн.</span>
-                    </div>
-
-                    <div class="quantity-selector">
-                        <button type="button" class="btn-qty minus">−</button>
-                        <input type="number" name="quantity" value="1" min="1" class="qty-input" />
-                        <button type="button" class="btn-qty plus">+</button>
-                    </div>
-
-                    <button type="button"
-                            class="btn btn-success add-to-cart-btn"
-                            data-album-id="@album.Id"
-                            data-title="@album.Title"
-                            data-price="@album.Price"
-                            data-image="@Url.Content(album.ImagePath)">
-                        Купити
-                    </button>
-                </div>
-            </div>
-        }
-    </div>
+        </div>
 </div>
 
 <script>
@@ -155,5 +169,52 @@
         });
 
         updateCartUI();
+    });
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const input = document.getElementById("searchInput");
+        const dropdown = document.getElementById("searchDropdown");
+        let timer;
+
+        input.addEventListener("input", () => {
+            clearTimeout(timer);
+            const query = input.value.trim();
+
+            if (query.length === 0) {
+                dropdown.style.display = "none";
+                dropdown.innerHTML = "";
+                return;
+            }
+
+            timer = setTimeout(() => {
+                fetch(`?handler=Search&query=${encodeURIComponent(query)}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.length === 0) {
+                            dropdown.style.display = "none";
+                            dropdown.innerHTML = "";
+                            return;
+                        }
+
+                        dropdown.innerHTML = data.map(item => `
+                            <a href="/Shop/Albums/Details/${item.id}" class="search-item">
+                                <img src="${item.image || '/img/placeholder.jpg'}" alt="${item.title}" />
+                                <div class="search-text">
+                                    <strong>${item.title}</strong>
+                                    <span>${item.artist}</span>
+                                </div>
+                            </a>
+                        `).join("");
+
+                        dropdown.style.display = "block";
+                    });
+            }, 300); // затримка 300мс
+        });
+
+        document.addEventListener("click", e => {
+            if (!e.target.closest("#searchForm")) {
+                dropdown.style.display = "none";
+            }
+        });
     });
 </script>

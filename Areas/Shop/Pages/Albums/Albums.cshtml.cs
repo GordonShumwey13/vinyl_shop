@@ -18,10 +18,16 @@ namespace VinylShop.Areas.Shop.Pages.Albums
         public IList<Album> Albums { get; set; } = new List<Album>();
 
         [BindProperty(SupportsGet = true)]
+        public string? SearchString { get; set; }
+
+        [BindProperty(SupportsGet = true)]
         public string? Genre { get; set; }
 
         [BindProperty(SupportsGet = true)]
         public string? Sort { get; set; }
+
+        public string? CurrentSort => Sort;
+        public string? CurrentGenre => Genre;
 
         public async Task OnGetAsync()
         {
@@ -29,6 +35,13 @@ namespace VinylShop.Areas.Shop.Pages.Albums
                 .Include(a => a.Artist)
                 .Include(a => a.Genre)
                 .AsQueryable();
+
+            if (!string.IsNullOrEmpty(SearchString))
+            {
+                query = query.Where(a => 
+                    a.Title.Contains(SearchString) || 
+                    a.Artist.Name.Contains(SearchString));
+            }
 
             switch (Sort)
             {
@@ -47,15 +60,36 @@ namespace VinylShop.Areas.Shop.Pages.Albums
                 case "price_asc":
                     query = query.OrderBy(a => a.Price);
                     break;
-                case "rating":
-                    break;
                 case null:
                 case "":
                 default:
+                    query = query.OrderByDescending(a => a.Id);
                     break;
             }
 
             Albums = await query.ToListAsync();
+        }
+
+        public async Task<IActionResult> OnGetSearchAsync(string query)
+        {
+            if (string.IsNullOrWhiteSpace(query))
+            {
+                return new JsonResult(new List<object>());
+            }
+
+            var results = await _context.Albums
+                .Include(a => a.Artist)
+                .Where(a => a.Title.Contains(query) || a.Artist.Name.Contains(query))
+                .Select(a => new {
+                    id = a.Id,
+                    title = a.Title,
+                    artist = a.Artist.Name,
+                    image = a.ImagePath
+                })
+                .Take(5)
+                .ToListAsync();
+
+            return new JsonResult(results);
         }
     }
 }
