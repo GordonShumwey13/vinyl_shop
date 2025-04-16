@@ -191,8 +191,8 @@
                     .then(res => res.json())
                     .then(data => {
                         if (data.length === 0) {
-                            dropdown.style.display = "none";
-                            dropdown.innerHTML = "";
+                            dropdown.style.display = "block";
+                            dropdown.innerHTML = "Нічого не знайдено";
                             return;
                         }
 
