@@ -8,39 +8,15 @@ body {
 
 a {
     text-decoration: none;
-    color: inherit; 
-}
-
-a:hover {
-    text-decoration: none;
-}
-
-.artist-filter li a {
-    text-decoration: none;
-    color: #333;
-}
-
-.artist-filter li a:hover {
-    text-decoration: none;
-}
-
-.album-title a {
-    text-decoration: none;
     color: inherit;
 }
 
-.album-title a:hover {
-    text-decoration: none;
-}
-
-
 h1 {
     font-size: 2rem;
-    margin-bottom: 30px;
-    margin-top: 10px;
+    margin: 10px 0 30px;
 }
 
-/* Main Header */
+/* ---------------------- HEADER ---------------------- */
 .main-header {
     position: fixed;
     top: 0;
@@ -54,12 +30,12 @@ h1 {
 }
 
 .header-container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
     max-width: 1200px;
     margin: 0 auto;
     padding: 0 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .logo {
@@ -89,12 +65,8 @@ h1 {
 }
 
 .navigation a:hover {
-    color: #ddd;
-}
-
-.cart-button-link {
-    text-decoration: none;
-    color: inherit;
+    transform: scale(1);
+    opacity: 0.754132;
 }
 
 .cart-button {
@@ -125,6 +97,7 @@ h1 {
     font-size: 0.8rem;
 }
 
+/* ---------------------- BANNER ---------------------- */
 .banner-section {
     position: relative;
     height: 400px;
@@ -148,17 +121,77 @@ h1 {
     text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
 }
 
-.shop-filter {
-    display: flex;
-    flex-wrap: wrap;
-    flex-direction: column;
-    align-items: flex-end;
-    margin: 50px 50px 20px 0;
-    padding: 15px 20px;
-    font-family: "Montserrat", sans-serif;
+/* ---------------------- MAIN LAYOUT ---------------------- */
+.shop-container {
+    max-width: 1450px;
+    margin: 0 auto;
+    padding: 0 20px;
 }
 
-.form-control {
+.shop-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.shop-header {
+    display: flex;
+    justify-content: flex-end;
+    width: 99%;
+}
+
+
+.layout {
+    display: flex;
+    gap: 24px;
+    align-items: flex-start;
+}
+
+/* ---------------------- SORTING ---------------------- */
+
+.sort-form select.form-control {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid #ccc;
+    border-radius: 0;
+    padding: 8px 0;
+    font-size: 18px;
+    font-weight: 500;
+    color: #2c2c2c;
+    outline: none;
+    transition: border-color 0.3s;
+    cursor: pointer;
+    width: 100%;
+}
+
+.sort-form select.form-control:hover,
+.sort-form select.form-control:focus {
+    border-bottom: 2px solid #e63946; /* яскраво-червоне підкреслення */
+    background: transparent;
+}
+
+.sort-form {
+    position: relative;
+    width: 300px;
+}
+
+.sort-form::after {
+    content: '▾';
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    color: #444;
+    font-size: 14px;
+}
+
+.form-control-search {
     width: 90%;
     padding: 10px 14px;
     font-size: 16px;
@@ -169,31 +202,25 @@ h1 {
     transition: border-color 0.2s, box-shadow 0.2s;
 }
 
-.form-control:focus {
+.form-control-search:focus {
     border-color: #007bff;
     outline: none;
     box-shadow: 0 0 5px rgba(0, 123, 255, 0.4);
 }
 
-.layout {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 40px;
-}
-
+/* ---------------------- SIDEBAR ---------------------- */
 .sidebar {
+    margin-top: 60px;
     width: 250px;
-    height: fit-content;
     background: #fff;
     padding: 20px;
     border-radius: 12px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-    
+    flex-shrink: 0;
 }
 
 .sidebar h4 {
-    margin-bottom: 16px;
+    margin-bottom: 10px;
     font-size: 1.1rem;
 }
 
@@ -205,11 +232,102 @@ h1 {
     font-size: 0.95rem;
 }
 
+.artist-filter {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+.artist-filter a:hover {
+    opacity: 0.754132;
+}
+
+/* ---------------------- SEARCH ---------------------- */
+.search-form-wrapper {
+    position: relative;
+}
+
+#searchInput {
+    margin-bottom: 0;
+}
+
+.search-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 999;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    padding: 8px;
+    margin-top: 4px;
+    display: none;
+    width: 100%;
+    max-width: 450px;
+}
+
+.search-dropdown .search-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px;
+    text-decoration: none;
+    color: inherit;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+}
+
+.search-dropdown .search-item:hover {
+    background-color: #f5f5f5;
+}
+
+.search-dropdown .search-item img {
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+.search-dropdown .search-text {
+    display: flex;
+    flex-direction: column;
+    font-size: 14px;
+}
+
+.search-item.no-results {
+    padding: 10px;
+    text-align: center;
+    color: #888;
+    font-style: italic;
+    pointer-events: none;
+}
+
+/* ---------------------- SHOP GRID ---------------------- */
+.shop-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 20px;
+    width: 100%;
+}
+
+.album-card {
+    width: 250px;
+    padding: 10px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s;
+}
+
+.album-card:hover {
+    transform: scale(1.05);
+}
+
 .album-image {
     width: 100%;
-    height: 300px;
+    height: 250px;
     object-fit: cover;
-    border-radius: 8px;
+    border-radius: 10px;
 }
 
 .album-info {
@@ -217,21 +335,11 @@ h1 {
     padding: 0px;
     text-align: center;
 }
-.album-info h3 {
-    font-size: 1.1rem;
-    margin-bottom: 5px;
-    font-weight: 700;
-}
 
 .album-title {
     font-weight: 600;
     font-size: 1rem;
-    text-align: center;
     margin: 10px 0;
-}
-
-.album-title:hover {
-    transition: color 0.2s ease;
 }
 
 .album-genre {
@@ -246,18 +354,34 @@ h1 {
     color: #555;
 }
 
-.artist-filter {
-    list-style: none;
-    padding: 0;
-    margin: 0;
+.album-rating {
+    text-align: center;
+    margin: 8px 0;
+    font-size: 16px;
+    color: #ffc107;
 }
 
-.artist-filter li a {
-    color: #333;
-    text-decoration: none;
+.album-rating .star {
+    font-size: 1.2rem;
 }
 
-/* Ціна, кількість, кнопка */
+.album-rating .star.empty {
+    color: #ddd;
+}
+
+.album-rating .star.half {
+    color: #ffc107;
+    opacity: 0.6;
+}
+
+.album-rating .review-count {
+    color: #777;
+    font-size: 0.9rem;
+    margin-left: 4px;
+}
+
+
+/* ---------------------- PRICE / QUANTITY / BUTTON ---------------------- */
 .price-block {
     display: flex;
     flex-direction: column;
@@ -280,7 +404,6 @@ h1 {
     margin-top: 15px;
     padding: 8px;
     border-radius: 8px;
-    display: inline-block;
     text-align: center;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
     width: 55%;
@@ -294,8 +417,6 @@ h1 {
     font-weight: 500;
     text-align: center;
     border-radius: 6px;
-    display: inline-block;
-    transition: background-color 0.2s ease-in-out;
     border: none;
     cursor: pointer;
     text-decoration: none;
@@ -303,13 +424,14 @@ h1 {
 
 .btn-success {
     background-color: royalblue;
+    color: white;
 }
 
 .btn-success:hover {
     background-color: #475ca0;
 }
 
-/* Секція кількості */
+/* Кількість */
 .quantity-selector {
     display: flex;
     align-items: center;
@@ -347,44 +469,7 @@ h1 {
     background-color: #ddd;
 }
 
-/* Buttons */
-.btn-primary {
-    background-color: #0d6efd;
-    color: white;
-}
-
-.btn-primary:hover {
-    background-color: #0b5ed7;
-}
-
-.btn-secondary {
-    background-color: #6c757d;
-    color: white;
-}
-
-.btn-secondary:hover {
-    background-color: #5a6268;
-}
-
-.btn-success {
-    background-color: royalblue;
-    color: white;
-}
-
-.btn-success:hover {
-    background-color: #475ca0;
-}
-
-/* Контейнер для Shop Grid */
-.shop-grid {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 24px;
-    justify-items: center;
-    align-items: start;
-}
-
-/* Артисти */
+/* ---------------------- ARTISTS ---------------------- */
 .artist-card {
     margin: -300px auto 40px auto;
     padding: 20px 30px;
@@ -474,72 +559,4 @@ h1 {
     height: 250px;
     object-fit: cover;
     border-radius: 10px;
-}
-
-/* Search */
-
-/* Контейнер випадаючих результатів */
-.search-Form {
-    position: relative;
-}
-
-.searchInput {
-    margin-bottom: 0;
-}
-
-.shop-filter form {
-    position: relative;
-}
-
-.search-dropdown {
-    position: relative;
-    top: 100%;
-    left: 0;
-    background-color: #fff;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    padding: 8px;
-    margin-top: 4px;
-    display: none;
-    width: auto;
-    min-width: 260px;
-    max-width: 450px;
-}
-
-/* Стиль кожного результату */
-.search-dropdown .search-item {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 6px;
-    text-decoration: none;
-    color: inherit;
-    border-radius: 4px;
-    transition: background-color 0.2s;
-}
-
-.search-dropdown .search-item:hover {
-    background-color: #f5f5f5;
-}
-
-.search-dropdown .search-item img {
-    width: 40px;
-    height: 40px;
-    object-fit: cover;
-    border-radius: 4px;
-}
-
-.search-dropdown .search-text {
-    display: flex;
-    flex-direction: column;
-    font-size: 14px;
-}
-
-.search-item.no-results {
-    padding: 10px;
-    text-align: center;
-    color: #888;
-    font-style: italic;
-    pointer-events: none;
 }

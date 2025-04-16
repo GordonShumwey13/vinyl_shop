@@ -13,45 +13,14 @@
     <div class="banner-text">КАТАЛОГ ПЛАТІВОК</div>
 </div>
 
-<div class="shop-filter">
-        @{
-        var sortOptions = new Dictionary<string, string>
-        {
-            { "", "Сортування за замовчуванням" },
-            { "latest", "Сортувати за останніми" },
-            { "artist", "За артистом (А → Я)" },
-            { "genre", "За жанром (А → Я)" },
-            { "price_desc", "Ціна (від більшої)" },
-            { "price_asc", "Ціна (від меншої)" }
-        };
-        }
-        <form method="get">
-            <select name="sort" class="form-control" onchange="this.form.submit()">
-                @foreach (var option in sortOptions)
-                {
-                    <option value="@option.Key" selected="@(currentSort == option.Key ? "selected" : null)">
-                        @option.Value
-                    </option>
-                }
-                <option value="rating" disabled>Оцінка (недоступно)</option>
-            </select>
-
-            @if (!string.IsNullOrEmpty(currentGenre))
-            {
-                <input type="hidden" name="genre" value="@currentGenre" />
-            }
-        </form>
-</div>
-
-<div class="layout">
+<div class="shop-container">
+    <div class="layout">
         <div class="sidebar">
             <h4>Пошук</h4>
-            <form method="get" autocomplete="off" id="searchForm">
-                <input type="text" name="search" id="searchInput"
-                    placeholder="Пошук альбому або артиста..." class="form-control" />
+            <form method="get" autocomplete="off" id="searchForm" class="search-form-wrapper">
+                <input type="text" name="search" id="searchInput" placeholder="Що шукаєм?" class="form-control-search" />
                 <div id="searchDropdown" class="search-dropdown"></div>
 
-                @* Для збереження сортування і жанру *@
                 @if (!string.IsNullOrEmpty(currentGenre))
                 {
                     <input type="hidden" name="genre" value="@currentGenre" />
@@ -62,7 +31,7 @@
                 }
             </form>
 
-            <h4 style="margin-top: 20px;">Артист</h4>
+            <h4>Артисти</h4>
             <ul class="artist-filter">
                 @foreach (var artist in Model.Albums.Select(a => a.Artist).Distinct().OrderBy(artist => artist.Name))
                 {
@@ -73,48 +42,103 @@
             </ul>
         </div>
 
-        <div class="shop-grid">
-            @foreach (var album in Model.Albums)
-            {
-                <div class="album-card">
-                    <div class="album-image-wrapper">
-                        <a asp-area="Shop" asp-page="/Albums/Details" asp-route-id="@album.Id">
-                            <img class="album-image" src="@album.ImagePath" alt="@album.Title" />
-                        </a>
-                    </div>
+        <div class="shop-content">
+            <div class="shop-header">
+                <form method="get" class="sort-form">
+                    <select name="sort" onchange="this.form.submit()" class="form-control">
+                        @{
+                            var sortOptions = new Dictionary<string, string>
+                            {
+                                { "", "Сортування за замовчуванням" },
+                                { "latest", "Сортувати за останніми" },
+                                { "artist", "За артистом (А → Я)" },
+                                { "genre", "За жанром (А → Я)" },
+                                { "price_desc", "Ціна (від більшої)" },
+                                { "price_asc", "Ціна (від меншої)" }
+                            };
+                        }
+                        @foreach (var option in sortOptions)
+                        {
+                            <option value="@option.Key" selected="@(currentSort == option.Key ? "selected" : null)">
+                                @option.Value
+                            </option>
+                        }
+                        @if (!string.IsNullOrEmpty(currentGenre))
+                        {
+                            <input type="hidden" name="genre" value="@currentGenre" />
+                        }
+                    </select>
+                </form>
+            </div>
 
-                    <div class="album-info">
-                        <a asp-area="Shop" asp-page="/Albums/Details" asp-route-id="@album.Id">
-                            <div class="album-genre">@album.Genre.Name</div>
-                            <h5 class="album-title">@album.Title</h5>
-                            <div class="album-artist">@album.Artist.Name</div>
-                        </a>
-                    </div>
-
-                    <div class="price-block">
-                        <div class="price-wrapper">
-                            <span class="price-highlight">@album.Price грн.</span>
+            <div class="shop-grid">
+                @foreach (var album in Model.Albums)
+                {
+                    <div class="album-card">
+                        <div class="album-image-wrapper">
+                            <a asp-area="Shop" asp-page="/Albums/Details" asp-route-id="@album.Id">
+                                <img class="album-image" src="@album.ImagePath" alt="@album.Title" />
+                            </a>
                         </div>
 
-                        <div class="quantity-selector">
-                            <button type="button" class="btn-qty minus">−</button>
-                            <input type="number" name="quantity" value="1" min="1" class="qty-input" />
-                            <button type="button" class="btn-qty plus">+</button>
+                        <div class="album-info">
+                            <a asp-area="Shop" asp-page="/Albums/Details" asp-route-id="@album.Id">
+                                <div class="album-genre">@album.Genre.Name</div>
+                                <h5 class="album-title">@album.Title</h5>
+                                <div class="album-artist">@album.Artist.Name</div>
+                            </a>
                         </div>
 
-                        <button type="button"
-                                class="btn btn-success add-to-cart-btn"
-                                data-album-id="@album.Id"
-                                data-title="@album.Title"
-                                data-price="@album.Price"
-                                data-image="@Url.Content(album.ImagePath)">
-                            Купити
-                        </button>
+                        <div class="album-rating">
+                            @{
+                                var fullStars = (int)Math.Floor(album.Rating);
+                                var halfStar = album.Rating % 1 >= 0.5;
+                                var emptyStars = 5 - fullStars - (halfStar ? 1 : 0);
+                            }
+
+                            @for (int i = 0; i < fullStars; i++)
+                            {
+                                <span class="star full">★</span>
+                            }
+                            @if (halfStar)
+                            {
+                                <span class="star half">☆</span>
+                            }
+                            @for (int i = 0; i < emptyStars; i++)
+                            {
+                                <span class="star empty">☆</span>
+                            }
+
+                            <span class="review-count">(@album.ReviewCount)</span>
+                        </div>
+
+                        <div class="price-block">
+                            <div class="price-wrapper">
+                                <span class="price-highlight">@album.Price грн.</span>
+                            </div>
+
+                            <div class="quantity-selector">
+                                <button type="button" class="btn-qty minus">−</button>
+                                <input type="number" name="quantity" value="1" min="1" class="qty-input" />
+                                <button type="button" class="btn-qty plus">+</button>
+                            </div>
+
+                            <button type="button"
+                                    class="btn btn-success add-to-cart-btn"
+                                    data-album-id="@album.Id"
+                                    data-title="@album.Title"
+                                    data-price="@album.Price"
+                                    data-image="@Url.Content(album.ImagePath)">
+                                Купити
+                            </button>
+                        </div>
                     </div>
-                </div>
-            }
+                }
+            </div>
         </div>
+    </div>
 </div>
+
 
 <script>
     document.addEventListener('DOMContentLoaded', () => {

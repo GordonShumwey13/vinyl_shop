@@ -40,7 +40,7 @@ body {
 
 .image-section {
     display: flex;
-    align-items: center;
+    align-items: baseline;
     justify-content: center;
 }
 
@@ -150,6 +150,10 @@ body {
 
 .btn-success {
     background-color: #198754;
+    width: 130px;
+}
+.btn-success.mt-2 {
+    margin-right: 20px;
 }
 
 .btn-success:hover {
@@ -195,4 +199,65 @@ body {
 .track-duration {
     text-align: left;
     color: #666;
+}
+
+.reviews-form {
+    margin-bottom: 20px;
+}
+
+.reviews-form h4 {
+    margin-bottom: 15px;
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+.reviews-form .form-group {
+    margin-bottom: 15px;
+}
+
+.reviews-form label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+}
+
+.reviews-form input,
+.reviews-form select,
+.reviews-form textarea {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.95rem;
+    resize: vertical;
+}
+
+.review-list {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+.review-list li {
+    padding: 12px 15px;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    background-color: #f6f8fa;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.review-list strong {
+    font-weight: 600;
+    margin-right: 5px;
+}
+
+.review-list small {
+    color: #888;
+    display: block;
+    margin-bottom: 6px;
+}
+
+.review-list p {
+    margin: 0;
 }

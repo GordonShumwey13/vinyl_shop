@@ -18,27 +18,27 @@
         <div class="order-details-block">
             <div class="album-info">
                 <div class="info-row">
-                    <span>Альбом:</span>
+                    <span>Альбом</span>
                     <span>@Model.Album.Title</span>
                 </div>
 
                 <div class="info-row">
-                    <span>Артист:</span>
+                    <span>Артист</span>
                     <span>@Model.Album.Artist.Name</span>
                 </div>
 
                 <div class="info-row">
-                    <span>Жанр:</span>
+                    <span>Жанр</span>
                     <span>@Model.Album.Genre.Name</span>
                 </div>
 
                 <div class="info-row">
-                    <span>Ціна платівки:</span>
+                    <span>Ціна платівки</span>
                     <span id="pricePerOne">@Model.Album.Price грн.</span>
                 </div>
 
                 <div class="info-row">
-                    <span>Наявність:</span>
+                    <span>Наявність</span>
                     @if (Model.Album.Stock > 0)
                     {
                         <span class="in-stock">В наявності</span>
@@ -49,30 +49,56 @@
                     }
                 </div>
                 <div class="info-row quantity-wrapper">
-                    <span>Кількість:</span>
+                    <span>Кількість</span>
                     <div class="quantity-selector-details">
                         <button type="button" class="btn-qty minus">-</button>
                         <input type="number" name="Quantity" value="@Model.Quantity" min="1" class="qty-input" readonly/>
                         <button type="button" class="btn-qty plus">+</button>
                     </div>
                 </div>
-                <div class="info-row"><span>Загальна ціна:</span><span id="totalPrice">@Model.Album.Price грн.</span></span></div>
+                <div class="info-row"><span>Загальна ціна</span><span id="totalPrice">@Model.Album.Price грн.</span></span></div>
+            </div>
+
+            <div class="reviews-form">
+                <h4>Залишити відгук</h4>
+                <form method="post">
+                     <input type="hidden" name="AlbumId" value="@Model.Album.Id" />
+                     <div class="form-group">
+                        <label>Ваше ім’я</label>
+                        <input name="AuthorName" class="form-control" required />
+                     </div>
+                     <div class="form-group">
+                        <label>Оцінка</label>
+                        <select name="Rating" class="form-control" required>
+                            <option value="">Оберіть</option>
+                            @for (int i = 5; i >= 1; i--)
+                            {
+                                <option value="@i">@i ★</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Коментар</label>
+                        <textarea name="Comment" class="form-control"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-success mt-2">Надіслати</button>
+                    <button type="button" class="btn btn-success" id="addToCart"
+                            data-album-id="@Model.Album.Id"
+                            data-title="@Model.Album.Title"
+                            data-price="@Model.Album.Price"
+                            data-image="@Url.Content(Model.Album.ImagePath)">
+                        Купити
+                    </button>
+                </form>
             </div>
 
             <div class="form-group">
-                <button type="button"
-                        class="btn btn-success"
-                        id="addToCart"
-                        data-album-id="@Model.Album.Id"
-                        data-title="@Model.Album.Title"
-                        data-price="@Model.Album.Price"
-                        data-image="@Url.Content(Model.Album.ImagePath)">
-                    Купити
-                </button>
             </div>
         </div>
+    
+
     <div class="details-content">
-        <h3>Список треків:</h3>
+        <h3>Список треків</h3>
         <ol class="track-list">
             @foreach (var song in Model.Album.Songs)
             {
@@ -83,6 +109,30 @@
             }
         </ol>
     </div>
+
+    <div class="reviews-section">
+            <h3>Відгуки</h3>
+
+            @if (Model.Reviews.Any())
+            {
+                 <ul class="review-list">
+                    @foreach (var review in Model.Reviews.OrderByDescending(r => r.CreatedAt))
+                    {
+                        <li>
+                            <strong>@review.AuthorName</strong> — ★ @review.Rating
+                            <br/>
+                            <small>@review.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</small>
+                               <p>@review.Comment</p>
+                        </li>
+                    }
+                </ul>
+            }
+            else
+            {
+                <p>Поки що немає відгуків.</p>
+            }
+    </div>
+
 </div>
 
 <script>

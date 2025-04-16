@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using VinylShop.Data;
 
@@ -11,9 +12,11 @@ using VinylShop.Data;
 namespace MyWebApp.Migrations
 {
     [DbContext(typeof(VinylShopContext))]
-    partial class VinylShopContextModelSnapshot : ModelSnapshot
+    [Migration("20250416192857_AddAlbumRatingAndReviews")]
+    partial class AddAlbumRatingAndReviews
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -215,37 +218,6 @@ namespace MyWebApp.Migrations
                     b.ToTable("Genres");
                 });
 
-            modelBuilder.Entity("VinylShop.Models.Review", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("AlbumId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("AuthorName")
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("Comment")
-                        .HasMaxLength(1000)
-                        .HasColumnType("varchar(1000)");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<int>("Rating")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AlbumId");
-
-                    b.ToTable("Reviews");
-                });
-
             modelBuilder.Entity("VinylShop.Models.Song", b =>
                 {
                     b.Property<int>("Id")
@@ -321,17 +293,6 @@ namespace MyWebApp.Migrations
                     b.Navigation("Genre");
                 });
 
-            modelBuilder.Entity("VinylShop.Models.Review", b =>
-                {
-                    b.HasOne("VinylShop.Models.Album", "Album")
-                        .WithMany("Reviews")
-                        .HasForeignKey("AlbumId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Album");
-                });
-
             modelBuilder.Entity("VinylShop.Models.Song", b =>
                 {
                     b.HasOne("VinylShop.Models.Album", "Album")
@@ -350,8 +311,6 @@ namespace MyWebApp.Migrations
 
             modelBuilder.Entity("VinylShop.Models.Album", b =>
                 {
-                    b.Navigation("Reviews");
-
                     b.Navigation("Songs");
                 });
 

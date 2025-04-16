@@ -24,6 +24,12 @@ namespace VinylShop.Models
         [ForeignKey("GenreId")]
         public Genre Genre { get; set; } = null!;
 
+        [Range(0, 5)]
+        public double Rating { get; set; } = 0;
+
+        [Range(0, int.MaxValue)]
+        public int ReviewCount { get; set; } = 0;
+
         [Required]
         [Column(TypeName = "decimal(10,2)")]
         public decimal Price { get; set; }
@@ -35,5 +41,7 @@ namespace VinylShop.Models
         public string? ImagePath { get; set; }
 
         public ICollection<Song> Songs { get; set; } = new List<Song>();
+
+        public ICollection<Review> Reviews { get; set; } = new List<Review>();
     }
 }
