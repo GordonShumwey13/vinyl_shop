@@ -84,6 +84,7 @@
                     <button type="submit" class="btn btn-success mt-2">Надіслати</button>
                     <button type="button" class="btn btn-success" id="addToCart"
                             data-album-id="@Model.Album.Id"
+                            data-artist="@Model.Album.Artist.Name"
                             data-title="@Model.Album.Title"
                             data-price="@Model.Album.Price"
                             data-image="@Url.Content(Model.Album.ImagePath)">
@@ -168,6 +169,7 @@
         if (addToCartBtn) {
             addToCartBtn.addEventListener('click', () => {
                 const id = parseInt(addToCartBtn.dataset.albumId);
+                const artist = addToCartBtn.dataset.artist;
                 const title = addToCartBtn.dataset.title;
                 const price = parseFloat(addToCartBtn.dataset.price);
                 const image = addToCartBtn.dataset.image;
@@ -179,7 +181,7 @@
                 if (item) {
                     item.qty += qty;
                 } else {
-                    cart.push({ id, title, qty, price, image }); // Додаємо новий товар
+                    cart.push({ id, artist, title, qty, price, image }); // Додаємо новий товар
                 }
 
                 localStorage.setItem('cart', JSON.stringify(cart)); // Зберігаємо кошик в localStorage

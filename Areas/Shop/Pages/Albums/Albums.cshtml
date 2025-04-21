@@ -126,6 +126,7 @@
                             <button type="button"
                                     class="btn btn-success add-to-cart-btn"
                                     data-album-id="@album.Id"
+                                    data-artist="@album.Artist.Name"
                                     data-title="@album.Title"
                                     data-price="@album.Price"
                                     data-image="@Url.Content(album.ImagePath)">
@@ -173,10 +174,11 @@
             btn.addEventListener('click', () => {
                 const priceBlock = btn.closest('.price-block');
                 const id = parseInt(btn.dataset.albumId);
+                const artist = btn.dataset.artist;
                 const title = btn.dataset.title;
+                const image = btn.dataset.image || '';
                 const price = parseFloat(btn.dataset.price);
                 const qty = parseInt(priceBlock.querySelector('.qty-input').value);
-                const image = btn.dataset.image || '';
 
                 let cart = JSON.parse(localStorage.getItem('cart')) || [];
 
@@ -184,7 +186,7 @@
                 if (item) {
                     item.qty += qty;
                 } else {
-                    cart.push({ id, title, qty, price, image });
+                    cart.push({ id, artist, title, qty, price, image });
                 }
 
                 localStorage.setItem('cart', JSON.stringify(cart));

@@ -1,0 +1,40 @@
+.order-container {
+    position: relative;
+    max-width: 700px;
+    margin: -300px auto 40px auto;
+    padding: 90px;
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.success-card h2 {
+    font-size: 28px;
+    margin-bottom: 10px;
+}
+
+.success-card p {
+    font-size: 18px;
+    margin-bottom: 30px;
+}
+
+.return-button {
+    font-size: 16px;
+    padding: 12px 30px;
+}
+
+@media (max-width: 600px) {
+    .order-container {
+        margin: 20px 15px;
+        padding: 30px 20px;
+    }
+
+    .success-card h2 {
+        font-size: 24px;
+    }
+
+    .success-card p {
+        font-size: 16px;
+    }
+}

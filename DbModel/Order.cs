@@ -16,13 +16,24 @@ public class Order
     [Required]
     public DateTime OrderDate { get; set; } = DateTime.UtcNow;
 
-    public string DeliveryMethod { get; set; } = "";
-    public string Packaging { get; set; } = "";
-    public string PaymentMethod { get; set; } = "";
-    public string City { get; set; } = "";
-    public string Address { get; set; } = "";
-    public string Comment { get; set; } = "";
-    public string PromoCode { get; set; } = "";
+    [Required]
+    public string PaymentMethod { get; set; } = string.Empty;
+
+    [Required]
+    [StringLength(100)]
+    public string City { get; set; } = string.Empty;
+
+    [Required]
+    [StringLength(100)]
+    public string Phone { get; set; } = string.Empty;
+
+    [Required]
+    [StringLength(100)]   
+    public string Address { get; set; } = string.Empty;
+
+    [StringLength(500)]
+    public string Comment { get; set; } = string.Empty;
+    
     public decimal TotalPrice { get; set; }
 
     public ICollection<OrderItem> Items { get; set; } = new List<OrderItem>();

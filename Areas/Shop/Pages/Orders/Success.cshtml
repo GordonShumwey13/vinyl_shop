@@ -1,10 +1,37 @@
 @page
 @model VinylShop.Areas.Shop.Pages.Orders.SuccessModel
 
-<link rel="stylesheet" href="~/css/order.css" />
+@{
+    ViewData["Title"] = "Замовлення успішне";
+}
 
-<div class="success-screen">
-    <h2>Thank You for Your Purchase!</h2>
-    <p>Your order has been successfully placed.</p>
-    <a asp-page="../Home/Index" class="btn-primary">Back to Shop</a>
+<link rel="stylesheet" href="~/css/success.css" />
+
+<div class="banner-section">
+    <img src="~/img/vinyl_header.jpg" alt="Vinyl Header" class="banner-image" />
 </div>
+
+<div class="order-container">
+    <div class="success-card">
+        <h2 class="success-title">Дякуємо за покупку! 💚</h2>
+        <p class="success-text">Ваше замовлення було успішно оформлено.</p>
+
+        <a href="/Shop/Albums/Albums" class="btn btn-success return-button">Повернутися до магазину</a>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // 🧹 Очистити кеш
+        localStorage.removeItem("cart");
+
+        // 🔄 Оновити значення у хедері
+        const cartCount = document.querySelector('.cart-count');
+        const cartTotal = document.querySelector('.cart-total'); // або що там у тебе
+
+        if (cartCount) cartCount.textContent = '0';
+        if (cartTotal) cartTotal.textContent = '0.00 грн.';
+
+        console.log("🧼 Кошик очищено та інтерфейс оновлено.");
+    });
+</script>
