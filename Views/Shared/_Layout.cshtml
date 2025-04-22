@@ -3,32 +3,8 @@
 <head>
     <title>@ViewData["Title"] - VinylShop</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap">
-    <link rel="stylesheet" href="~/css/shop.css"/>
+    <link rel="stylesheet" href="~/css/shop.css" />
 </head>
-
-<script>
-    function updateCartUI() {
-        const cart = JSON.parse(localStorage.getItem('cart')) || [];
-
-        let totalQty = 0;
-        let totalPrice = 0;
-
-        cart.forEach(item => {
-            totalQty += parseInt(item.qty);
-            totalPrice += item.qty * item.price;
-        });
-
-        const countEl = document.querySelector('.cart-count');
-        const totalEl = document.querySelector('.cart-total');
-
-        if (countEl && totalEl) {
-            countEl.textContent = totalQty;
-            totalEl.textContent = `${totalPrice.toFixed(2)} грн.`;
-        }
-    }
-
-    document.addEventListener('DOMContentLoaded', updateCartUI);
-</script>
 
 <body>
     <header class="main-header">
@@ -37,12 +13,14 @@
                 <img src="~/img/logo.png" alt="Vinyl Place Logo">
                 <span>VINYL SHOP</span>
             </a>
+
             <nav class="navigation">
                 <a href="/Shop/Home">ГОЛОВНА</a>
                 <a href="/Shop/Albums/Albums">КАТАЛОГ ПЛАТІВОК</a>
                 <a href="#">ДОСТАВКА ТА ОПЛАТА</a>
                 <a href="#">СТАТТІ ТА ОГЛЯДИ</a>
             </nav>
+
             <a href="/Shop/Orders/Create" class="cart-button-link">
                 <div class="cart-button">
                     <span class="cart-total">0 грн.</span>
@@ -50,11 +28,83 @@
                     <span class="cart-count">0</span>
                 </div>
             </a>
+
+            @if (User.Identity?.IsAuthenticated ?? false)
+            {
+                <div class="auth-button">
+                    <a href="/Identity/Account/Manage">👤 Мій кабінет</a>
+                    <form method="post" asp-area="Identity" asp-page="/Account/Logout" class="logout-form">
+                        <button type="submit" class="logout-button">🚪 Вийти</button>
+                    </form>
+                </div>
+            }
+            else
+            {
+                <div class="auth-button">
+                    <a href="#" onclick="openAuthModal()">👤 Особистий кабінет</a>
+                </div>
+            }
         </div>
     </header>
 
-    <div class="container">
+    <main class="container">
         @RenderBody()
+    </main>
+
+    <!-- Модальне вікно -->
+    <div id="authModal" class="modal">
+        <iframe src="/Identity/Account/Login" class="modal-iframe"></iframe>
     </div>
+
+    @RenderSection("Scripts", required: false)
+
+    <script>
+        function updateCartUI() {
+            const cart = JSON.parse(localStorage.getItem('cart')) || [];
+            let totalQty = 0;
+            let totalPrice = 0;
+
+            cart.forEach(item => {
+                totalQty += parseInt(item.qty);
+                totalPrice += item.qty * item.price;
+            });
+
+            const countEl = document.querySelector('.cart-count');
+            const totalEl = document.querySelector('.cart-total');
+
+            if (countEl && totalEl) {
+                countEl.textContent = totalQty;
+                totalEl.textContent = `${totalPrice.toFixed(2)} грн.`;
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', updateCartUI);
+
+        function openAuthModal() {
+            const modal = document.getElementById("authModal");
+            if (modal) {
+                modal.style.display = "block";
+            }
+        }
+
+        function closeAuthModal() {
+            const modal = document.getElementById("authModal");
+            if (modal) {
+                modal.style.display = "none";
+            }
+        }
+
+        window.addEventListener("message", function (event) {
+            if (event.data?.action === "loginSuccess") {
+                closeAuthModal();
+                location.reload();
+            }
+
+            if (event.data?.action === "closeModal") {
+                closeAuthModal();
+            }
+        });
+    </script>
+
 </body>
 </html>

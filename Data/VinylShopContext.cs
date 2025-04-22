@@ -1,9 +1,10 @@
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using VinylShop.Models;
 
 namespace VinylShop.Data
 {
-    public class VinylShopContext : DbContext
+    public class VinylShopContext : IdentityDbContext<ApplicationUser>
     {
         public VinylShopContext(DbContextOptions<VinylShopContext> options) : base(options)
         {
@@ -19,7 +20,9 @@ namespace VinylShop.Data
         public DbSet<Review> Reviews { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
+        {   
+            base.OnModelCreating(modelBuilder);
+            
             modelBuilder.Entity<Artist>()
                 .HasIndex(a => a.Name)
                 .IsUnique();

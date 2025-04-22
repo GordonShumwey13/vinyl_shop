@@ -1,10 +1,14 @@
-using Microsoft.EntityFrameworkCore;
+using VinylShop.Models;
 using VinylShop.Data;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
+// var connectionString = builder.Configuration.GetConnectionString("VinylShopContextConnection") ?? throw new InvalidOperationException("Connection string 'VinylShopContextConnection' not found.");
 
-builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
+builder.Services.AddControllersWithViews();
 
 builder.Services.AddDbContext<VinylShopContext>(options =>
     options.UseMySql(
@@ -12,6 +16,12 @@ builder.Services.AddDbContext<VinylShopContext>(options =>
         ServerVersion.AutoDetect("server=localhost;database=vinyl_shop;user=root;password=qwerty123")
     )
 );
+
+builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
+{
+    options.SignIn.RequireConfirmedAccount = false;
+})
+.AddEntityFrameworkStores<VinylShopContext>();
 
 var app = builder.Build();
 
@@ -23,6 +33,9 @@ using (var scope = app.Services.CreateScope())
 
 app.UseStaticFiles();
 app.UseRouting();
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.UseEndpoints(endpoints =>
 {

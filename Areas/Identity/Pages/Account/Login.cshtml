@@ -1,0 +1,47 @@
+﻿@page
+@model LoginModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@{
+    ViewData["Title"] = "Авторизація";
+}
+
+<div class="auth-modal-wrapper">
+    <div class="auth-modal-header">
+        <h1>@ViewData["Title"]</h1>
+        <span class="close-button" onclick="window.top.postMessage({ action: 'closeModal' }, '*')">&times;</span>
+    </div>
+
+    <form id="account" method="post" class="auth-form">
+        <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+
+        <input asp-for="Input.Email" class="auth-input" placeholder="E-Mail" autocomplete="username" aria-required="true" />
+        <span asp-validation-for="Input.Email" class="text-danger"></span>
+
+        <input asp-for="Input.Password" class="auth-input" placeholder="Пароль" autocomplete="current-password" aria-required="true" />
+        <span asp-validation-for="Input.Password" class="text-danger"></span>
+
+        <div class="auth-links">
+            <a asp-page="./ForgotPassword">Забули пароль?</a>
+            <a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl">Реєстрація</a>
+        </div>
+
+        <button id="login-submit" type="submit" class="auth-submit-btn">Увійти</button>
+    </form>
+</div>
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"
+            integrity="sha512-FOs0K8PStFQ0U0x3Jg78SnpX+L0PL5nIEmnwvUT8KynOCk+b+Z2vPMZ8ikghAbO3VmkkfIVM36qfK2ZtGkL2UQ=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate-unobtrusive/4.0.0/jquery.validate.unobtrusive.min.js"
+            integrity="sha512-kV4uLHE/VpNZZUgHszTgURzWH2N3Jq3S0dnzWiPUjeoY7k7h/d9JtfvnpnK0uQAtWZkVcY6Z9IH/MpQ7+R4dlg=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    @if (ViewData["LoginSuccess"] as bool? == true)
+    {
+        <script>
+            window.top.postMessage({ action: 'loginSuccess' }, '*');
+        </script>
+    }
+}
