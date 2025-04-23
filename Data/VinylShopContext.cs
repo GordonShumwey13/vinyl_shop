@@ -1,10 +1,9 @@
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using VinylShop.Models;
 
 namespace VinylShop.Data
 {
-    public class VinylShopContext : IdentityDbContext<ApplicationUser>
+    public class VinylShopContext : DbContext
     {
         public VinylShopContext(DbContextOptions<VinylShopContext> options) : base(options)
         {
@@ -18,11 +17,13 @@ namespace VinylShop.Data
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderItem> OrderItems { get; set; }
         public DbSet<Review> Reviews { get; set; } = null!;
+        public DbSet<User> Users { get; set; }
+        public DbSet<UserRole> UserRoles { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {   
+        {
             base.OnModelCreating(modelBuilder);
-            
+
             modelBuilder.Entity<Artist>()
                 .HasIndex(a => a.Name)
                 .IsUnique();
@@ -30,6 +31,19 @@ namespace VinylShop.Data
             modelBuilder.Entity<Genre>()
                 .HasIndex(g => g.Name)
                 .IsUnique();
+
+            modelBuilder.Entity<User>()
+                .ToTable("User")
+                .HasIndex(u => u.Email)
+                .IsUnique();
+
+            modelBuilder.Entity<UserRole>()
+                .ToTable("UserRole");
+
+            modelBuilder.Entity<UserRole>()
+                .HasOne(ur => ur.User)
+                .WithMany(u => u.Roles)
+                .HasForeignKey(ur => ur.UserId);
         }
     }
 }

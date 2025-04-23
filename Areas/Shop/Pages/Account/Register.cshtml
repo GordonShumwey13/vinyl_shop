@@ -1,0 +1,44 @@
+﻿@page
+@model VinylShop.Pages.Account.RegisterModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    ViewData["Title"] = "Реєстрація";
+}
+
+<div class="auth-modal-wrapper">
+    <div class="auth-modal-header">
+        <h1>@ViewData["Title"]</h1>
+        <span class="close-button" onclick="window.top.postMessage({ action: 'closeModal' }, '*')">&times;</span>
+    </div>
+
+    <form method="post" class="auth-form">
+        <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+
+        <input asp-for="Input.Email" class="auth-input" placeholder="E-Mail" autocomplete="username" />
+        <span asp-validation-for="Input.Email" class="text-danger"></span>
+
+        <input asp-for="Input.Password" class="auth-input" placeholder="Пароль" autocomplete="new-password" />
+        <span asp-validation-for="Input.Password" class="text-danger"></span>
+
+        <input asp-for="Input.ConfirmPassword" class="auth-input" placeholder="Підтвердження паролю" autocomplete="new-password" />
+        <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
+
+        <button type="submit" class="auth-submit-btn">Реєстрація</button>
+    </form>
+</div>
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"
+            crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate-unobtrusive/4.0.0/jquery.validate.unobtrusive.min.js"
+            crossorigin="anonymous"></script>
+
+    @if ((ViewData["RegistrationSuccess"]?.ToString().ToLower() ?? "") == "true")
+    {
+        <script>
+            if (window.top !== window.self) {
+                window.top.postMessage({ action: 'loginSuccess' }, '*');
+            }
+        </script>
+    }
+}

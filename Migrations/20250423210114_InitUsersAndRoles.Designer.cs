@@ -12,15 +12,15 @@ using VinylShop.Data;
 namespace MyWebApp.Migrations
 {
     [DbContext(typeof(VinylShopContext))]
-    [Migration("20250421104053_AddPhoneToOrder")]
-    partial class AddPhoneToOrder
+    [Migration("20250423210114_InitUsersAndRoles")]
+    partial class InitUsersAndRoles
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.2")
+                .HasAnnotation("ProductVersion", "8.0.13")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
             MySqlModelBuilderExtensions.AutoIncrementColumns(modelBuilder);
@@ -271,6 +271,52 @@ namespace MyWebApp.Migrations
                     b.ToTable("Songs");
                 });
 
+            modelBuilder.Entity("VinylShop.Models.User", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("PasswordHash")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Email")
+                        .IsUnique();
+
+                    b.ToTable("User", (string)null);
+                });
+
+            modelBuilder.Entity("VinylShop.Models.UserRole", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("RoleName")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UserRole", (string)null);
+                });
+
             modelBuilder.Entity("Order", b =>
                 {
                     b.HasOne("VinylShop.Models.Buyer", "Buyer")
@@ -342,6 +388,17 @@ namespace MyWebApp.Migrations
                     b.Navigation("Album");
                 });
 
+            modelBuilder.Entity("VinylShop.Models.UserRole", b =>
+                {
+                    b.HasOne("VinylShop.Models.User", "User")
+                        .WithMany("Roles")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Order", b =>
                 {
                     b.Navigation("Items");
@@ -367,6 +424,11 @@ namespace MyWebApp.Migrations
             modelBuilder.Entity("VinylShop.Models.Genre", b =>
                 {
                     b.Navigation("Albums");
+                });
+
+            modelBuilder.Entity("VinylShop.Models.User", b =>
+                {
+                    b.Navigation("Roles");
                 });
 #pragma warning restore 612, 618
         }

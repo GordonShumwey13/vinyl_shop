@@ -1,11 +1,9 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.EntityFrameworkCore;
 using VinylShop.Models;
 using VinylShop.Data;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
-// var connectionString = builder.Configuration.GetConnectionString("VinylShopContextConnection") ?? throw new InvalidOperationException("Connection string 'VinylShopContextConnection' not found.");
 
 builder.Services.AddRazorPages();
 builder.Services.AddControllersWithViews();
@@ -17,11 +15,11 @@ builder.Services.AddDbContext<VinylShopContext>(options =>
     )
 );
 
-builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
-{
-    options.SignIn.RequireConfirmedAccount = false;
-})
-.AddEntityFrameworkStores<VinylShopContext>();
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/Shop/Account/Login";
+    });
 
 var app = builder.Build();
 
@@ -49,4 +47,5 @@ app.UseEndpoints(endpoints =>
         name: "default",
         pattern: "{controller=Home}/{action=Index}/{id?}");
 });
+
 app.Run();

@@ -1,0 +1,20 @@
+﻿@page
+@model VinylShop.Pages.Account.LogoutModel
+@{
+    ViewData["Title"] = "Вихід";
+}
+
+<header>
+    <h1>@ViewData["Title"]</h1>
+
+    @if (User.Identity?.IsAuthenticated ?? false)
+    {
+        <form method="post">
+            <button type="submit" class="nav-link btn btn-link text-dark">Натисни для виходу</button>
+        </form>
+    }
+    else
+    {
+        <p>Ви успішно вийшли з Особистого кабінету</p>
+    }
+</header>

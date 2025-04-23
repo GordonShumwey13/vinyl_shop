@@ -1,9 +1,12 @@
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Antiforgery
+
 <!DOCTYPE html>
 <html>
 <head>
     <title>@ViewData["Title"] - VinylShop</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap">
     <link rel="stylesheet" href="~/css/shop.css" />
+    <link rel="stylesheet" href="~/css/auth.css" />
 </head>
 
 <body>
@@ -32,8 +35,8 @@
             @if (User.Identity?.IsAuthenticated ?? false)
             {
                 <div class="auth-button">
-                    <a href="/Identity/Account/Manage">👤 Мій кабінет</a>
-                    <form method="post" asp-area="Identity" asp-page="/Account/Logout" class="logout-form">
+                    <a href="/Shop/Account/Profile">👤 Мій кабінет</a>
+                    <form method="post" asp-page="/Account/Logout" asp-area="Shop">
                         <button type="submit" class="logout-button">🚪 Вийти</button>
                     </form>
                 </div>
@@ -53,7 +56,7 @@
 
     <!-- Модальне вікно -->
     <div id="authModal" class="modal">
-        <iframe src="/Identity/Account/Login" class="modal-iframe"></iframe>
+        <iframe id="authModalFrame" src="/Shop/Account/Login?returnUrl=@Context.Request.Path" class="modal-iframe"></iframe>
     </div>
 
     @RenderSection("Scripts", required: false)
