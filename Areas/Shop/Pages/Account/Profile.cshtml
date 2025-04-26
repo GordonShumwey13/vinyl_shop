@@ -2,22 +2,73 @@
 @model VinylShop.Areas.Shop.Pages.Account.ProfileModel
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
-<link rel="stylesheet" href="~/css/profile.css"/>
+<link rel="stylesheet" href="~/css/profile.css" />
 
 @await Html.PartialAsync("_Banner", (string)null)
 
-<div class="profile-container">
-    <h2 class="profile-title">Профіль користувача</h2>
-
-    <div class="profile-info">
-        <p><strong>Email:</strong> @Model.UserEmail</p>
+@if (TempData["Message"] != null)
+{
+    <div id="popup-message" class="popup-message">
+        @TempData["Message"]
     </div>
 
-    <div class="profile-actions">
-        <a href="/Shop/Account/ProfileEdit" class="btn btn-success">Змінити профіль</a>
+    <script>
+        setTimeout(() => {
+            const popup = document.getElementById('popup-message');
+            if (popup) {
+                popup.style.opacity = '0';
+                setTimeout(() => popup.remove(), 500);
+            }
+        }, 3000);
+    </script>
+}
 
-        <form method="post" asp-page-handler="Logout" style="display:inline-block; margin-left:10px;">
-            <button type="submit" class="btn btn-danger">Вийти з акаунту</button>
-        </form>
-    </div>
+<div class="profile-wrapper">
+
+    @await Html.PartialAsync("_UserInfoBar")
+
+    <!-- Main Content -->
+    <section class="profile-content">
+
+        <div class="account-summary">
+            <h2>Мій обліковий запис</h2>
+            <p>
+                В особистому кабінеті ви можете переглядати історію замовлень, змінювати контактні дані,
+                оновлювати адресу доставки та іншу інформацію.
+            </p>
+        </div>
+
+        <div class="profile-main-info">
+            <h3>Основна інформація</h3>
+            <div class="info-table">
+                <div class="info-header">
+                    <div>Ім’я</div>
+                    <div>Пошта</div>
+                    <div>Дії</div>
+                </div>
+                <div class="info-row">
+                    <div>@Model.FirstName</div>
+                    <div>@Model.UserEmail</div>
+                    <div><a href="/Shop/Account/ProfileEdit" class="edit-link">Змінити</a></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="profile-orders">
+            <h3>Історія замовлень</h3>
+            <div class="orders-table">
+                <div class="orders-header">
+                    <div>№ замовлення</div>
+                    <div>Статус</div>
+                    <div>Дата замовлення</div>
+                    <div>Сума</div>
+                </div>
+                <div class="orders-row">
+                    <div colspan="4" class="no-orders">У вас поки немає замовлень.</div>
+                </div>
+            </div>
+        </div>
+
+    </section>
+
 </div>

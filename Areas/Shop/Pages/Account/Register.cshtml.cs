@@ -35,6 +35,7 @@ namespace VinylShop.Pages.Account
             [DataType(DataType.Password)]
             public string Password { get; set; }
 
+            [Required(ErrorMessage = "Підтвердження пароля")]
             [DataType(DataType.Password)]
             [Compare("Password", ErrorMessage = "Паролі не співпадають")]
             public string ConfirmPassword { get; set; }

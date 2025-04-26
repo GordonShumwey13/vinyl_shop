@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
 using VinylShop.Data;
 using VinylShop.Utils;
+using VinylShop.Models;
 
 namespace VinylShop.Areas.Shop.Pages.Account
 {
@@ -21,19 +22,35 @@ namespace VinylShop.Areas.Shop.Pages.Account
         [BindProperty]
         public InputModel Input { get; set; }
 
+        [TempData]
         public string Message { get; set; }
 
         public class InputModel
         {
-            [Required(ErrorMessage = "Поле Email обов'язкове")]
-            [EmailAddress(ErrorMessage = "Некоректний Email")]
+            [Required(ErrorMessage = "Введіть ім'я")]
+            [StringLength(50, ErrorMessage = "Ім'я не може перевищувати 50 символів")]
+            public string FirstName { get; set; }
+
+            [Required(ErrorMessage = "Введіть прізвище")]
+            [StringLength(50, ErrorMessage = "Прізвище не може перевищувати 50 символів")]
+            public string LastName { get; set; }
+
+            [Required(ErrorMessage = "Введіть email")]
+            [EmailAddress(ErrorMessage = "Некоректний формат")]
             public string Email { get; set; }
 
-            [DataType(DataType.Password)]
-            public string NewPassword { get; set; }
+            [Required(ErrorMessage = "Введіть номер телефону")]
+            [StringLength(20, ErrorMessage = "Номер телефону не може перевищувати 20 символів")]
+            public string PhoneNumber { get; set; }
 
+            [Required(ErrorMessage = "Введіть пароль")]
             [DataType(DataType.Password)]
-            [Compare("NewPassword", ErrorMessage = "Паролі не співпадають.")]
+            [StringLength(100, MinimumLength = 6, ErrorMessage = "Пароль повинен бути не менше 6 символів")]
+            public string Password { get; set; }
+
+            [Required(ErrorMessage = "Підтвердження пароля")]
+            [DataType(DataType.Password)]
+            [Compare("Password", ErrorMessage = "Паролі не співпадають")]
             public string ConfirmPassword { get; set; }
         }
 
@@ -44,7 +61,10 @@ namespace VinylShop.Areas.Shop.Pages.Account
 
             Input = new InputModel
             {
-                Email = user.Email
+                FirstName = "",
+                LastName = "",
+                Email = "",
+                PhoneNumber = ""
             };
         }
 
@@ -56,17 +76,20 @@ namespace VinylShop.Areas.Shop.Pages.Account
             var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
             var user = _context.Users.Find(userId);
 
+            user.FirstName = Input.FirstName;
+            user.LastName = Input.LastName;
             user.Email = Input.Email;
+            user.PhoneNumber = Input.PhoneNumber;
 
-            if (!string.IsNullOrWhiteSpace(Input.NewPassword))
+            if (!string.IsNullOrWhiteSpace(Input.Password))
             {
-                user.PasswordHash = PasswordUtils.HashPassword(Input.NewPassword);
+                user.PasswordHash = PasswordUtils.HashPassword(Input.Password);
             }
 
             _context.SaveChanges();
             Message = "Ваші дані успішно оновлено!";
 
-            return Page();
+            return RedirectToPage("/Account/Profile", new { area = "Shop" });
         }
     }
 }
