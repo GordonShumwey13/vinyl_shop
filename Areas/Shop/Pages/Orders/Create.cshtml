@@ -6,9 +6,7 @@
 
 <link rel="stylesheet" href="~/css/order.css" />
 
-<div class="banner-section">
-    <img src="~/img/vinyl_header.jpg" alt="Vinyl Header" class="banner-image" />
-</div>
+@await Html.PartialAsync("_Banner", (string)null)
 
 <div class="order-container">
     <h1 class="order-title">Ваше замовлення</h1>

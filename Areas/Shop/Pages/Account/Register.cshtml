@@ -23,6 +23,15 @@
         <input asp-for="Input.ConfirmPassword" class="auth-input" placeholder="Підтвердження паролю" autocomplete="new-password" />
         <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
 
+        <input asp-for="Input.FirstName" class="auth-input" placeholder="Ім'я" />
+        <span asp-validation-for="Input.FirstName" class="text-danger"></span>
+
+        <input asp-for="Input.LastName" class="auth-input" placeholder="Прізвище" />
+        <span asp-validation-for="Input.LastName" class="text-danger"></span>
+
+        <input asp-for="Input.PhoneNumber" class="auth-input" placeholder="Телефон" autocomplete="tel" />
+        <span asp-validation-for="Input.PhoneNumber" class="text-danger"></span>
+
         <button type="submit" class="auth-submit-btn">Реєстрація</button>
     </form>
 </div>

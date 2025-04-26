@@ -38,6 +38,18 @@ namespace VinylShop.Pages.Account
             [DataType(DataType.Password)]
             [Compare("Password", ErrorMessage = "Паролі не співпадають")]
             public string ConfirmPassword { get; set; }
+
+            [Required(ErrorMessage = "Введіть ім'я")]
+            [StringLength(50, ErrorMessage = "Ім'я не може перевищувати 50 символів")]
+            public string FirstName { get; set; }
+
+            [Required(ErrorMessage = "Введіть прізвище")]
+            [StringLength(50, ErrorMessage = "Прізвище не може перевищувати 50 символів")]
+            public string LastName { get; set; }
+
+            [Required(ErrorMessage = "Введіть номер телефону")]
+            [StringLength(20, ErrorMessage = "Номер телефону не може перевищувати 20 символів")]
+            public string PhoneNumber { get; set; }
         }
 
         public void OnGet() { }
@@ -54,9 +66,12 @@ namespace VinylShop.Pages.Account
             }
 
             var user = new User
-            {   
+            {
                 Email = Input.Email,
-                PasswordHash = PasswordUtils.HashPassword(Input.Password)
+                PasswordHash = PasswordUtils.HashPassword(Input.Password),
+                FirstName = Input.FirstName,
+                LastName = Input.LastName,
+                PhoneNumber = Input.PhoneNumber,
             };
 
             _context.Users.Add(user);

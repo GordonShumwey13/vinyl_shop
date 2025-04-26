@@ -1,0 +1,6 @@
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Antiforgery
+
+<!-- Модальне вікно для авторизації -->
+<div id="authModal" class="modal">
+    <iframe id="authModalFrame" src="/Shop/Account/Login?returnUrl=@Context.Request.Path" class="modal-iframe"></iframe>
+</div>

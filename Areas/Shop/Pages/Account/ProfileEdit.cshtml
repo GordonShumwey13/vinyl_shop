@@ -1,0 +1,38 @@
+@page
+@model VinylShop.Areas.Shop.Pages.Account.ProfileEditModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+<link rel="stylesheet" href="~/css/profile.css"/>
+
+@await Html.PartialAsync("_Banner", (string)null)
+
+<div class="profile-container">
+    <h2 class="profile-title">Редагувати профіль</h2>
+
+    <form method="post">
+        <div class="form-group">
+            <label asp-for="Input.Email"></label>
+            <input asp-for="Input.Email" class="form-control" />
+            <span asp-validation-for="Input.Email" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Input.NewPassword"></label>
+            <input asp-for="Input.NewPassword" type="password" class="form-control" />
+            <span asp-validation-for="Input.NewPassword" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Input.ConfirmPassword"></label>
+            <input asp-for="Input.ConfirmPassword" type="password" class="form-control" />
+            <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
+        </div>
+
+        <button type="submit" class="btn btn-success mt-3">Зберегти зміни</button>
+    </form>
+
+    @if (!string.IsNullOrEmpty(Model.Message))
+    {
+        <div class="alert alert-success mt-3">@Model.Message</div>
+    }
+</div>

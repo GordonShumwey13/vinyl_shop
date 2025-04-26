@@ -8,10 +8,7 @@
 
 <link rel="stylesheet" href="~/css/shop.css"/>
 
-<div class="banner-section">
-    <img src="~/img/vinyl_header.jpg" alt="Vinyl Header" class="banner-image"/>
-    <div class="banner-text">КАТАЛОГ ПЛАТІВОК</div>
-</div>
+@await Html.PartialAsync("_Banner", "КАТАЛОГ ПЛАТІВОК")
 
 <div class="shop-container">
     <div class="layout">

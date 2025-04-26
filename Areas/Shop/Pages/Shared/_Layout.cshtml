@@ -1,8 +1,8 @@
 @inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Antiforgery
-
 <!DOCTYPE html>
-<html>
 <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - VinylShop</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap">
     <link rel="stylesheet" href="~/css/shop.css" />
@@ -10,54 +10,11 @@
 </head>
 
 <body>
-    <header class="main-header">
-        <div class="header-container">
-            <a href="/Shop/Home" class="logo">
-                <img src="~/img/logo.png" alt="Vinyl Place Logo">
-                <span>VINYL SHOP</span>
-            </a>
-
-            <nav class="navigation">
-                <a href="/Shop/Home">ГОЛОВНА</a>
-                <a href="/Shop/Albums/Albums">КАТАЛОГ ПЛАТІВОК</a>
-                <a href="#">ДОСТАВКА ТА ОПЛАТА</a>
-                <a href="#">СТАТТІ ТА ОГЛЯДИ</a>
-            </nav>
-
-            <a href="/Shop/Orders/Create" class="cart-button-link">
-                <div class="cart-button">
-                    <span class="cart-total">0 грн.</span>
-                    <span class="cart-icon">🛒</span>
-                    <span class="cart-count">0</span>
-                </div>
-            </a>
-
-            @if (User.Identity?.IsAuthenticated ?? false)
-            {
-                <div class="auth-button">
-                    <a href="/Shop/Account/Profile">👤 Мій кабінет</a>
-                    <form method="post" asp-page="/Account/Logout" asp-area="Shop">
-                        <button type="submit" class="logout-button">🚪 Вийти</button>
-                    </form>
-                </div>
-            }
-            else
-            {
-                <div class="auth-button">
-                    <a href="#" onclick="openAuthModal()">👤 Особистий кабінет</a>
-                </div>
-            }
-        </div>
-    </header>
+    @await Html.PartialAsync("_Header")
 
     <main class="container">
         @RenderBody()
     </main>
-
-    <!-- Модальне вікно -->
-    <div id="authModal" class="modal">
-        <iframe id="authModalFrame" src="/Shop/Account/Login?returnUrl=@Context.Request.Path" class="modal-iframe"></iframe>
-    </div>
 
     @RenderSection("Scripts", required: false)
 
@@ -108,6 +65,5 @@
             }
         });
     </script>
-
 </body>
 </html>

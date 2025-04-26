@@ -1,0 +1,9 @@
+@model string
+
+<div class="banner-section">
+    <img src="~/img/vinyl_header.jpg" alt="Vinyl Header" class="banner-image" />
+    @if (!string.IsNullOrEmpty(Model))
+    {
+        <div class="banner-text">@Model</div>
+    }
+</div>

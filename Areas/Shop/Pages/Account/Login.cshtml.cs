@@ -4,11 +4,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.Extensions.Logging;
 using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
 using VinylShop.Data;
-using VinylShop.Models;
 using VinylShop.Utils;
 
 namespace VinylShop.Pages.Account
@@ -31,16 +29,14 @@ namespace VinylShop.Pages.Account
 
         public class InputModel
         {
-            [Required]
-            [EmailAddress]
+            [Required(ErrorMessage = "Введіть email")]
+            [EmailAddress(ErrorMessage = "Некоректний формат")]
             public string Email { get; set; }
 
-            [Required]
+            [Required(ErrorMessage = "Введіть пароль")]
+            [StringLength(100, MinimumLength = 6, ErrorMessage = "Пароль повинен бути не менше 6 символів")]
             [DataType(DataType.Password)]
             public string Password { get; set; }
-
-            [Display(Name = "Запам’ятати мене")]
-            public bool RememberMe { get; set; }
         }
 
         public void OnGet(string returnUrl = null)
@@ -72,13 +68,10 @@ namespace VinylShop.Pages.Account
             var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
             var principal = new ClaimsPrincipal(identity);
 
-            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal, new AuthenticationProperties
-            {
-                IsPersistent = Input.RememberMe
-            });
+            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
 
             _logger.LogInformation("Користувач успішно увійшов.");
-            
+
             ViewData["LoginSuccess"] = true;
             return Page();
         }
