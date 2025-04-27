@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using VinylShop.Data;
 
@@ -11,9 +12,11 @@ using VinylShop.Data;
 namespace MyWebApp.Migrations
 {
     [DbContext(typeof(VinylShopContext))]
-    partial class VinylShopContextModelSnapshot : ModelSnapshot
+    [Migration("20250427102728_AddOrderStatus")]
+    partial class AddOrderStatus
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -60,8 +63,10 @@ namespace MyWebApp.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("varchar(100)");
 
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)");
 
                     b.Property<decimal>("TotalPrice")
                         .HasColumnType("decimal(65,30)");

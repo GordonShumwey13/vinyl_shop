@@ -20,12 +20,16 @@
         </div>
     </div>
 
-
     <form method="post" class="checkout-form">
         <input type="hidden" name="CartJson" id="CartJsonInput" />
-        <input type="text" name="FullName" placeholder="ПІБ" required />
-        <input type="tel" name="Phone" placeholder="Телефон" required />
-        <input type="email" name="BuyerEmail" placeholder="E-mail" required />
+
+        @if (!User.Identity.IsAuthenticated)
+        {
+            <input type="text" name="FullName" placeholder="ПІБ" required />
+            <input type="tel" name="Phone" placeholder="Телефон" required />
+            <input type="email" name="BuyerEmail" placeholder="E-mail" required />
+        }
+
         <input type="text" name="City" placeholder="Місто" required />
         <input type="text" name="Address" placeholder="Адреса" required />
         <textarea name="Comment" placeholder="Коментар до замовлення"></textarea>
