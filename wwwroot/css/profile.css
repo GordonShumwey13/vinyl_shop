@@ -36,6 +36,31 @@
     transition: opacity 0.5s ease;
 }
 
+.status-badge {
+    width: 90px;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    display: inline-block;
+}
+
+.status-pending {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+.status-success {
+    background-color: #157347;
+    color: #fff;
+}
+
+.status-cancelled {
+    background-color: #e63946;
+    color: #fff;
+}
+
+
 /* === Sidebar Menu === */
 .sidebar-menu {
     list-style: none;
