@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 using VinylShop.Data;
-using VinylShop.Models;
 
 namespace VinylShop.Areas.Shop.Pages.Account
 {
@@ -18,6 +18,7 @@ namespace VinylShop.Areas.Shop.Pages.Account
 
         public string UserEmail { get; set; }
         public string FirstName { get; set; }
+        public List<Order> Orders { get; set; } = new();
 
         public async Task<IActionResult> OnGetAsync()
         {
@@ -35,6 +36,15 @@ namespace VinylShop.Areas.Shop.Pages.Account
 
             UserEmail = user.Email;
             FirstName = user.FirstName;
+
+            var buyer = await _context.Buyers.FirstOrDefaultAsync(b => b.UserId == user.Id);
+            if (buyer != null)
+            {
+                Orders = await _context.Orders
+                    .Where(o => o.BuyerId == buyer.Id)
+                    .OrderByDescending(o => o.OrderDate)
+                    .ToListAsync();
+            }
 
             return Page();
         }

@@ -6,12 +6,11 @@
 
 @await Html.PartialAsync("_Banner", (string)null)
 
-@if (TempData["Message"] != null)
+@if (TempData["SuccessMessage"] != null)
 {
     <div id="popup-message" class="popup-message">
-        @TempData["Message"]
+        @TempData["SuccessMessage"]
     </div>
-
     <script>
         setTimeout(() => {
             const popup = document.getElementById('popup-message');
@@ -54,20 +53,7 @@
             </div>
         </div>
 
-        <div class="profile-orders">
-            <h3>Історія замовлень</h3>
-            <div class="orders-table">
-                <div class="orders-header">
-                    <div>№ замовлення</div>
-                    <div>Статус</div>
-                    <div>Дата замовлення</div>
-                    <div>Сума</div>
-                </div>
-                <div class="orders-row">
-                    <div colspan="4" class="no-orders">У вас поки немає замовлень.</div>
-                </div>
-            </div>
-        </div>
+        @await Html.PartialAsync("_OrderHistory", Model.Orders)
 
     </section>
 

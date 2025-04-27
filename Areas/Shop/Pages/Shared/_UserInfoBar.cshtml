@@ -1,13 +1,13 @@
-    <aside class="profile-sidebar">
-        <ul class="sidebar-menu">
-            <li><a href="/Shop/Account/Profile">👤 Моя інформація</a></li>
-            <li><a href="/Shop/Account/ProfileEdit">✏️ Змінити контактну інформацію</a></li>
-            <li><a href="#">❤️ Закладки</a></li>
-            <li><a href="#">🛒 Історія замовлень</a></li>
-            <li>
-                <form method="post" asp-page-handler="Logout">
-                    <button type="submit" class="sidebar-logout-btn">🚪 Вихід</button>
-                </form>
-            </li>
-        </ul>
-    </aside>
+<aside class="profile-sidebar">
+    <ul class="sidebar-menu">
+        <li><a href="/Shop/Account/Profile">👤 Моя інформація</a></li>
+        <li><a href="/Shop/Account/ProfileEdit">✏️ Змінити контактну інформацію</a></li>
+        <li><a href="#">❤️ Закладки</a></li>
+        <li><a href="/Shop/Account/History" class="account-link active">🛒 Історія замовлень</a></li>
+        <li>
+            <form method="post" asp-page-handler="Logout">
+                <button type="submit" class="sidebar-logout-btn">🚪 Вихід</button>
+            </form>
+        </li>
+    </ul>
+</aside>

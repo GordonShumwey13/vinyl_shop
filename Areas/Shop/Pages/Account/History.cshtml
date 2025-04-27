@@ -1,0 +1,42 @@
+@page
+@model VinylShop.Areas.Shop.Pages.Account.HistoryModel
+@{
+    ViewData["Title"] = "Історія замовлень";
+}
+
+<link rel="stylesheet" href="~/css/profile.css" />
+
+@await Html.PartialAsync("_Banner", (string)null)
+
+@if (TempData["Message"] != null)
+{
+    <div id="popup-message" class="popup-message">
+        @TempData["Message"]
+    </div>
+
+    <script>
+        setTimeout(() => {
+            const popup = document.getElementById('popup-message');
+            if (popup) {
+                popup.style.opacity = '0';
+                setTimeout(() => popup.remove(), 500);
+            }
+        }, 3000);
+    </script>
+}
+
+<div class="profile-wrapper">
+
+    @await Html.PartialAsync("_UserInfoBar")
+
+    <section class="profile-content">
+
+        <div class="account-summary">
+            <h2>Історія замовлень</h2>
+        </div>
+
+        @await Html.PartialAsync("_OrderHistory", Model.Orders)
+
+    </section>
+
+</div>

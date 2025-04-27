@@ -11,9 +11,6 @@ namespace VinylShop.Models
         public string Email { get; set; }
 
         [Required]
-        public string PasswordHash { get; set; }
-
-        [Required]
         [MaxLength(50)]
         public string FirstName { get; set; }
 
@@ -24,6 +21,9 @@ namespace VinylShop.Models
         [Required]
         [MaxLength(20)]
         public string PhoneNumber { get; set; }
+
+        [Required]
+        public string PasswordHash { get; set; }
 
         public ICollection<UserRole> Roles { get; set; }
     }

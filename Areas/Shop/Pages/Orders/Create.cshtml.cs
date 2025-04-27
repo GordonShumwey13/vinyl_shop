@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json;
 using VinylShop.Data;
 using VinylShop.Models;
-using System.Text.Json;
 
 namespace VinylShop.Areas.Shop.Pages.Orders
 {
@@ -42,6 +42,19 @@ namespace VinylShop.Areas.Shop.Pages.Orders
 
         public async Task<IActionResult> OnGetAsync(int? albumId, int quantity = 1)
         {
+            if (User.Identity.IsAuthenticated)
+            {
+                var userId = int.TryParse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value, out var uid) ? uid : (int?)null;
+                if (userId.HasValue)
+                {
+                    var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId.Value);
+                    if (user != null)
+                    {
+                        Phone = user.PhoneNumber ?? string.Empty;
+                    }
+                }
+            }
+
             if (albumId.HasValue)
             {
                 Album = await _context.Albums
@@ -60,139 +73,129 @@ namespace VinylShop.Areas.Shop.Pages.Orders
             return Page();
         }
 
-public async Task<IActionResult> OnPostAsync()
-{
-    Console.WriteLine("🚀 Start OnPostAsync");
-
-    if (!ModelState.IsValid)
-    {
-        Console.WriteLine("❌ ModelState is invalid");
-        foreach (var entry in ModelState)
+        public async Task<IActionResult> OnPostAsync()
         {
-            foreach (var error in entry.Value.Errors)
+            if (!ModelState.IsValid)
             {
-                Console.WriteLine($"❌ ModelState Error: {error.ErrorMessage}");
-            }
-        }
-        return Page();
-    }
-
-    if (string.IsNullOrEmpty(CartJson))
-    {
-        Console.WriteLine("❌ CartJson is empty");
-        ModelState.AddModelError("", "Кошик порожній");
-        return Page();
-    }
-
-    Console.WriteLine("🛒 CartJson received:");
-    Console.WriteLine(CartJson);
-
-    List<CartItem> cartItems;
-    try
-    {
-        cartItems = JsonSerializer.Deserialize<List<CartItem>>(CartJson) ?? new();
-        Console.WriteLine($"✅ Cart deserialized. Items count: {cartItems.Count}");
-    }
-    catch (Exception ex)
-    {
-        Console.WriteLine("❌ JSON десеріалізація не вдалася: " + ex.Message);
-        ModelState.AddModelError("", "Невірний формат кошика");
-        return Page();
-    }
-
-    if (!cartItems.Any())
-    {
-        Console.WriteLine("❌ Cart is empty after deserialization");
-        ModelState.AddModelError("", "Кошик порожній");
-        return Page();
-    }
-
-    try
-    {
-        Console.WriteLine($"🔍 Шукаємо покупця з email: {BuyerEmail}");
-        var buyer = await _context.Buyers.FirstOrDefaultAsync(b => b.Email == BuyerEmail);
-        if (buyer == null)
-        {
-            Console.WriteLine("🆕 Створюємо нового покупця");
-            buyer = new Buyer { Email = BuyerEmail };
-            _context.Buyers.Add(buyer);
-            await _context.SaveChangesAsync();
-        }
-        else
-        {
-            Console.WriteLine($"✅ Покупець знайдений, ID = {buyer.Id}");
-        }
-
-        var newOrder = new Order
-        {
-            BuyerId = buyer.Id,
-            Phone = Phone,
-            OrderDate = DateTime.UtcNow,
-            PaymentMethod = PaymentMethod,
-            City = City,
-            Address = Address,
-            Comment = Comment,
-            TotalPrice = 0m
-        };
-
-        Console.WriteLine("📝 Створюємо замовлення (без позицій)");
-        _context.Orders.Add(newOrder);
-        await _context.SaveChangesAsync();
-        Console.WriteLine($"✅ Замовлення створено з ID = {newOrder.Id}");
-
-        foreach (var item in cartItems)
-        {
-            int albumId = item.AlbumId != 0 ? item.AlbumId : item.Id;
-            Console.WriteLine($"🔍 Шукаємо альбом з ID = {albumId}");
-
-            var album = await _context.Albums.FindAsync(albumId);
-            if (album == null)
-            {
-                Console.WriteLine($"❌ Альбом ID {albumId} не знайдено");
-                ModelState.AddModelError("", $"Товар з ID {albumId} недоступний.");
                 return Page();
             }
 
-            if (album.Stock < item.Quantity)
+            if (string.IsNullOrEmpty(CartJson))
             {
-                Console.WriteLine($"❌ Недостатньо в наявності: {album.Title} (залишилось {album.Stock}, потрібно {item.Quantity})");
-                ModelState.AddModelError("", $"Товар \"{album.Title}\" — недостатньо в наявності.");
+                ModelState.AddModelError(string.Empty, "Кошик порожній.");
                 return Page();
             }
 
-            album.Stock -= item.Quantity;
-
-            var orderItem = new OrderItem
+            List<CartItem> cartItems;
+            try
             {
-                OrderId = newOrder.Id,
-                AlbumId = album.Id,
-                Quantity = item.Quantity,
-                Price = album.Price * item.Quantity
+                cartItems = JsonSerializer.Deserialize<List<CartItem>>(CartJson) ?? new();
+            }
+            catch
+            {
+                ModelState.AddModelError(string.Empty, "Невірний формат кошика.");
+                return Page();
+            }
+
+            if (!cartItems.Any())
+            {
+                ModelState.AddModelError(string.Empty, "Кошик порожній.");
+                return Page();
+            }
+
+            var (email, userId) = GetUserInfo();
+            if (string.IsNullOrEmpty(email))
+            {
+                ModelState.AddModelError(string.Empty, "Не вказаний email.");
+                return Page();
+            }
+
+            var buyer = await _context.Buyers.FirstOrDefaultAsync(b => b.Email == email);
+            if (buyer == null)
+            {
+                buyer = new Buyer { Email = email, UserId = userId };
+                _context.Buyers.Add(buyer);
+                await _context.SaveChangesAsync();
+            }
+            else if (userId.HasValue && buyer.UserId == null)
+            {
+                buyer.UserId = userId;
+                _context.Buyers.Update(buyer);
+                await _context.SaveChangesAsync();
+            }
+
+            var resolvedPhone = Phone;
+            if (User.Identity.IsAuthenticated && userId.HasValue)
+            {
+                var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId.Value);
+                if (user != null)
+                {
+                    resolvedPhone = user.PhoneNumber;
+                }
+            }
+
+            var newOrder = new Order
+            {
+                BuyerId = buyer.Id,
+                Phone = resolvedPhone,
+                OrderDate = DateTime.UtcNow,
+                PaymentMethod = PaymentMethod,
+                City = City,
+                Address = Address,
+                Comment = Comment,
+                TotalPrice = 0m,
+                Items = new List<OrderItem>()
             };
 
-            _context.OrderItems.Add(orderItem);
-            newOrder.TotalPrice += orderItem.Price;
+            foreach (var item in cartItems)
+            {
+                int albumId = item.AlbumId != 0 ? item.AlbumId : item.Id;
+                var album = await _context.Albums.FindAsync(albumId);
 
-            Console.WriteLine($"✅ Додано позицію: {album.Title} × {item.Quantity} = {orderItem.Price} грн");
+                if (album == null || album.Stock < item.Quantity)
+                {
+                    ModelState.AddModelError(string.Empty, $"Товар \"{album?.Title ?? "невідомий"}\" недоступний або немає в наявності.");
+                    return Page();
+                }
+
+                album.Stock -= item.Quantity;
+
+                newOrder.Items.Add(new OrderItem
+                {
+                    AlbumId = album.Id,
+                    Quantity = item.Quantity,
+                    Price = album.Price * item.Quantity
+                });
+
+                newOrder.TotalPrice += album.Price * item.Quantity;
+            }
+
+            _context.Orders.Add(newOrder);
+            await _context.SaveChangesAsync();
+
+            Response.Cookies.Delete("cart");
+
+            TempData["SuccessMessage"] = "Замовлення успішно оформлено!";
+            return Redirect("/Shop/Account/Profile");
         }
 
-        await _context.SaveChangesAsync();
-        Console.WriteLine("💾 Усі позиції збережені");
+        private (string? Email, int? UserId) GetUserInfo()
+        {
+            string? email = null;
+            int? userId = null;
 
-        Response.Cookies.Delete("cart");
-        Console.WriteLine("🧼 Кошик очищено з cookies");
+            if (User.Identity.IsAuthenticated)
+            {
+                email = User.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value;
+                userId = int.TryParse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value, out var uid) ? uid : (int?)null;
+            }
 
-        Console.WriteLine("✅ Успішне завершення. Редірект на Success");
-        return Redirect("/Shop/Orders/Success");
-    }
-    catch (Exception ex)
-    {
-        Console.WriteLine("❌ Помилка при збереженні замовлення:");
-        Console.WriteLine(ex.ToString());
-        ModelState.AddModelError("", "Виникла помилка при оформленні замовлення. Спробуйте ще раз.");
-        return Page();
-    }
-}
+            if (string.IsNullOrEmpty(email))
+            {
+                email = BuyerEmail;
+            }
 
+            return (email, userId);
+        }
     }
 }

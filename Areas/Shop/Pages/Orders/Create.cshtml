@@ -20,8 +20,10 @@
         </div>
     </div>
 
-    <form method="post" class="checkout-form">
+    <form method="post" class="checkout-form" id="orderForm">
         <input type="hidden" name="CartJson" id="CartJsonInput" />
+        <input type="hidden" name="BuyerEmail" id="BuyerEmailInput" />
+        <input type="hidden" name="Phone" id="PhoneInput" />
 
         @if (!User.Identity.IsAuthenticated)
         {
@@ -47,17 +49,15 @@
 </div>
 
 <script>
-    document.querySelector("form").addEventListener("submit", () => {
-        const cart = localStorage.getItem("cart");
-        document.getElementById("CartJsonInput").value = cart;
-    });
+    const buyerEmail = "@(User.Identity.IsAuthenticated? User.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value : "")";
+    const userPhone = "@(User.Identity.IsAuthenticated? Model.Phone: "")";
 
     document.addEventListener('DOMContentLoaded', () => {
         const cartContainer = document.getElementById('cart-items');
         const totalElement = document.getElementById('final-sum');
+        const orderForm = document.getElementById('orderForm');
 
         let cart = JSON.parse(localStorage.getItem('cart')) || [];
-        console.log("Кошик у localStorage:", cart);
 
         function updateCartDisplay() {
             cartContainer.innerHTML = '';
@@ -86,16 +86,24 @@
                 `;
                 cartContainer.appendChild(itemDiv);
             });
+
             totalElement.textContent = `${totalSum.toFixed(2)} грн.`;
         }
 
+        if (cart.length > 0) {
+            updateCartDisplay();
+        } else {
+            cartContainer.innerHTML = '<p>Ваш кошик порожній.</p>';
+            totalElement.textContent = '0 грн.';
+        }
+
         cartContainer.addEventListener('click', (e) => {
-            const index = parseInt(e.target.dataset.index);
+            const index = parseInt(e.target.dataset.index, 10);
             if (e.target.classList.contains('btn-qty')) {
                 if (e.target.classList.contains('plus')) {
-                    cart[index].qty += 1;
+                    cart[index].qty++;
                 } else if (e.target.classList.contains('minus') && cart[index].qty > 1) {
-                    cart[index].qty -= 1;
+                    cart[index].qty--;
                 }
                 localStorage.setItem('cart', JSON.stringify(cart));
                 updateCartDisplay();
@@ -108,16 +116,20 @@
             }
         });
 
-        if (!cart.length) {
-            cartContainer.innerHTML = '<p>Ваш кошик порожній.</p>';
-            totalElement.textContent = '0 грн.';
-        } else {
-            updateCartDisplay();
-        }
-    });
+        orderForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
 
-    if (window.location.pathname.includes('Create')) {
-        const btn = document.querySelector('.cart-button');
-        if (btn) btn.style.display = 'none';
-    }
+            if (cart.length === 0) {
+                alert('Кошик порожній!');
+                return;
+            }
+
+            document.getElementById('CartJsonInput').value = JSON.stringify(cart);
+            if (buyerEmail) document.getElementById('BuyerEmailInput').value = buyerEmail;
+            if (userPhone) document.getElementById('PhoneInput').value = userPhone;
+
+            orderForm.submit();
+            localStorage.removeItem('cart'); // Очищаємо кошик тільки після сабміту
+        });
+    });
 </script>
