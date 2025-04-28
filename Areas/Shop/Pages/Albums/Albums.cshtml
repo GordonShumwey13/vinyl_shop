@@ -1,12 +1,13 @@
 @page
 @model VinylShop.Areas.Shop.Pages.Albums.AlbumsModel
+
 @{
     ViewData["Title"] = "Vinyl Shop";
     var currentSort = Request.Query["sort"].ToString();
     var currentGenre = Request.Query["genre"].ToString();
 }
 
-<link rel="stylesheet" href="~/css/shop.css"/>
+<link rel="stylesheet" href="~/css/shop.css" />
 
 @await Html.PartialAsync("_Banner", "КАТАЛОГ ПЛАТІВОК")
 
@@ -15,7 +16,8 @@
         <div class="sidebar">
             <h4>Пошук</h4>
             <form method="get" autocomplete="off" id="searchForm" class="search-form-wrapper">
-                <input type="text" name="search" id="searchInput" placeholder="Що шукаєм?" class="form-control-search" />
+                <input type="text" name="search" id="searchInput" placeholder="Що шукаєм?"
+                    class="form-control-search" />
                 <div id="searchDropdown" class="search-dropdown"></div>
 
                 @if (!string.IsNullOrEmpty(currentGenre))
@@ -45,14 +47,14 @@
                     <select name="sort" onchange="this.form.submit()" class="form-control">
                         @{
                             var sortOptions = new Dictionary<string, string>
-                            {
-                                { "", "Сортування за замовчуванням" },
-                                { "latest", "Сортувати за останніми" },
-                                { "artist", "За артистом (А → Я)" },
-                                { "genre", "За жанром (А → Я)" },
-                                { "price_desc", "Ціна (від більшої)" },
-                                { "price_asc", "Ціна (від меншої)" }
-                            };
+                                                {
+                                                { "", "Сортування за замовчуванням" },
+                                                { "latest", "Сортувати за останніми" },
+                                                { "artist", "За артистом (А → Я)" },
+                                                { "genre", "За жанром (А → Я)" },
+                                                { "price_desc", "Ціна (від більшої)" },
+                                                { "price_asc", "Ціна (від меншої)" }
+                                                };
                         }
                         @foreach (var option in sortOptions)
                         {
@@ -95,15 +97,15 @@
 
                             @for (int i = 0; i < fullStars; i++)
                             {
-                                <span class="star full">★</span>
+                                <i class="fas fa-star"></i> <!-- Повна зірка -->
                             }
                             @if (halfStar)
                             {
-                                <span class="star half">☆</span>
+                                <i class="fas fa-star-half-alt"></i> <!-- Половинка зірки -->
                             }
                             @for (int i = 0; i < emptyStars; i++)
                             {
-                                <span class="star empty">☆</span>
+                                <i class="far fa-star"></i> <!-- Порожня зірка -->
                             }
 
                             <span class="review-count">(@album.ReviewCount)</span>
@@ -121,12 +123,10 @@
                             </div>
 
                             <button type="button"
-                                    class="btn btn-success add-to-cart-btn"
-                                    data-album-id="@album.Id"
-                                    data-artist="@album.Artist.Name"
-                                    data-title="@album.Title"
-                                    data-price="@album.Price"
-                                    data-image="@Url.Content(album.ImagePath)">
+                                class="btn btn-success add-to-cart-btn @(album.Stock == 0 ? "disabled-btn" : "")"
+                                @(album.Stock == 0 ? "disabled" : "") data-album-id="@album.Id"
+                                data-artist="@album.Artist.Name" data-title="@album.Title" data-price="@album.Price"
+                                data-image="@Url.Content(album.ImagePath)">
                                 Купити
                             </button>
                         </div>

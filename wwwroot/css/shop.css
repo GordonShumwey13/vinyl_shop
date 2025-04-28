@@ -3,7 +3,7 @@ body {
     padding-bottom: 50px;
     font-family: "Montserrat", sans-serif;
     background-color: #f6f8fa;
-    color: #333; 
+    color: #333;
 }
 
 button,
@@ -368,17 +368,13 @@ h1 {
     color: #ffc107;
 }
 
-.album-rating .star {
-    font-size: 1.2rem;
+
+.album-rating i {
+    color: gold;
 }
 
-.album-rating .star.empty {
-    color: #ddd;
-}
-
-.album-rating .star.half {
-    color: #ffc107;
-    opacity: 0.6;
+.album-rating .far.fa-star {
+    color: #ccc;
 }
 
 .album-rating .review-count {
@@ -386,7 +382,6 @@ h1 {
     font-size: 0.9rem;
     margin-left: 4px;
 }
-
 
 /* ---------------------- PRICE / QUANTITY / BUTTON ---------------------- */
 .price-block {
@@ -438,6 +433,14 @@ h1 {
     background-color: #475ca0;
 }
 
+.disabled-btn {
+    background-color: #ccc !important;
+    border-color: #ccc !important;
+    color: #666 !important;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
 /* Кількість */
 .quantity-selector {
     display: flex;
@@ -475,6 +478,8 @@ h1 {
 .btn-qty:hover {
     background-color: #ddd;
 }
+
+
 
 /* ---------------------- ARTISTS ---------------------- */
 .artist-card {

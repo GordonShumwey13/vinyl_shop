@@ -2,39 +2,23 @@
 @model VinylShop.Areas.Shop.Pages.Albums.DetailsModel
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
-<link rel="stylesheet" href="~/css/details.css"/>
+<link rel="stylesheet" href="~/css/details.css" />
 
 @await Html.PartialAsync("_Banner", (string)null)
 
 <div class="order-container">
-
     <div class="order-grid">
         <div class="image-section">
-            <img src="@Model.Album.ImagePath" alt="@Model.Album.Title" class="order-album-image"/>
+            <img src="@Model.Album.ImagePath" alt="@Model.Album.Title" class="order-album-image" />
         </div>
 
         <div class="order-details-block">
             <div class="album-info">
-                <div class="info-row">
-                    <span>Альбом</span>
-                    <span>@Model.Album.Title</span>
+                <div class="info-row"><span>Альбом</span><span>@Model.Album.Title</span></div>
+                <div class="info-row"><span>Артист</span><span>@Model.Album.Artist.Name</span></div>
+                <div class="info-row"><span>Жанр</span><span>@Model.Album.Genre.Name</span></div>
+                <div class="info-row"><span>Ціна платівки</span><span id="pricePerOne">@Model.Album.Price грн.</span>
                 </div>
-
-                <div class="info-row">
-                    <span>Артист</span>
-                    <span>@Model.Album.Artist.Name</span>
-                </div>
-
-                <div class="info-row">
-                    <span>Жанр</span>
-                    <span>@Model.Album.Genre.Name</span>
-                </div>
-
-                <div class="info-row">
-                    <span>Ціна платівки</span>
-                    <span id="pricePerOne">@Model.Album.Price грн.</span>
-                </div>
-
                 <div class="info-row">
                     <span>Наявність</span>
                     @if (Model.Album.Stock > 0)
@@ -50,78 +34,106 @@
                     <span>Кількість</span>
                     <div class="quantity-selector-details">
                         <button type="button" class="btn-qty minus">-</button>
-                        <input type="number" name="Quantity" value="@Model.Quantity" min="1" class="qty-input" readonly/>
+                        <input type="number" name="Quantity" value="@Model.Quantity" min="1" class="qty-input"
+                            readonly />
                         <button type="button" class="btn-qty plus">+</button>
                     </div>
                 </div>
-                <div class="info-row"><span>Загальна ціна</span><span id="totalPrice">@Model.Album.Price грн.</span></span></div>
+                <div class="info-row"><span>Загальна ціна</span><span id="totalPrice">@Model.Album.Price грн.</span>
+                </div>
             </div>
 
-            <div class="reviews-form">
-                <h4>Залишити відгук</h4>
-                <form method="post">
-                     <input type="hidden" name="AlbumId" value="@Model.Album.Id" />
-                     <div class="form-group">
-                        <label>Ваше ім’я</label>
-                        <input name="AuthorName" class="form-control" required />
-                     </div>
-                     <div class="form-group">
-                        <label>Оцінка</label>
-                        <select name="Rating" class="form-control" required>
-                            <option value="">Оберіть</option>
-                            @for (int i = 5; i >= 1; i--)
-                            {
-                                <option value="@i">@i ★</option>
-                            }
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Коментар</label>
-                        <textarea name="Comment" class="form-control"></textarea>
-                    </div>
-                    <button type="submit" class="btn btn-success mt-2">Надіслати</button>
-                    <button type="button" class="btn btn-success" id="addToCart"
-                            data-album-id="@Model.Album.Id"
-                            data-artist="@Model.Album.Artist.Name"
-                            data-title="@Model.Album.Title"
-                            data-price="@Model.Album.Price"
-                            data-image="@Url.Content(Model.Album.ImagePath)">
-                        Купити
-                    </button>
-                </form>
-            </div>
-
-            <div class="form-group">
-            </div>
-        </div>
-    
-
-    <div class="details-content">
-        <h3>Список треків</h3>
-        <ol class="track-list">
-            @foreach (var song in Model.Album.Songs)
+            @if (User.Identity.IsAuthenticated)
             {
-                <li>
-                    <span class="track-title">@song.Title</span>
-                    <span class="track-duration">@song.Duration.ToString(@"mm\:ss")</span>
-                </li>
+                <div class="reviews-form">
+                    <h4>Залишити відгук</h4>
+                    <form method="post" asp-page-handler="SubmitReview">
+                        <input type="hidden" name="AlbumId" value="@Model.Album.Id" />
+                        <input type="hidden" name="AuthorName" value="@Model.UserName" />
+
+                        <div class="album-rating">
+                            @for (int i = 1; i <= 5; i++)
+                            {
+                                var isFilled = false;
+
+                                if (Model.UserRating.HasValue)
+                                {
+                                    // Якщо користувач вже залишив оцінку — показуємо його оцінку
+                                    isFilled = i <= Model.UserRating;
+                                }
+                                else
+                                {
+                                    // Інакше малюємо по середній оцінці альбому
+                                    var fullStars = (int)Math.Floor(Model.Album.Rating);
+                                    var halfStar = Model.Album.Rating % 1 >= 0.5;
+
+                                    if (i <= fullStars)
+                                    {
+                                        isFilled = true;
+                                    }
+                                    else if (halfStar && i == fullStars + 1)
+                                    {
+                                        <i class="fas fa-star-half-alt" data-value="@i"></i>
+                                        continue;
+                                    }
+                                }
+
+                                if (isFilled)
+                                {
+                                    <i class="fas fa-star" data-value="@i"></i> <!-- Повна зірка -->
+                                }
+                                else
+                                {
+                                    <i class="far fa-star" data-value="@i"></i> <!-- Порожня зірка -->
+                                }
+                            }
+
+                            <span class="review-count">(@Model.Album.ReviewCount)</span>
+                        </div>
+
+
+                        <div class="form-group">
+                            <label>Коментар</label>
+                            <textarea name="Comment" class="form-control"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-success">Надіслати</button>
+                        <button type="button" class="btn btn-success @(Model.Album.Stock == 0 ? "disabled-btn" : "")"
+                            id="addToCart" @(Model.Album.Stock == 0 ? "disabled" : "") data-album-id="@Model.Album.Id"
+                            data-artist="@Model.Album.Artist.Name" data-title="@Model.Album.Title"
+                            data-price="@Model.Album.Price" data-image="@Url.Content(Model.Album.ImagePath)">
+                            Купити
+                        </button>
+                    </form>
+                </div>
             }
-        </ol>
-    </div>
+        </div>
 
-    <div class="reviews-section">
+        <div class="details-content">
+            <h3>Список треків</h3>
+            <ol class="track-list">
+                @foreach (var song in Model.Album.Songs)
+                {
+                    <li>
+                        <span class="track-title">@song.Title</span>
+                        <span class="track-duration">@song.Duration.ToString(@"mm\:ss")</span>
+                    </li>
+                }
+            </ol>
+        </div>
+
+        <div class="reviews-section">
             <h3>Відгуки</h3>
-
             @if (Model.Reviews.Any())
             {
-                 <ul class="review-list">
-                    @foreach (var review in Model.Reviews.OrderByDescending(r => r.CreatedAt))
+                <ul class="review-list">
+                    @foreach (var review in Model.Reviews.Where(r =>
+                                    !string.IsNullOrWhiteSpace(r.Comment)).OrderByDescending(r => r.CreatedAt))
                     {
                         <li>
-                            <strong>@review.AuthorName</strong> — ★ @review.Rating
-                            <br/>
+                            <strong>@review.AuthorName</strong>
+                            <br />
                             <small>@review.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</small>
-                               <p>@review.Comment</p>
+                            <p>@review.Comment</p>
                         </li>
                     }
                 </ul>
@@ -130,61 +142,88 @@
             {
                 <p>Поки що немає відгуків.</p>
             }
+        </div>
     </div>
 
-</div>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const minusBtn = document.querySelector('.btn-qty.minus');
+            const plusBtn = document.querySelector('.btn-qty.plus');
+            const qtyInput = document.querySelector('.qty-input');
+            const pricePerOne = parseFloat(document.getElementById('pricePerOne').textContent);
+            const totalPriceElement = document.getElementById('totalPrice');
 
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const minusBtn = document.querySelector('.btn-qty.minus');
-        const plusBtn = document.querySelector('.btn-qty.plus');
-        const qtyInput = document.querySelector('.qty-input');
-        const pricePerOne = parseFloat(document.getElementById('pricePerOne').textContent);
-        const totalPriceElement = document.getElementById('totalPrice');
-
-        function updateTotalPrice(qty) {
-            const totalPrice = (pricePerOne * qty).toFixed(2);
-            totalPriceElement.textContent = totalPrice;
-        }
-
-        minusBtn.addEventListener('click', () => {
-            let val = parseInt(qtyInput.value);
-            if (val > 1) {
-                val -= 1;
-                qtyInput.value = val;
-                updateTotalPrice(val);
+            function updateTotalPrice(qty) {
+                const totalPrice = (pricePerOne * qty).toFixed(2);
+                totalPriceElement.textContent = totalPrice;
             }
-        });
 
-        plusBtn.addEventListener('click', () => {
-            let val = parseInt(qtyInput.value);
-            val += 1;
-            qtyInput.value = val;
-            updateTotalPrice(val);
-        });
-
-        const addToCartBtn = document.getElementById('addToCart');
-        if (addToCartBtn) {
-            addToCartBtn.addEventListener('click', () => {
-                const id = parseInt(addToCartBtn.dataset.albumId);
-                const artist = addToCartBtn.dataset.artist;
-                const title = addToCartBtn.dataset.title;
-                const price = parseFloat(addToCartBtn.dataset.price);
-                const image = addToCartBtn.dataset.image;
-                const qty = parseInt(qtyInput.value);
-
-                let cart = JSON.parse(localStorage.getItem('cart')) || [];
-                let item = cart.find(i => i.id === id);
-
-                if (item) {
-                    item.qty += qty;
-                } else {
-                    cart.push({ id, artist, title, qty, price, image }); // Додаємо новий товар
+            minusBtn.addEventListener('click', () => {
+                let val = parseInt(qtyInput.value);
+                if (val > 1) {
+                    qtyInput.value = --val;
+                    updateTotalPrice(val);
                 }
-
-                localStorage.setItem('cart', JSON.stringify(cart)); // Зберігаємо кошик в localStorage
-                updateCartUI(); // Оновлюємо інтерфейс кошика
             });
-        }
-    });
-</script>
+
+            plusBtn.addEventListener('click', () => {
+                let val = parseInt(qtyInput.value);
+                qtyInput.value = ++val;
+                updateTotalPrice(val);
+            });
+
+            const addToCartBtn = document.getElementById('addToCart');
+            if (addToCartBtn) {
+                addToCartBtn.addEventListener('click', () => {
+                    const id = parseInt(addToCartBtn.dataset.albumId);
+                    const artist = addToCartBtn.dataset.artist;
+                    const title = addToCartBtn.dataset.title;
+                    const price = parseFloat(addToCartBtn.dataset.price);
+                    const image = addToCartBtn.dataset.image;
+                    const qty = parseInt(qtyInput.value);
+
+                    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+                    let item = cart.find(i => i.id === id);
+
+                    if (item) {
+                        item.qty += qty;
+                    } else {
+                        cart.push({ id, artist, title, qty, price, image });
+                    }
+
+                    localStorage.setItem('cart', JSON.stringify(cart));
+                    updateCartUI();
+                });
+            }
+
+            // Rating functionality
+            const ratingStars = document.querySelectorAll('.album-rating i');
+            ratingStars.forEach(star => {
+                star.addEventListener('click', () => {
+                    const rating = parseInt(star.getAttribute('data-value'));
+                    const albumId = @Model.Album.Id;
+
+                    fetch('/Shop/Albums/Rate', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            albumId: albumId,
+                            rating: rating
+                        })
+                    })
+                        .then(response => {
+                            if (response.ok) {
+                                location.reload();
+                            } else {
+                                alert('Помилка при оцінюванні.');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Помилка:', error);
+                        });
+                });
+            });
+        });
+    </script>
