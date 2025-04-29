@@ -1,9 +1,10 @@
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
-using System.Security.Claims;
 using VinylShop.Data;
+using VinylShop.Models;
 
 namespace VinylShop.Areas.Shop.Pages.Account
 {

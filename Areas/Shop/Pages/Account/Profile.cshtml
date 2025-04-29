@@ -32,8 +32,8 @@
         <div class="account-summary">
             <h2>Мій обліковий запис</h2>
             <p>
-                В особистому кабінеті ви можете переглядати історію замовлень, змінювати контактні дані,
-                оновлювати адресу доставки та іншу інформацію.
+                В особистому кабінеті ви можете переглядати історію замовлень, змінювати контактні дані та іншу
+                інформацію.
             </p>
         </div>
 
@@ -53,8 +53,55 @@
             </div>
         </div>
 
-        @await Html.PartialAsync("_OrderHistory", Model.Orders)
+        <div class="profile-main-info"></div>
+        <h3>Історія замовлень</h3>
+        <div class="info-table">
+            <div class="info-header">
+                <div>№ замовлення</div>
+                <div>Статус</div>
+                <div>Дата замовлення</div>
+                <div>Сума</div>
+            </div>
+            @if (Model.Orders.Any())
+            {
+                @foreach (var order in Model.Orders)
+                {
+                    <a href="/Shop/Account/History" class="info-row-link">
+                        <div class="info-row">
+                            <div class="order-number">@order.Id</div>
+                            <div>
+                                @switch (order.Status)
+                                {
+                                    case VinylShop.Models.Enums.OrderStatus.Очікування:
+                                        <span class="status-badge status-pending">Очікування</span>
+                                        break;
+                                    case VinylShop.Models.Enums.OrderStatus.Успішний:
+                                        <span class="status-badge status-success">Успішний</span>
+                                        break;
+                                    case VinylShop.Models.Enums.OrderStatus.Відхилений:
+                                        <span class="status-badge status-cancelled">Відхилений</span>
+                                        break;
+                                    default:
+                                        <span class="status-badge">@order.Status.ToString()</span>
+                                        break;
+                                }
+                            </div>
+                            <div>@order.OrderDate.ToLocalTime().ToString("dd.MM.yyyy")</div>
+                            <div>@order.TotalPrice.ToString("0.00") грн</div>
+                        </div>
+                    </a>
+                }
+            }
+            else
+            {
+                <div class="info-row">
+                    <div></div>
+                    <div class="no-orders" style="flex: 2; text-align: center;">У вас поки немає замовлень.</div>
+                    <div></div>
+                    <div></div>
+                </div>
+            }
 
+        </div>
     </section>
-
 </div>

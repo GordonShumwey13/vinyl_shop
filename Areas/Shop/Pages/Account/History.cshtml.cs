@@ -28,6 +28,9 @@ namespace VinylShop.Areas.Shop.Pages.Account
 
             Orders = await _context.Orders
                 .Include(o => o.Buyer)
+                .Include(o => o.Items)
+                    .ThenInclude(oi => oi.Album)
+                        .ThenInclude(a => a.Artist)
                 .Where(o => o.Buyer.UserId == userId)
                 .OrderByDescending(o => o.OrderDate)
                 .ToListAsync();

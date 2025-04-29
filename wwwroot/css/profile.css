@@ -160,6 +160,11 @@
     padding: 20px 0;
 }
 
+.order-number:hover {
+    transform: scale(1);
+    opacity: 0.754132;
+}
+
 .edit-link {
     color: #198754;
     text-decoration: none;

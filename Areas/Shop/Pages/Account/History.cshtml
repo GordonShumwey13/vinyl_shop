@@ -1,29 +1,15 @@
 @page
 @model VinylShop.Areas.Shop.Pages.Account.HistoryModel
+@using System.Text.Json
+
 @{
     ViewData["Title"] = "Історія замовлень";
 }
 
 <link rel="stylesheet" href="~/css/profile.css" />
+<link rel="stylesheet" href="~/css/order.css" />
 
 @await Html.PartialAsync("_Banner", (string)null)
-
-@if (TempData["Message"] != null)
-{
-    <div id="popup-message" class="popup-message">
-        @TempData["Message"]
-    </div>
-
-    <script>
-        setTimeout(() => {
-            const popup = document.getElementById('popup-message');
-            if (popup) {
-                popup.style.opacity = '0';
-                setTimeout(() => popup.remove(), 500);
-            }
-        }, 3000);
-    </script>
-}
 
 <div class="profile-wrapper">
 
@@ -35,8 +21,77 @@
             <h2>Історія замовлень</h2>
         </div>
 
-        @await Html.PartialAsync("_OrderHistory", Model.Orders)
+        @if (Model?.Orders?.Any() != true)
+        {
+            <p>У вас немає жодного замовлення.</p>
+        }
+        else
+        {
+            @foreach (var order in Model.Orders)
+            {
+                <div class="order-block">
+                    <h2 class="order-number">Замовлення #@order.Id від @order.OrderDate.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</h2>
 
+                    <div class="cart-table">
+                        @if (order.Items != null && order.Items.Any())
+                        {
+                            foreach (var item in order.Items)
+                            {
+                                if (item.Album != null)
+                                {
+                                    <div class="cart-item">
+                                        <img src="@item.Album.ImagePath" alt="@item.Album.Title" />
+                                        <div>
+                                            <a class="cart-item-title" href="/Shop/Albums/Details/@item.AlbumId">
+                                                @item.Album.Artist.Name - @item.Album.Title
+                                            </a>
+                                            <div class="cart-item-controls">
+                                                <div class="quantity-control">
+                                                    <span class="item-qty">Кількість: @item.Quantity</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="cart-item-price">@((item.Price * item.Quantity).ToString("F2")) грн.</div>
+                                    </div>
+                                }
+                            }
+                        }
+                    </div>
+
+                    <div class="order-summary">
+                        @{
+                            var finalPrice = order.Items?.Sum(i => i.Price * i.Quantity) ?? 0;
+                        }
+                        <div class="summary-line">
+                            <span class="label">Спосіб оплати:</span>
+                            <span class="value">@order.PaymentMethod</span>
+                        </div>
+                        <div class="summary-line">
+                            <span class="label">Статус:</span>
+                            <span class="value @GetStatusClass(order.Status)">
+                                @order.Status
+                            </span>
+                        </div>
+                        <div class="summary-line total">
+                            <span class="label">Разом:</span>
+                            <span class="value">@finalPrice.ToString("F2") грн.</span>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
     </section>
-
 </div>
+
+@functions {
+    private string GetStatusClass(VinylShop.Models.Enums.OrderStatus status)
+    {
+        return status switch
+        {
+            VinylShop.Models.Enums.OrderStatus.Очікування => "status-pending",
+            VinylShop.Models.Enums.OrderStatus.Успішний => "status-success",
+            VinylShop.Models.Enums.OrderStatus.Відхилений => "status-cancelled",
+            _ => ""
+        };
+    }
+}

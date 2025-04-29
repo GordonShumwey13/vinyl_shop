@@ -21,6 +21,13 @@ body {
     object-fit: cover;
 }
 
+.order-block {
+    background: #fff;
+    padding: 10px;
+    box-shadow: 0 2px rgba(0, 0, 0, 0.1);
+    margin: 0 0 10px 0;
+}
+
 .order-container {
     max-width: 1000px;
     margin: -300px auto 40px auto;
@@ -121,21 +128,25 @@ body {
     display: flex;
     justify-content: space-between;
     width: 100%;
-    max-width: 250px;
+    max-width: 270px;
     padding: 5px 0;
     font-size: 1rem;
+    column-gap: 20px;
 }
 
 .summary-line .label {
     text-align: left;
     font-weight: 600;
     color: #333;
+
 }
 
 .summary-line .value {
-    text-align: right;
+    border-radius: 10px;
+    text-align: center;
     font-weight: 500;
     min-width: 120px;
+    padding: 1px;
 }
 
 .summary-line.total .label,
