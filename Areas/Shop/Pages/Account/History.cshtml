@@ -68,9 +68,7 @@
                         </div>
                         <div class="summary-line">
                             <span class="label">Статус:</span>
-                            <span class="value @GetStatusClass(order.Status)">
-                                @order.Status
-                            </span>
+                            <span class="value"><order-status status="@order.Status"></order-status></span>
                         </div>
                         <div class="summary-line total">
                             <span class="label">Разом:</span>
@@ -83,7 +81,7 @@
     </section>
 </div>
 
-@functions {
+@* @functions {
     private string GetStatusClass(VinylShop.Models.Enums.OrderStatus status)
     {
         return status switch
@@ -94,4 +92,4 @@
             _ => ""
         };
     }
-}
+} *@

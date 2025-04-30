@@ -62,7 +62,7 @@ namespace VinylShop.Areas.Shop.Pages.Albums
             return Page();
         }
 
-        // Обробник тільки для форми "Залишити коментар" (без рейтингу по кліку)
+        // Обробник для форми "Залишити коментар"
         public async Task<IActionResult> OnPostSubmitReviewAsync()
         {
             var albumIdStr = Request.Form["AlbumId"];
@@ -85,7 +85,7 @@ namespace VinylShop.Areas.Shop.Pages.Albums
                 AlbumId = albumId,
                 AuthorName = authorName,
                 Comment = comment,
-                Rating = 0, // Рейтинг 0, бо це просто коментар, без натискання на зірку
+                Rating = 0,
                 CreatedAt = DateTime.UtcNow
             };
 

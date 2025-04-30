@@ -51,13 +51,11 @@ namespace VinylShop.Areas.Shop.Pages.Albums
 
             if (existingReview != null)
             {
-                // Користувач вже оцінював — оновлюємо його рейтинг
                 existingReview.Rating = request.Rating;
                 existingReview.CreatedAt = DateTime.UtcNow;
             }
             else
             {
-                // Користувач ще не оцінював — додаємо новий відгук
                 var review = new Review
                 {
                     AlbumId = album.Id,
@@ -70,7 +68,7 @@ namespace VinylShop.Areas.Shop.Pages.Albums
 
             await _context.SaveChangesAsync();
 
-            // Після додавання/оновлення — перераховуємо середній рейтинг
+            // Перераховуємо середній рейтинг
             album = await _context.Albums.Include(a => a.Reviews).FirstOrDefaultAsync(a => a.Id == request.AlbumId);
 
             album.Rating = album.Reviews.Any() ? Math.Round(album.Reviews.Average(r => r.Rating), 1) : 0;

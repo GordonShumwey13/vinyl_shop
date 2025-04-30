@@ -70,21 +70,7 @@
                         <div class="info-row">
                             <div class="order-number">@order.Id</div>
                             <div>
-                                @switch (order.Status)
-                                {
-                                    case VinylShop.Models.Enums.OrderStatus.Очікування:
-                                        <span class="status-badge status-pending">Очікування</span>
-                                        break;
-                                    case VinylShop.Models.Enums.OrderStatus.Успішний:
-                                        <span class="status-badge status-success">Успішний</span>
-                                        break;
-                                    case VinylShop.Models.Enums.OrderStatus.Відхилений:
-                                        <span class="status-badge status-cancelled">Відхилений</span>
-                                        break;
-                                    default:
-                                        <span class="status-badge">@order.Status.ToString()</span>
-                                        break;
-                                }
+                                <order-status status="@order.Status"></order-status>
                             </div>
                             <div>@order.OrderDate.ToLocalTime().ToString("dd.MM.yyyy")</div>
                             <div>@order.TotalPrice.ToString("0.00") грн</div>
