@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using VinylShop.Enums;
 
 namespace VinylShop.Models
 {
@@ -11,8 +12,8 @@ namespace VinylShop.Models
         public int UserId { get; set; }
 
         public User User { get; set; }
-        
-        public string RoleName { get; set; }
+
+        public UserRoleEnum RoleName { get; set; }
 
     }
 }

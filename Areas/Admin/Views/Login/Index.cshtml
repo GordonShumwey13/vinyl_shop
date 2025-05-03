@@ -1,0 +1,23 @@
+@{
+    ViewData["Title"] = "Вхід в адмінку";
+}
+
+<link rel="stylesheet" href="~/css/album.css" asp-append-version="true" />
+
+<h2>@ViewData["Title"]</h2>
+
+<form asp-action="Index" method="post">
+    <div asp-validation-summary="All" class="text-danger"></div>
+
+    <div class="form-group">
+        <label for="email">E-Mail</label>
+        <input type="email" name="email" class="form-control" required />
+    </div>
+
+    <div class="form-group">
+        <label for="password">Пароль</label>
+        <input type="password" name="password" class="form-control" required />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Увійти</button>
+</form>

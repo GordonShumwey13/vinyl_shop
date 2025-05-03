@@ -1,10 +1,12 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using VinylShop.Data;
+using VinylShop.Enums;
 using VinylShop.Models;
 
 namespace VinylShop.Areas.Admin.Controllers
-{   
+{
     [Area("Admin")]
     public class ArtistsController : Controller
     {
@@ -35,23 +37,7 @@ namespace VinylShop.Areas.Admin.Controllers
             return View(artist);
         }
 
-        private async Task<string?> UploadImageAsync(IFormFile? imageFile)
-        {
-            if (imageFile == null || imageFile.Length == 0) return null;
-
-            var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/img/artists");
-            var uniqueFileName = $"{Guid.NewGuid()}_{Path.GetFileName(imageFile.FileName)}";
-            var filePath = Path.Combine(uploadsFolder, uniqueFileName);
-
-            using (var fileStream = new FileStream(filePath, FileMode.Create))
-            {
-                await imageFile.CopyToAsync(fileStream);
-            }
-
-            return "/img/artists/" + uniqueFileName;
-        }
-
-        // GET: Artists/Edit/
+        [Authorize(Roles = $"{nameof(UserRoleEnum.Admin)},{nameof(UserRoleEnum.SalesManager)}")]
         public async Task<IActionResult> EditArtist(int? id)
         {
             if (id == null) return NotFound();
@@ -62,7 +48,7 @@ namespace VinylShop.Areas.Admin.Controllers
             return View("EditArtist", artist);
         }
 
-        // POST: Artists/Edit/
+        [Authorize(Roles = $"{nameof(UserRoleEnum.Admin)},{nameof(UserRoleEnum.SalesManager)}")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditArtist(int id, [Bind("Id,Name,Biography,ImagePath")] Artist artist, IFormFile? imageFile)
@@ -77,6 +63,7 @@ namespace VinylShop.Areas.Admin.Controllers
                     {
                         artist.ImagePath = await UploadImageAsync(imageFile);
                     }
+
                     _context.Update(artist);
                     await _context.SaveChangesAsync();
                 }
@@ -87,7 +74,8 @@ namespace VinylShop.Areas.Admin.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View("EditArtis", artist);
+
+            return View("EditArtist", artist);
         }
 
         private bool ArtistExists(int id)
@@ -95,5 +83,22 @@ namespace VinylShop.Areas.Admin.Controllers
             return _context.Artists.Any(e => e.Id == id);
         }
 
+        private async Task<string?> UploadImageAsync(IFormFile? imageFile)
+        {
+            if (imageFile == null || imageFile.Length == 0) return null;
+
+            var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/img/artists");
+            Directory.CreateDirectory(uploadsFolder);
+
+            var uniqueFileName = $"{Guid.NewGuid()}_{Path.GetFileName(imageFile.FileName)}";
+            var filePath = Path.Combine(uploadsFolder, uniqueFileName);
+
+            using (var fileStream = new FileStream(filePath, FileMode.Create))
+            {
+                await imageFile.CopyToAsync(fileStream);
+            }
+
+            return "/img/artists/" + uniqueFileName;
+        }
     }
 }

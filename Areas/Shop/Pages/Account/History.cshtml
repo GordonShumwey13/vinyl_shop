@@ -23,7 +23,7 @@
 
         @if (Model?.Orders?.Any() != true)
         {
-            <p>У вас немає жодного замовлення.</p>
+            <p>У вас немає жодного замовлення</p>
         }
         else
         {
@@ -80,16 +80,3 @@
         }
     </section>
 </div>
-
-@* @functions {
-    private string GetStatusClass(VinylShop.Models.Enums.OrderStatus status)
-    {
-        return status switch
-        {
-            VinylShop.Models.Enums.OrderStatus.Очікування => "status-pending",
-            VinylShop.Models.Enums.OrderStatus.Успішний => "status-success",
-            VinylShop.Models.Enums.OrderStatus.Відхилений => "status-cancelled",
-            _ => ""
-        };
-    }
-} *@

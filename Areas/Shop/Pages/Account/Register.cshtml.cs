@@ -1,13 +1,13 @@
 #nullable disable
 
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.ComponentModel.DataAnnotations;
-using VinylShop.Data;
-using VinylShop.Models;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using System.Security.Claims;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+using VinylShop.Data;
+using VinylShop.Models;
 using VinylShop.Utils;
 
 namespace VinylShop.Pages.Account
@@ -91,7 +91,7 @@ namespace VinylShop.Pages.Account
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
 
             ViewData["RegistrationSuccess"] = true;
-            return Page();
+            return RedirectToPage("/Albums/Albums");
         }
     }
 }

@@ -1,0 +1,54 @@
+@model VinylShop.Models.OrderEditDto
+@using System.Linq
+
+@{
+    ViewData["Title"] = "Edit Order";
+}
+
+<link rel="stylesheet" href="~/css/album.css" asp-append-version="true" />
+
+<h1>Edit Order</h1>
+
+<form asp-action="Edit" method="post">
+    <input type="hidden" asp-for="Id" />
+
+    <div class="form-group">
+        <label>Address</label>
+        <input asp-for="Address" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label>City</label>
+        <input asp-for="City" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label>Phone</label>
+        <input asp-for="Phone" class="form-control" />
+    </div>
+
+    <h4>Items</h4>
+    <div id="itemsContainer">
+        @for (int i = 0; i < Model.Items.Count; i++)
+        {
+            var item = Model.Items[i];
+            <div class="form-group item-entry">
+                <input type="hidden" asp-for="Items[i].Id" />
+                <input type="hidden" asp-for="Items[i].AlbumId" />
+
+                <label>@item.ArtistName - @item.AlbumTitle</label>
+
+                <label>Quantity</label>
+                <input asp-for="Items[i].Quantity" class="form-control" />
+
+                <button type="submit" formaction="@Url.Action("RemoveItem", "Orders", new { area = "Admin" })"
+                    formmethod="post" name="itemId" value="@item.Id" class="btn btn-danger btn-sm"
+                    onclick="return confirm('Are you sure you want to remove this item?');">
+                    Remove
+                </button>
+            </div>
+        }
+    </div>
+
+    <button type="submit" class="btn btn-primary">Save</button>
+</form>

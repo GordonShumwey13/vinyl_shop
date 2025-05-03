@@ -6,10 +6,37 @@
 
 <link rel="stylesheet" href="~/css/album.css" asp-append-version="true" />
 
-<h1 class="mb-4">Vinyl Shop</h1>
+<div class="top-bar">
+    <h1 class="page-title">Vinyl Shop</h1>
 
-<div class="mb-3">
+    <div class="auth-buttons">
+        @if (User.Identity.IsAuthenticated)
+        {
+            <span class="user-name">👋 @User.Identity.Name</span>
+            <a asp-area="Admin" asp-controller="Login" asp-action="Logout" class="btn btn-primary">
+                Logout
+            </a>
+        }
+        else
+        {
+
+            <a asp-area="Admin" asp-controller="Login" asp-action="Index" class="btn btn-primary">
+                Login
+            </a>
+        }
+        @if (User.IsInRole("Admin"))
+        {
+            <a asp-area="Admin" asp-controller="User" asp-action="Index" class="btn btn-primary">
+                Manage Users
+            </a>
+        }
+    </div>
+</div>
+
+<div>
     <a asp-action="Create" class="btn btn-primary">Add New Album</a>
+    <a asp-controller="Orders" asp-action="Index" class="btn btn-primary">Orders</a>
+
 </div>
 
 <table class="table">
@@ -48,9 +75,13 @@
                 </td>
                 <td>
                     <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-primary action-btn">Edit</a>
-                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-delete action-btn">Delete</a>
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-delete action-btn">Delete</a>
+                    }
                     <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-secondary action-btn">Details Album</a>
-                    <a asp-area="Admin" asp-controller="Artists" asp-action="Details" asp-route-id="@item.Artist.Id" class="btn btn-secondary action-btn">Details Artist</a>
+                    <a asp-area="Admin" asp-controller="Artists" asp-action="Details" asp-route-id="@item.Artist.Id"
+                        class="btn btn-secondary action-btn">Details Artist</a>
                 </td>
             </tr>
         }

@@ -70,7 +70,7 @@
                         <div class="info-row">
                             <div class="order-number">@order.Id</div>
                             <div>
-                                <order-status status="@order.Status"></order-status>
+                                <span class="value"><order-status status="@order.Status"></order-status></span>
                             </div>
                             <div>@order.OrderDate.ToLocalTime().ToString("dd.MM.yyyy")</div>
                             <div>@order.TotalPrice.ToString("0.00") грн</div>
