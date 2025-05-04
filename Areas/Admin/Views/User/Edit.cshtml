@@ -1,4 +1,4 @@
-@model VinylShop.Models.User
+@model VinylShop.Models.UserAdmin
 
 @{
     ViewData["Title"] = "Edit User";
@@ -15,17 +15,6 @@
         <label>Email</label>
         <input type="email" name="email" class="form-control" value="@Model.Email" required />
     </div>
-
-    <div class="form-group">
-        <label>First Name</label>
-        <input type="text" name="firstName" class="form-control" value="@Model.FirstName" required />
-    </div>
-
-    <div class="form-group">
-        <label>Last Name</label>
-        <input type="text" name="lastName" class="form-control" value="@Model.LastName" required />
-    </div>
-
     <div class="form-group">
         <label>Password</label>
         <input type="password" name="password" class="form-control" />

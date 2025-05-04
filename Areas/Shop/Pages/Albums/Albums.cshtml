@@ -31,13 +31,8 @@
             </form>
 
             <h4>Артисти</h4>
-            <ul class="artist-filter">
-                @foreach (var artist in Model.Albums.Select(a => a.Artist).Distinct().OrderBy(artist => artist.Name))
-                {
-                    <li>
-                        <a asp-area="Shop" asp-page="/Artists/Artist" asp-route-id="@artist.Id">@artist.Name</a>
-                    </li>
-                }
+            <ul class="artist-filter" id="artistList">
+                <li>Завантаження...</li>
             </ul>
         </div>
 
@@ -97,15 +92,15 @@
 
                             @for (int i = 0; i < fullStars; i++)
                             {
-                                <i class="fas fa-star"></i> <!-- Повна зірка -->
+                                <i class="fas fa-star"></i>
                             }
                             @if (halfStar)
                             {
-                                <i class="fas fa-star-half-alt"></i> <!-- Половинка зірки -->
+                                <i class="fas fa-star-half-alt"></i>
                             }
                             @for (int i = 0; i < emptyStars; i++)
                             {
-                                <i class="far fa-star"></i> <!-- Порожня зірка -->
+                                <i class="far fa-star"></i>
                             }
 
                             <span class="review-count">(@album.ReviewCount)</span>
@@ -137,9 +132,36 @@
     </div>
 </div>
 
-
 <script>
     document.addEventListener('DOMContentLoaded', () => {
+        // Завантаження артистів через API
+        fetch('/api/shopapi/artists')
+            .then(res => res.json())
+            .then(artists => {
+                const artistList = document.getElementById('artistList');
+                artistList.innerHTML = '';
+
+                if (artists.length === 0) {
+                    artistList.innerHTML = '<li>Артисти відсутні</li>';
+                } else {
+                    artists.sort((a, b) => a.name.localeCompare(b.name));
+                    artists.forEach(artist => {
+                        const li = document.createElement('li');
+                        const a = document.createElement('a');
+                        a.href = `/Shop/Artists/Artist/${artist.id}`;
+                        a.textContent = artist.name;
+                        li.appendChild(a);
+                        artistList.appendChild(li);
+                    });
+                }
+            })
+            .catch(err => {
+                console.error('Помилка завантаження артистів:', err);
+                const artistList = document.getElementById('artistList');
+                artistList.innerHTML = '<li>Помилка завантаження</li>';
+            });
+
+        // Оновлення ціни при зміні кількості
         function updateAlbumPrice(priceBlock) {
             const qty = parseInt(priceBlock.querySelector('.qty-input').value);
             const basePrice = parseFloat(priceBlock.querySelector('.add-to-cart-btn').dataset.price);
@@ -194,6 +216,7 @@
         updateCartUI();
     });
 
+    // Пошук
     document.addEventListener("DOMContentLoaded", () => {
         const input = document.getElementById("searchInput");
         const dropdown = document.getElementById("searchDropdown");
@@ -231,7 +254,7 @@
 
                         dropdown.style.display = "block";
                     });
-            }, 300); // затримка 300мс
+            }, 300);
         });
 
         document.addEventListener("click", e => {
