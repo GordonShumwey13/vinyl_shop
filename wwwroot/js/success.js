@@ -1,0 +1,14 @@
+
+    document.addEventListener('DOMContentLoaded', function () {
+        // Очистити кеш
+        localStorage.removeItem("cart");
+
+        // Оновити значення у хедері
+        const cartCount = document.querySelector('.cart-count');
+        const cartTotal = document.querySelector('.cart-total'); // або що там у тебе
+
+        if (cartCount) cartCount.textContent = '0';
+        if (cartTotal) cartTotal.textContent = '0.00 грн.';
+
+        console.log("🧼 Кошик очищено та інтерфейс оновлено.");
+    });
