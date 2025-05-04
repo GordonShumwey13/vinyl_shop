@@ -106,7 +106,12 @@ img {
 }
 
 .inline-form {
-    display: inline;
+    display: inline-block;
+    margin-right: 5px;
+}
+
+td {
+    white-space: nowrap;
 }
 
 .details {
