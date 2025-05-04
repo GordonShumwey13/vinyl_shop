@@ -1,5 +1,6 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
@@ -8,6 +9,7 @@ using VinylShop.Models;
 
 namespace VinylShop.Areas.Shop.Pages.Account
 {
+    [Authorize(AuthenticationSchemes = "ShopAuth")]
     public class ProfileModel : PageModel
     {
         private readonly VinylShopContext _context;
@@ -52,7 +54,7 @@ namespace VinylShop.Areas.Shop.Pages.Account
 
         public async Task<IActionResult> OnPostLogoutAsync()
         {
-            await HttpContext.SignOutAsync();
+            await HttpContext.SignOutAsync("ShopAuth");
             return RedirectToPage("/Home/Index", new { area = "Shop" });
         }
     }

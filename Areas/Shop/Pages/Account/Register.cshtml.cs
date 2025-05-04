@@ -85,13 +85,13 @@ namespace VinylShop.Pages.Account
                 new Claim(ClaimTypes.Name, user.Email)
             };
 
-            var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+            var identity = new ClaimsIdentity(claims, "ShopAuth");
             var principal = new ClaimsPrincipal(identity);
 
-            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
+            await HttpContext.SignInAsync("ShopAuth", principal);
 
-            ViewData["RegistrationSuccess"] = true;
-            return RedirectToPage("/Albums/Albums");
+            // ViewData["RegistrationSuccess"] = true;
+            return Redirect("/Shop/Account/Profile");
         }
     }
 }

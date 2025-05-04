@@ -1,4 +1,4 @@
-@model List<VinylShop.Models.User>
+@model List<VinylShop.Models.UserAdmin>
 
 @{
     ViewData["Title"] = "Users";
@@ -24,7 +24,6 @@
         {
             <tr>
                 <td>@user.Email</td>
-                <td>@user.FirstName @user.LastName</td>
                 <td>
                     @string.Join(", ", user.Roles.Select(r => r.RoleName.ToString()))
                 </td>

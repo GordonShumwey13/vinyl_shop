@@ -1,11 +1,11 @@
 #nullable disable
 
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 using VinylShop.Data;
 using VinylShop.Utils;
 
@@ -65,15 +65,19 @@ namespace VinylShop.Pages.Account
                 new Claim(ClaimTypes.Name, user.Email)
             };
 
-            var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+            var identity = new ClaimsIdentity(claims, "ShopAuth");
             var principal = new ClaimsPrincipal(identity);
 
-            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
+            await HttpContext.SignInAsync("ShopAuth", principal);
 
             _logger.LogInformation("Користувач успішно увійшов.");
 
-            ViewData["LoginSuccess"] = true;
-            return Page();
+            if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl) && !returnUrl.Contains("/Account/Login"))
+            {
+                return Redirect(returnUrl);
+            }
+            return RedirectToPage("/Albums/Albums", new { area = "Shop" });
+
         }
     }
 }

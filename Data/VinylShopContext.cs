@@ -5,9 +5,7 @@ namespace VinylShop.Data
 {
     public class VinylShopContext : DbContext
     {
-        public VinylShopContext(DbContextOptions<VinylShopContext> options) : base(options)
-        {
-        }
+        public VinylShopContext(DbContextOptions<VinylShopContext> options) : base(options) { }
 
         public DbSet<Album> Albums { get; set; }
         public DbSet<Artist> Artists { get; set; }
@@ -18,6 +16,7 @@ namespace VinylShop.Data
         public DbSet<OrderItem> OrderItems { get; set; }
         public DbSet<Review> Reviews { get; set; } = null!;
         public DbSet<User> Users { get; set; }
+        public DbSet<UserAdmin> UserAdmins { get; set; }
         public DbSet<UserRole> UserRoles { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -37,13 +36,18 @@ namespace VinylShop.Data
                 .HasIndex(u => u.Email)
                 .IsUnique();
 
+            modelBuilder.Entity<UserAdmin>()
+                .ToTable("UserAdmin")
+                .HasIndex(u => u.Email)
+                .IsUnique();
+
             modelBuilder.Entity<UserRole>()
                 .ToTable("UserRole");
 
             modelBuilder.Entity<UserRole>()
-                .HasOne(ur => ur.User)
+                .HasOne(ur => ur.UserAdmin)
                 .WithMany(u => u.Roles)
-                .HasForeignKey(ur => ur.UserId);
+                .HasForeignKey(ur => ur.UserAdminId);
         }
     }
 }

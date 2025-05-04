@@ -10,6 +10,7 @@ using VinylShop.Models;
 namespace VinylShop.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(AuthenticationSchemes = "AdminAuth")]
     public class AlbumsController : Controller
     {
         private readonly VinylShopContext _context;

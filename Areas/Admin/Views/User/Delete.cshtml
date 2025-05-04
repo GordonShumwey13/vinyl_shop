@@ -1,4 +1,4 @@
-@model VinylShop.Models.User
+@model VinylShop.Models.UserAdmin
 
 @{
     ViewData["Title"] = "Delete User";
@@ -14,7 +14,6 @@
 
     <div class="user-info">
         <p><strong>Email:</strong> @Model.Email</p>
-        <p><strong>Name:</strong> @Model.FirstName @Model.LastName</p>
         <p><strong>Roles:</strong> @string.Join(", ", Model.Roles.Select(r => r.RoleName.ToString()))</p>
     </div>
 

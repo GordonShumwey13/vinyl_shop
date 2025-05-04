@@ -1,7 +1,7 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using VinylShop.Data;
 using VinylShop.Models;
 using VinylShop.Models.Enums;
@@ -9,6 +9,7 @@ using VinylShop.Models.Enums;
 namespace VinylShop.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(AuthenticationSchemes = "AdminAuth")]
     public class OrdersController : Controller
     {
         private readonly VinylShopContext _context;

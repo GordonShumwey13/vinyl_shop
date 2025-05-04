@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
@@ -6,6 +7,7 @@ using VinylShop.Models;
 
 namespace VinylShop.Areas.Shop.Pages.Account
 {
+    [Authorize(AuthenticationSchemes = "ShopAuth")]
     public class HistoryModel : PageModel
     {
         private readonly VinylShopContext _context;
@@ -19,12 +21,11 @@ namespace VinylShop.Areas.Shop.Pages.Account
 
         public async Task<IActionResult> OnGetAsync()
         {
-            if (!User.Identity.IsAuthenticated)
-                return RedirectToPage("/Account/Login");
-
             var userIdStr = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
             if (!int.TryParse(userIdStr, out var userId))
+            {
                 return RedirectToPage("/Account/Login");
+            }
 
             Orders = await _context.Orders
                 .Include(o => o.Buyer)

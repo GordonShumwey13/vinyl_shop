@@ -1,6 +1,5 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using VinylShop.Data;
@@ -25,22 +24,22 @@ namespace VinylShop.Areas.Admin.Controllers
         [HttpPost]
         public async Task<IActionResult> Index(string email, string password)
         {
-            var user = await _context.Users
+            var userAdmin = await _context.UserAdmins
                 .Include(u => u.Roles)
                 .FirstOrDefaultAsync(u => u.Email == email);
 
-            if (user != null && BCrypt.Net.BCrypt.Verify(password, user.PasswordHash))
+            if (userAdmin != null && BCrypt.Net.BCrypt.Verify(password, userAdmin.PasswordHash))
             {
                 var claims = new List<Claim>
                 {
-                    new Claim(ClaimTypes.Name, user.Email),
-                    new Claim(ClaimTypes.Role, user.Roles.First().RoleName.ToString())
+                    new Claim(ClaimTypes.Name, userAdmin.Email),
+                    new Claim(ClaimTypes.Role, userAdmin.Roles.First().RoleName.ToString())
                 };
 
-                var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                var identity = new ClaimsIdentity(claims, "AdminAuth", ClaimTypes.Name, ClaimTypes.Role);
                 var principal = new ClaimsPrincipal(identity);
 
-                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
+                await HttpContext.SignInAsync("AdminAuth", principal);
 
                 return RedirectToAction("Index", "Albums", new { area = "Admin" });
             }
@@ -51,7 +50,7 @@ namespace VinylShop.Areas.Admin.Controllers
 
         public async Task<IActionResult> Logout()
         {
-            await HttpContext.SignOutAsync();
+            await HttpContext.SignOutAsync("AdminAuth");
             return RedirectToAction("Index", "Albums", new { area = "Admin" });
         }
     }

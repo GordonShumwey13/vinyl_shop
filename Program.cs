@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
-using VinylShop.Models;
 using VinylShop.Data;
+using VinylShop.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,11 +15,23 @@ builder.Services.AddDbContext<VinylShopContext>(options =>
     )
 );
 
-builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-    .AddCookie(options =>
-    {
-        options.LoginPath = "/Shop/Account/Login";
-    });
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultScheme = "ShopAuth"; // За замовчуванням для Shop
+})
+.AddCookie("ShopAuth", options =>
+{
+    options.LoginPath = "/Account/Login";
+    options.AccessDeniedPath = "/Account/AccessDenied";
+    options.Cookie.Name = "ShopAuthCookie";
+})
+.AddCookie("AdminAuth", options =>
+{
+    options.LoginPath = "/Admin/Login/Index";
+    options.AccessDeniedPath = "/Admin/Login/AccessDenied";
+    options.Cookie.Name = "AdminAuthCookie";
+});
+
 
 var app = builder.Build();
 

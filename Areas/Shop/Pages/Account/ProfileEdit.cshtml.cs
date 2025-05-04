@@ -1,15 +1,15 @@
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.AspNetCore.Authorization;
 using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 using VinylShop.Data;
-using VinylShop.Utils;
 using VinylShop.Models;
+using VinylShop.Utils;
 
 namespace VinylShop.Areas.Shop.Pages.Account
 {
-    [Authorize]
+    [Authorize(AuthenticationSchemes = "ShopAuth")]
     public class ProfileEditModel : PageModel
     {
         private readonly VinylShopContext _context;

@@ -9,9 +9,9 @@ namespace VinylShop.Models
         public int Id { get; set; }
 
         [Required]
-        public int UserId { get; set; }
+        public int UserAdminId { get; set; }
 
-        public User User { get; set; }
+        public UserAdmin UserAdmin { get; set; }
 
         public UserRoleEnum RoleName { get; set; }
 

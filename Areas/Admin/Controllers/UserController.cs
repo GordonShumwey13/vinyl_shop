@@ -9,7 +9,7 @@ using VinylShop.Models;
 namespace VinylShop.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    [Authorize(Roles = nameof(UserRoleEnum.Admin))]
+    [Authorize(AuthenticationSchemes = "AdminAuth")]
     public class UserController : Controller
     {
         private readonly VinylShopContext _context;
@@ -22,7 +22,7 @@ namespace VinylShop.Areas.Admin.Controllers
         // GET: Admin/User
         public async Task<IActionResult> Index()
         {
-            var users = await _context.Users
+            var users = await _context.UserAdmins
                 .Include(u => u.Roles)
                 .ToListAsync();
 
@@ -39,21 +39,18 @@ namespace VinylShop.Areas.Admin.Controllers
         // POST: Admin/User/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(string email, string password, string firstName, string lastName, UserRoleEnum role)
+        public async Task<IActionResult> Create(string email, string password, UserRoleEnum role)
         {
-            if (_context.Users.Any(u => u.Email == email))
+            if (_context.UserAdmins.Any(u => u.Email == email))
             {
                 ModelState.AddModelError("", "Такий користувач вже існує");
                 ViewBag.Roles = new SelectList(Enum.GetValues(typeof(UserRoleEnum)));
                 return View();
             }
 
-            var user = new User
+            var user = new UserAdmin
             {
                 Email = email,
-                FirstName = firstName,
-                LastName = lastName,
-                PhoneNumber = "",
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword(password),
                 Roles = new List<UserRole>
                 {
@@ -61,7 +58,7 @@ namespace VinylShop.Areas.Admin.Controllers
                 }
             };
 
-            _context.Users.Add(user);
+            _context.UserAdmins.Add(user);
             await _context.SaveChangesAsync();
 
             return RedirectToAction(nameof(Index));
@@ -72,7 +69,7 @@ namespace VinylShop.Areas.Admin.Controllers
         {
             if (id == null) return NotFound();
 
-            var user = await _context.Users
+            var user = await _context.UserAdmins
                 .Include(u => u.Roles)
                 .FirstOrDefaultAsync(u => u.Id == id);
 
@@ -86,17 +83,15 @@ namespace VinylShop.Areas.Admin.Controllers
         // POST: Admin/User/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, string email, string firstName, string lastName, string password, UserRoleEnum role)
+        public async Task<IActionResult> Edit(int id, string email, string password, UserRoleEnum role)
         {
-            var user = await _context.Users
+            var user = await _context.UserAdmins
                 .Include(u => u.Roles)
                 .FirstOrDefaultAsync(u => u.Id == id);
 
             if (user == null) return NotFound();
 
             user.Email = email;
-            user.FirstName = firstName;
-            user.LastName = lastName;
             if (!string.IsNullOrWhiteSpace(password))
             {
                 user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(password);
@@ -115,7 +110,7 @@ namespace VinylShop.Areas.Admin.Controllers
         {
             if (id == null) return NotFound();
 
-            var user = await _context.Users
+            var user = await _context.UserAdmins
                 .Include(u => u.Roles)
                 .FirstOrDefaultAsync(u => u.Id == id);
 
@@ -129,10 +124,10 @@ namespace VinylShop.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var user = await _context.Users.FindAsync(id);
+            var user = await _context.UserAdmins.FindAsync(id);
             if (user != null)
             {
-                _context.Users.Remove(user);
+                _context.UserAdmins.Remove(user);
                 await _context.SaveChangesAsync();
             }
 

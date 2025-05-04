@@ -24,7 +24,5 @@ namespace VinylShop.Models
 
         [Required]
         public string PasswordHash { get; set; }
-
-        public ICollection<UserRole> Roles { get; set; }
     }
 }

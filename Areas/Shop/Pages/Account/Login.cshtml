@@ -13,12 +13,15 @@
     </div>
 
     <form method="post" class="auth-form">
+        @Html.AntiForgeryToken()
         <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
 
-        <input asp-for="Input.Email" class="auth-input" placeholder="E-Mail" autocomplete="username" aria-required="true" />
+        <input asp-for="Input.Email" class="auth-input" placeholder="E-Mail" autocomplete="username"
+            aria-required="true" />
         <span asp-validation-for="Input.Email" class="text-danger"></span>
 
-        <input asp-for="Input.Password" class="auth-input" placeholder="Пароль" autocomplete="current-password" aria-required="true" />
+        <input asp-for="Input.Password" class="auth-input" placeholder="Пароль" autocomplete="current-password"
+            aria-required="true" />
         <span asp-validation-for="Input.Password" class="text-danger"></span>
 
         <div class="auth-links">
@@ -31,11 +34,12 @@
 
 @section Scripts {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"
-            integrity="sha512-FOs0K8PStFQ0U0x3Jg78SnpX+L0PL5nIEmnwvUT8KynOCk+b+Z2vPMZ8ikghAbO3VmkkfIVM36qfK2ZtGkL2UQ=="
-            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate-unobtrusive/4.0.0/jquery.validate.unobtrusive.min.js"
-            integrity="sha512-kV4uLHE/VpNZZUgHszTgURzWH2N3Jq3S0dnzWiPUjeoY7k7h/d9JtfvnpnK0uQAtWZkVcY6Z9IH/MpQ7+R4dlg=="
-            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        integrity="sha512-FOs0K8PStFQ0U0x3Jg78SnpX+L0PL5nIEmnwvUT8KynOCk+b+Z2vPMZ8ikghAbO3VmkkfIVM36qfK2ZtGkL2UQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script
+        src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate-unobtrusive/4.0.0/jquery.validate.unobtrusive.min.js"
+        integrity="sha512-kV4uLHE/VpNZZUgHszTgURzWH2N3Jq3S0dnzWiPUjeoY7k7h/d9JtfvnpnK0uQAtWZkVcY6Z9IH/MpQ7+R4dlg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
     @if (ViewData["LoginSuccess"] as bool? == true)
     {
