@@ -17,17 +17,17 @@ namespace VinylShop.TagHelpers
 
         private string GetClass(OrderStatus status) => status switch
         {
-            OrderStatus.Очікування => "status-pending",
-            OrderStatus.Успішний => "status-success",
-            OrderStatus.Відхилений => "status-cancelled",
+            OrderStatus.Pending => "status-pending",
+            OrderStatus.Success => "status-success",
+            OrderStatus.Declined => "status-cancelled",
             _ => ""
         };
 
         private string GetText(OrderStatus status) => status switch
         {
-            OrderStatus.Очікування => "Очікування",
-            OrderStatus.Успішний => "Успішний",
-            OrderStatus.Відхилений => "Відхилений",
+            OrderStatus.Pending => "Очікування",
+            OrderStatus.Success => "Успішний",
+            OrderStatus.Declined => "Відхилений",
             _ => status.ToString()
         };
     }

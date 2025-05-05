@@ -10,7 +10,7 @@ namespace VinylShop.Models
         public int Id { get; set; }
 
         [Required]
-        public OrderStatus Status { get; set; } = OrderStatus.Очікування;
+        public OrderStatus Status { get; set; } = OrderStatus.Pending;
 
         [Required]
         public int BuyerId { get; set; }

@@ -14,7 +14,6 @@
     <thead>
         <tr>
             <th>Email</th>
-            <th>Name</th>
             <th>Roles</th>
             <th>Actions</th>
         </tr>
@@ -24,9 +23,7 @@
         {
             <tr>
                 <td>@user.Email</td>
-                <td>
-                    @string.Join(", ", user.Roles.Select(r => r.RoleName.ToString()))
-                </td>
+                <td>@string.Join(", ", user.Roles.Select(r => r.RoleName.ToString()))</td>
                 <td>
                     <a class="btn btn-primary" asp-action="Edit" asp-route-id="@user.Id">Edit</a>
                     <a class="btn btn-delete" asp-action="Delete" asp-route-id="@user.Id">Delete</a>

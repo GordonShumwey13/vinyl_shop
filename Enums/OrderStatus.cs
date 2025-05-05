@@ -4,12 +4,12 @@ namespace VinylShop.Models.Enums
     public enum OrderStatus
     {
         [Display(Name = "Очікування підтвердження")]
-        Очікування = 1,
+        Pending = 1,
 
         [Display(Name = "Замовлення успішне")]
-        Успішний = 2,
+        Success = 2,
 
         [Display(Name = "Замовлення відхилине")]
-        Відхилений = 3
+        Declined = 3
     }
 }
