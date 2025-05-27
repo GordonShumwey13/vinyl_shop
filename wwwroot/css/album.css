@@ -10,7 +10,17 @@ h1 {
     margin-bottom: 20px;
 }
 
-/* Загальні стилі для таблиць */
+/* -----------  THE MAIN STYLES ----------- */
+
+.container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
 .table {
     width: 100%;
     border-collapse: collapse;
@@ -37,7 +47,7 @@ h1 {
     background-color: #f0f8ff;
 }
 
-/* Стилі для лінки */
+/* ----------- LINKS ----------- */
 a {
     color: #007bff;
     text-decoration: none;
@@ -47,7 +57,7 @@ a:hover {
     text-decoration: underline;
 }
 
-/* Стилі для зображень */
+/* ----------- IMG ----------- */
 img {
     max-width: 50px;
     height: auto;
@@ -60,7 +70,7 @@ img {
     border-radius: 4px;
 }
 
-/* Стилі для кнопок */
+/* ----------- BUTTONS ----------- */
 .btn {
     padding: 10px 20px;
     font-size: 16px;
@@ -149,14 +159,13 @@ td {
     flex: 1;
 }
 
-/* Кнопки в формі */
 .form-group button,
 .form-group a {
     margin-right: 10px;
     display: inline-block;
 }
 
-/* Форматування для форми */
+/* ----------- FORM ----------- */
 .form-group {
     margin-bottom: 15px;
 }
@@ -179,17 +188,7 @@ td {
     box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
 }
 
-/* Контейнер */
-.container {
-    max-width: 600px;
-    margin: 0 auto;
-    padding: 20px;
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-}
-
-/* Логінка */
+/* ----------- LOGIN ----------- */
 .top-bar {
     display: flex;
     justify-content: space-between;

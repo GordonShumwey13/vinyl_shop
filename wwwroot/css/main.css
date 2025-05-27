@@ -37,7 +37,7 @@ h1 {
 
 .fullscreen-content {
     display: flex;
-    flex-direction: column; 
+    flex-direction: column;
     top: -30%;
     position: relative;
     z-index: 2;
@@ -51,8 +51,18 @@ h1 {
     left: 0;
     height: 100%;
     width: 100%;
-    background-color: rgba(0, 0, 0, 0.6); /* Темний напівпрозорий фон */
+    background-color: rgba(0, 0, 0, 0.6);
     z-index: 1;
+}
+
+.albums-container {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    position: relative;
+    margin-top: -580px;
+    z-index: 333
+    ;
 }
 
 .albums-section {
@@ -60,6 +70,7 @@ h1 {
     text-align: center;
 }
 
+/* ----------- BUTTON ----------- */
 .btn {
     font-family: 'Montserrat', sans-serif;
     padding: 10px 20px;
@@ -83,16 +94,7 @@ h1 {
     background-color: #157347;
 }
 
-.albums-container {
-    display: flex;
-    justify-content: center;
-    gap: 30px;
-    position: relative;
-    margin-top: -580px;
-    z-index: 333
-    ;
-}
-
+/* ----------- CARD ----------- */
 .album-card {
     background: #fff;
     border-radius: 16px;
@@ -117,6 +119,7 @@ h1 {
     border-radius: 8px;
 }
 
+/* ----------- INFO ----------- */
 .album-info {
     margin-top: 8px;
     padding: 0px;

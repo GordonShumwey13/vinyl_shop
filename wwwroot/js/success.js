@@ -5,7 +5,7 @@
 
         // Оновити значення у хедері
         const cartCount = document.querySelector('.cart-count');
-        const cartTotal = document.querySelector('.cart-total'); // або що там у тебе
+        const cartTotal = document.querySelector('.cart-total');
 
         if (cartCount) cartCount.textContent = '0';
         if (cartTotal) cartTotal.textContent = '0.00 грн.';

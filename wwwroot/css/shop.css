@@ -23,7 +23,34 @@ h1 {
     margin: 10px 0 30px;
 }
 
-/* ---------------------- HEADER ---------------------- */
+/* ----------- MAIN ----------- */
+.shop-container {
+    max-width: 1450px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.shop-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.shop-header {
+    display: flex;
+    justify-content: flex-end;
+    width: 99%;
+}
+
+
+.layout {
+    display: flex;
+    gap: 24px;
+    align-items: flex-start;
+}
+
+/* ----------- HEADER ----------- */
 .main-header {
     position: fixed;
     top: 0;
@@ -104,7 +131,7 @@ h1 {
     font-size: 0.8rem;
 }
 
-/* ---------------------- BANNER ---------------------- */
+/* ----------- BANNER ----------- */
 .banner-section {
     position: relative;
     height: 400px;
@@ -129,35 +156,7 @@ h1 {
     text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
 }
 
-/* ---------------------- MAIN LAYOUT ---------------------- */
-.shop-container {
-    max-width: 1450px;
-    margin: 0 auto;
-    padding: 0 20px;
-}
-
-.shop-content {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 24px;
-}
-
-.shop-header {
-    display: flex;
-    justify-content: flex-end;
-    width: 99%;
-}
-
-
-.layout {
-    display: flex;
-    gap: 24px;
-    align-items: flex-start;
-}
-
-/* ---------------------- SORTING ---------------------- */
-
+/* ----------- SORTING ----------- */
 .sort-form select.form-control {
     appearance: none;
     -webkit-appearance: none;
@@ -178,7 +177,7 @@ h1 {
 
 .sort-form select.form-control:hover,
 .sort-form select.form-control:focus {
-    border-bottom: 2px solid #e63946; /* яскраво-червоне підкреслення */
+    border-bottom: 2px solid #e63946;
     background: transparent;
 }
 
@@ -215,7 +214,7 @@ h1 {
     box-shadow: 0 0 5px rgba(0, 123, 255, 0.4);
 }
 
-/* ---------------------- SIDEBAR ---------------------- */
+/* ----------- SIDEBAR ----------- */
 .sidebar {
     margin-top: 60px;
     width: 250px;
@@ -248,7 +247,7 @@ h1 {
     opacity: 0.754132;
 }
 
-/* ---------------------- SEARCH ---------------------- */
+/* ----------- SEARCH ----------- */
 .search-form-wrapper {
     position: relative;
 }
@@ -309,7 +308,7 @@ h1 {
     pointer-events: none;
 }
 
-/* ---------------------- SHOP GRID ---------------------- */
+/* ----------- SHOP GRID ----------- */
 .shop-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
@@ -383,7 +382,7 @@ h1 {
     margin-left: 4px;
 }
 
-/* ---------------------- PRICE / QUANTITY / BUTTON ---------------------- */
+/* ----------- PRICE / QUANTITY / BUTTON ----------- */
 .price-block {
     display: flex;
     flex-direction: column;
@@ -411,7 +410,6 @@ h1 {
     width: 55%;
 }
 
-/* Кнопка покупки */
 .btn {
     font-family: 'Montserrat', sans-serif;
     padding: 10px 47px;
@@ -441,7 +439,6 @@ h1 {
     pointer-events: none;
 }
 
-/* Кількість */
 .quantity-selector {
     display: flex;
     align-items: center;
@@ -479,9 +476,7 @@ h1 {
     background-color: #ddd;
 }
 
-
-
-/* ---------------------- ARTISTS ---------------------- */
+/* ----------- ARTIST ----------- */
 .artist-card {
     margin: -300px auto 40px auto;
     padding: 20px 30px;

@@ -1,4 +1,4 @@
-/* === Layout and Containers === */
+
 .profile-wrapper {
     max-width: 1000px;
     margin: -300px auto 40px auto;
@@ -60,8 +60,7 @@
     color: #fff;
 }
 
-
-/* === Sidebar Menu === */
+/* ----------- SIDEBAR MENU ----------- */
 .sidebar-menu {
     list-style: none;
     padding: 0;
@@ -101,7 +100,7 @@
     color: #fff;
 }
 
-/* === Main Content Area === */
+/* ----------- MAIN CONTENT ----------- */
 .profile-content {
     flex: 1;
     background: #fff;
@@ -115,7 +114,7 @@
     color: #555;
 }
 
-/* === Profile Tables (Info & Orders) === */
+/* ----------- PROFILE TABLES ----------- */
 .profile-main-info,
 .profile-orders {
     margin-top: 40px;
@@ -175,7 +174,7 @@
     text-decoration: underline;
 }
 
-/* === Profile Edit Form === */
+/* ----------- PROFILE EDIT FORM ----------- */
 .profile-edit-form {
     margin-top: 20px;
 }

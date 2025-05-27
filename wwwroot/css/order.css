@@ -46,7 +46,7 @@ body {
     margin-bottom: 30px;
 }
 
-/* === CART ITEM === */
+/* ----------- CARD ----------- */
 .cart-table {
     margin-bottom: 20px;
     border-top: 1px solid #eee;
@@ -115,7 +115,7 @@ body {
     background: none;
 }
 
-/* === SUMMARY === */
+/* ----------- SUMMARY ----------- */
 .order-summary {
     display: flex;
     flex-direction: column;
@@ -156,8 +156,7 @@ body {
     color: #198754;
 }
 
-
-/* === ACCORDION === */
+/* ----------- ACCORDION ----------- */
 .accordion-section {
     margin-bottom: 30px;
 }
@@ -208,7 +207,7 @@ body {
     display: none;
 }
 
-/* === FORM === */
+/* ----------- FORM ----------- */
 .checkout-form {
     display: flex;
     flex-direction: column;
@@ -252,7 +251,7 @@ fieldset label {
     font-size: 0.95rem;
 }
 
-/* === BUTTONS === */
+/* ----------- BUTTONS ----------- */
 .btn {
     font-family: 'Montserrat', sans-serif;
     padding: 10px 20px;
@@ -280,7 +279,7 @@ fieldset label {
     width: 100%;
 }
 
-/* === RESPONSIVE === */
+/* ----------- RESPONSIVE ----------- */
 @media (max-width: 768px) {
     .order-container {
         margin: -250px 15px 40px 15px;
