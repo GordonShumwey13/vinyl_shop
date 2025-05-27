@@ -24,7 +24,6 @@ namespace VinylShop.Models
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-        // За потреби — UserId чи Email
         public string? AuthorName { get; set; }
     }
 }
