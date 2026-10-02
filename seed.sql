@@ -1,6 +1,3 @@
--- Seed data matching the current EF Core model (post-InitialCreate rebuild).
--- Safe to re-run: it clears these three tables first (Songs/Orders etc. are untouched).
-
 SET FOREIGN_KEY_CHECKS = 0;
 TRUNCATE TABLE `Albums`;
 TRUNCATE TABLE `Artists`;
