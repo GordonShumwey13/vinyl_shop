@@ -47,3 +47,49 @@ window.addEventListener("message", function (event) {
         closeAuthModal();
     }
 });
+
+// Універсальна каруселька карток альбомів (.album-carousel) — може бути кілька на сторінці
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.album-carousel').forEach(carousel => {
+        const track = carousel.querySelector('.album-carousel-track');
+        const prevBtn = carousel.querySelector('.carousel-prev');
+        const nextBtn = carousel.querySelector('.carousel-next');
+        const visibleCount = 4;
+
+        if (!track || !prevBtn || !nextBtn) {
+            return;
+        }
+
+        const cards = track.querySelectorAll('.album-card');
+        let currentIndex = 0;
+
+        if (cards.length <= visibleCount) {
+            prevBtn.style.display = 'none';
+            nextBtn.style.display = 'none';
+            return;
+        }
+
+        function updateCarousel() {
+            const cardWidth = cards[0].getBoundingClientRect().width + 20;
+            track.style.transform = `translateX(-${currentIndex * cardWidth}px)`;
+            prevBtn.disabled = currentIndex === 0;
+            nextBtn.disabled = currentIndex >= cards.length - visibleCount;
+        }
+
+        prevBtn.addEventListener('click', () => {
+            if (currentIndex > 0) {
+                currentIndex--;
+                updateCarousel();
+            }
+        });
+
+        nextBtn.addEventListener('click', () => {
+            if (currentIndex < cards.length - visibleCount) {
+                currentIndex++;
+                updateCarousel();
+            }
+        });
+
+        updateCarousel();
+    });
+});

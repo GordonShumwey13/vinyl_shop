@@ -145,3 +145,34 @@
             }
         </div>
     </div>
+    @if (Model.SimilarAlbums.Any())
+    {
+        <div class="albums-block">
+            <div class="albums-header">Схожі альбоми</div>
+            <div class="album-carousel">
+                <button type="button" class="carousel-arrow carousel-prev" aria-label="Попередні">&#10094;</button>
+                <div class="album-carousel-viewport">
+                    <div class="album-carousel-track">
+                        @foreach (var similar in Model.SimilarAlbums)
+                        {
+                            <div class="album-card">
+                                <a asp-area="Shop" asp-page="/Albums/Details" asp-route-id="@similar.Id">
+                                    @if (!string.IsNullOrEmpty(similar.ImagePath))
+                                    {
+                                        <img src="@similar.ImagePath" alt="@similar.Title" class="album-image" />
+                                    }
+                                    <div class="album-info">
+                                        <div class="album-genre">@similar.Genre.Name</div>
+                                        <h5 class="album-title">@similar.Title</h5>
+                                        <div class="album-artist">@similar.Artist.Name</div>
+                                    </div>
+                                </a>
+                            </div>
+                        }
+                    </div>
+                </div>
+                <button type="button" class="carousel-arrow carousel-next" aria-label="Наступні">&#10095;</button>
+            </div>
+        </div>
+    }
+

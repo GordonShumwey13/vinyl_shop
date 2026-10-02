@@ -567,3 +567,43 @@ h1 {
     object-fit: cover;
     border-radius: 10px;
 }
+
+.album-carousel {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.album-carousel-viewport {
+    overflow: hidden;
+    width: 100%;
+    padding: 5px;
+}
+
+.album-carousel-track {
+    display: flex;
+    gap: 20px;
+    transition: transform 0.35s ease;
+}
+
+.album-carousel-track .album-card {
+    flex: 0 0 calc(25% - 15px);
+    width: auto;
+}
+
+.carousel-arrow {
+    flex-shrink: 0;
+    width: 36px;
+    height: 36px;
+    border: none;
+    border-radius: 50%;
+    background: #222;
+    color: #fff;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.carousel-arrow:disabled {
+    opacity: 0.3;
+    cursor: default;
+}

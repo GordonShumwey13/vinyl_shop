@@ -13,28 +13,36 @@
     </div>
 </div>
 
-<div class="albums-container">
-    @foreach (var album in Model.Albums)
-    {
-        <a asp-area="Shop" asp-page="/Albums/Details" asp-route-id="@album.Id">
-            <div class="album-card">
-                @if (!string.IsNullOrEmpty(album.ImagePath))
+<div class="albums-section">
+    <div class="album-carousel">
+        <button type="button" class="carousel-arrow carousel-prev" aria-label="Попередні">&#10094;</button>
+        <div class="album-carousel-viewport">
+            <div class="album-carousel-track">
+                @foreach (var album in Model.Albums)
                 {
-                    <img class="album-image" src="@album.ImagePath" alt="@album.Title" />
+                    <div class="album-card">
+                        <a asp-area="Shop" asp-page="/Albums/Details" asp-route-id="@album.Id">
+                            @if (!string.IsNullOrEmpty(album.ImagePath))
+                            {
+                                <img class="album-image" src="@album.ImagePath" alt="@album.Title" />
+                            }
+
+                            <div class="album-info">
+                                <div class="album-genre">@album.Genre.Name</div>
+                                <h5 class="album-title">@album.Title</h5>
+                                <div class="album-artist">@album.Artist.Name</div>
+                            </div>
+
+                            <div class="price-block">
+                                <div class="price-wrapper">
+                                    <span class="price-highlight">@album.Price грн.</span>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
                 }
-
-                <div class="album-info">
-                    <div class="album-genre">@album.Genre.Name</div>
-                    <h5 class="album-title">@album.Title</h5>
-                    <div class="album-artist">@album.Artist.Name</div>
-                </div>
-
-                <div class="price-block">
-                        <div class="price-wrapper">
-                            <span class="price-highlight">@album.Price грн.</span>
-                        </div>
-                </div>
             </div>
-        </a>
-    }
+        </div>
+        <button type="button" class="carousel-arrow carousel-next" aria-label="Наступні">&#10095;</button>
+    </div>
 </div>

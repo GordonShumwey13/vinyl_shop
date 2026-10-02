@@ -6,10 +6,14 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 builder.Services.AddControllersWithViews();
 
+var connectionString = builder.Configuration.GetConnectionString("VinylShop")
+    ?? builder.Configuration["ConnectionStrings__VinylShop"]
+    ?? "server=localhost;database=vinyl_shop;user=root;password=qwerty123";
+
 builder.Services.AddDbContext<VinylShopContext>(options =>
     options.UseMySql(
-        "server=localhost;database=vinyl_shop;user=root;password=qwerty123",
-        ServerVersion.AutoDetect("server=localhost;database=vinyl_shop;user=root;password=qwerty123")
+        connectionString,
+        new MySqlServerVersion(new Version(8, 0, 36))
     )
 );
 

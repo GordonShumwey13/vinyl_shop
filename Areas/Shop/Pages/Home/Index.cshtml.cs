@@ -22,7 +22,7 @@ namespace VinylShop.Areas.Shop.Pages.Home
                 .Include(a => a.Artist)
                 .Include(a => a.Genre)
                 .OrderByDescending(a => a.Id)
-                .Take(3)
+                .Take(12)
                 .ToListAsync();
         }
     }

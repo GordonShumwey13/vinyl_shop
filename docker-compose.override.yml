@@ -1,0 +1,13 @@
+# Local development convenience only — NOT part of the segmented topology.
+# Docker Compose automatically merges this file with docker-compose.yml when
+# you run `docker compose up` from this directory, so DataGrip/DBeaver can
+# reach MySQL directly during day-to-day work.
+#
+# For the diploma network-segmentation demo, run instead with:
+#   docker compose -f docker-compose.yml up --build
+# (this ignores the override and keeps db fully isolated, as intended).
+
+services:
+  db:
+    ports:
+      - "3306:3306"

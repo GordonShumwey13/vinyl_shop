@@ -55,19 +55,17 @@ h1 {
     z-index: 1;
 }
 
-.albums-container {
-    display: flex;
-    justify-content: center;
-    gap: 30px;
+.albums-section {
+    padding: 40px 40px 0 40px;
+    text-align: center;
     position: relative;
-    margin-top: -580px;
-    z-index: 333
-    ;
+    margin-top: -650px;
+    z-index: 5;
 }
 
-.albums-section {
-    padding: 40px;
-    text-align: center;
+.albums-section .albums-header {
+    color: #fff;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
 }
 
 /* ----------- BUTTON ----------- */
