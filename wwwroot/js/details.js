@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Встановлення початкової ціни
     function updateTotalPrice(qty) {
         const totalPrice = (pricePerOne * qty).toFixed(2);
-        totalPriceElement.textContent = totalPrice;
+        totalPriceElement.textContent = `${totalPrice} грн.`;
     }
 
     minusBtn.addEventListener('click', () => {
