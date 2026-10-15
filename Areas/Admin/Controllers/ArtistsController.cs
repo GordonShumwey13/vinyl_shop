@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using VinylShop.Data;
 using VinylShop.Enums;
 using VinylShop.Models;
+using VinylShop.Utils;
 
 namespace VinylShop.Areas.Admin.Controllers
 {
@@ -56,6 +57,12 @@ namespace VinylShop.Areas.Admin.Controllers
         {
             if (id != artist.Id) return NotFound();
 
+            var imageError = ImageUpload.Validate(imageFile);
+            if (imageError != null)
+            {
+                ModelState.AddModelError(string.Empty, imageError);
+            }
+
             if (ModelState.IsValid)
             {
                 try
@@ -84,22 +91,9 @@ namespace VinylShop.Areas.Admin.Controllers
             return _context.Artists.Any(e => e.Id == id);
         }
 
-        private async Task<string?> UploadImageAsync(IFormFile? imageFile)
+        private static Task<string?> UploadImageAsync(IFormFile? imageFile)
         {
-            if (imageFile == null || imageFile.Length == 0) return null;
-
-            var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/img/artists");
-            Directory.CreateDirectory(uploadsFolder);
-
-            var uniqueFileName = $"{Guid.NewGuid()}_{Path.GetFileName(imageFile.FileName)}";
-            var filePath = Path.Combine(uploadsFolder, uniqueFileName);
-
-            using (var fileStream = new FileStream(filePath, FileMode.Create))
-            {
-                await imageFile.CopyToAsync(fileStream);
-            }
-
-            return "/img/artists/" + uniqueFileName;
+            return ImageUpload.SaveAsync(imageFile, "artists");
         }
     }
 }

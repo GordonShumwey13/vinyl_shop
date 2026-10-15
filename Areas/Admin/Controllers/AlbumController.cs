@@ -6,6 +6,7 @@ using VinylShop.Data;
 using VinylShop.DbModel;
 using VinylShop.Enums;
 using VinylShop.Models;
+using VinylShop.Utils;
 
 namespace VinylShop.Areas.Admin.Controllers
 {
@@ -60,6 +61,14 @@ namespace VinylShop.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Album album, IFormFile? ImageFile, IFormFile? ArtistImageFile, string ExistingArtist, string NewArtist, string GenreId, string NewGenre, List<string> SongTitles, List<string> SongDurations)
         {
+            var imageError = ImageUpload.Validate(ImageFile) ?? ImageUpload.Validate(ArtistImageFile);
+            if (imageError != null)
+            {
+                ModelState.AddModelError(string.Empty, imageError);
+                PopulateDropDowns();
+                return View(album);
+            }
+
             var artist = await GetOrCreateArtist(ExistingArtist, NewArtist, ArtistImageFile);
             if (artist == null)
             {
@@ -153,6 +162,15 @@ namespace VinylShop.Areas.Admin.Controllers
             if (existingAlbum != null)
             {
                 ModelState.AddModelError("Title", "An album with this title already exists for the selected artist.");
+                ViewBag.Artists = new SelectList(_context.Artists, "Id", "Name", albumDto.ArtistId);
+                ViewBag.Genres = new SelectList(_context.Genres, "Id", "Name", albumDto.GenreId);
+                return View(albumDto);
+            }
+
+            var imageError = ImageUpload.Validate(albumDto.ImageFile);
+            if (imageError != null)
+            {
+                ModelState.AddModelError(string.Empty, imageError);
                 ViewBag.Artists = new SelectList(_context.Artists, "Id", "Name", albumDto.ArtistId);
                 ViewBag.Genres = new SelectList(_context.Genres, "Id", "Name", albumDto.GenreId);
                 return View(albumDto);
@@ -304,22 +322,9 @@ namespace VinylShop.Areas.Admin.Controllers
             return 0;
         }
 
-        private async Task<string?> UploadImageAsync(IFormFile? imageFile, string folderName)
+        private static Task<string?> UploadImageAsync(IFormFile? imageFile, string folderName)
         {
-            if (imageFile == null || imageFile.Length == 0) return null;
-
-            var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), $"wwwroot/img/{folderName}");
-            Directory.CreateDirectory(uploadsFolder);
-
-            var uniqueFileName = $"{Guid.NewGuid()}_{Path.GetFileName(imageFile.FileName)}";
-            var filePath = Path.Combine(uploadsFolder, uniqueFileName);
-
-            using (var fileStream = new FileStream(filePath, FileMode.Create))
-            {
-                await imageFile.CopyToAsync(fileStream);
-            }
-
-            return $"/img/{folderName}/" + uniqueFileName;
+            return ImageUpload.SaveAsync(imageFile, folderName);
         }
 
         // Видаляє лише завантажені через адмінку обкладинки, якими не користується інший альбом

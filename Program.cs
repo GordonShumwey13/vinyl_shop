@@ -64,6 +64,12 @@ app.UseAuthorization();
 
 app.UseEndpoints(endpoints =>
 {
+    endpoints.MapGet("/", context =>
+    {
+        context.Response.Redirect("/Shop/Home");
+        return Task.CompletedTask;
+    });
+
     endpoints.MapRazorPages();
     endpoints.MapControllers();
 
