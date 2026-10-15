@@ -269,3 +269,17 @@ body {
 .review-list p {
     margin: 0;
 }
+
+.buy-block {
+    margin-top: 20px;
+}
+
+.review-login-hint {
+    margin-top: 20px;
+    color: #666;
+}
+
+.review-login-hint a {
+    color: inherit;
+    text-decoration: underline;
+}

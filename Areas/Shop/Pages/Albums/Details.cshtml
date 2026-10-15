@@ -44,6 +44,15 @@
                 </div>
             </div>
 
+            <div class="buy-block">
+                <button type="button" class="btn btn-success @(Model.Album.Stock == 0 ? "disabled-btn" : "")"
+                    id="addToCart" @(Model.Album.Stock == 0 ? "disabled" : "") data-album-id="@Model.Album.Id"
+                    data-artist="@Model.Album.Artist.Name" data-title="@Model.Album.Title"
+                    data-price="@Model.Album.Price" data-image="@Url.Content(Model.Album.ImagePath)">
+                    Купити
+                </button>
+            </div>
+
             @if (User.Identity.IsAuthenticated)
             {
                 <div class="reviews-form">
@@ -98,14 +107,14 @@
                             <textarea name="Comment" class="form-control"></textarea>
                         </div>
                         <button type="submit" class="btn btn-success">Надіслати</button>
-                        <button type="button" class="btn btn-success @(Model.Album.Stock == 0 ? "disabled-btn" : "")"
-                            id="addToCart" @(Model.Album.Stock == 0 ? "disabled" : "") data-album-id="@Model.Album.Id"
-                            data-artist="@Model.Album.Artist.Name" data-title="@Model.Album.Title"
-                            data-price="@Model.Album.Price" data-image="@Url.Content(Model.Album.ImagePath)">
-                            Купити
-                        </button>
                     </form>
                 </div>
+            }
+            else
+            {
+                <p class="review-login-hint">
+                    Щоб залишити відгук, <a href="#" onclick="openAuthModal(); return false;">увійдіть в особистий кабінет</a>.
+                </p>
             }
         </div>
 
