@@ -61,10 +61,20 @@ namespace VinylShop.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Album album, IFormFile? ImageFile, IFormFile? ArtistImageFile, string ExistingArtist, string NewArtist, string GenreId, string NewGenre, List<string> SongTitles, List<string> SongDurations)
         {
+            var songs = (SongTitles ?? new List<string>())
+                .Select((title, i) => (Title: title, Duration: SongDurations != null && i < SongDurations.Count ? SongDurations[i] : null))
+                .Where(s => !string.IsNullOrWhiteSpace(s.Title) || !string.IsNullOrWhiteSpace(s.Duration))
+                .ToList();
+
+            var fieldsValid = ValidateAlbumFields(album.Title, album.Price, album.Stock, songs);
             var imageError = ImageUpload.Validate(ImageFile) ?? ImageUpload.Validate(ArtistImageFile);
             if (imageError != null)
             {
                 ModelState.AddModelError(string.Empty, imageError);
+            }
+
+            if (!fieldsValid || imageError != null)
+            {
                 PopulateDropDowns();
                 return View(album);
             }
@@ -97,19 +107,14 @@ namespace VinylShop.Areas.Admin.Controllers
             album.GenreId = genreId;
             album.ImagePath = await UploadImageAsync(ImageFile, "albums");
 
-            if (SongTitles != null && SongDurations != null)
+            foreach (var song in songs)
             {
-                for (int i = 0; i < SongTitles.Count; i++)
+                SongDuration.TryParse(song.Duration, out TimeSpan duration);
+                album.Songs.Add(new Song
                 {
-                    if (!string.IsNullOrWhiteSpace(SongTitles[i]) && !string.IsNullOrWhiteSpace(SongDurations[i]))
-                    {
-                        album.Songs.Add(new Song
-                        {
-                            Title = SongTitles[i],
-                            Duration = TimeSpan.TryParse(SongDurations[i], out TimeSpan duration) ? duration : TimeSpan.Zero
-                        });
-                    }
-                }
+                    Title = song.Title.Trim(),
+                    Duration = duration
+                });
             }
 
             _context.Add(album);
@@ -158,6 +163,14 @@ namespace VinylShop.Areas.Admin.Controllers
             var album = await _context.Albums.Include(a => a.Artist).Include(a => a.Songs).FirstOrDefaultAsync(a => a.Id == id);
             if (album == null) return NotFound();
 
+            albumDto.Songs ??= new List<SongDto>();
+            if (!ValidateAlbumFields(albumDto.Title, albumDto.Price, albumDto.Stock, albumDto.Songs.Select(s => (s.Title, (string?)s.Duration))))
+            {
+                ViewBag.Artists = new SelectList(_context.Artists, "Id", "Name", albumDto.ArtistId);
+                ViewBag.Genres = new SelectList(_context.Genres, "Id", "Name", albumDto.GenreId);
+                return View(albumDto);
+            }
+
             var existingAlbum = await _context.Albums.FirstOrDefaultAsync(a => a.Title.ToLower() == albumDto.Title.ToLower() && a.ArtistId == albumDto.ArtistId && a.Id != albumDto.Id);
             if (existingAlbum != null)
             {
@@ -199,7 +212,8 @@ namespace VinylShop.Areas.Admin.Controllers
                     if (song != null)
                     {
                         song.Title = songDto.Title;
-                        song.Duration = TimeSpan.TryParse(songDto.Duration, out TimeSpan duration) ? duration : TimeSpan.Zero;
+                        SongDuration.TryParse(songDto.Duration, out TimeSpan duration);
+                        song.Duration = duration;
                     }
                 }
                 else
@@ -207,7 +221,7 @@ namespace VinylShop.Areas.Admin.Controllers
                     album.Songs.Add(new Song
                     {
                         Title = songDto.Title,
-                        Duration = TimeSpan.TryParse(songDto.Duration, out TimeSpan duration) ? duration : TimeSpan.Zero
+                        Duration = SongDuration.TryParse(songDto.Duration, out TimeSpan duration) ? duration : TimeSpan.Zero
                     });
                 }
             }
@@ -270,6 +284,46 @@ namespace VinylShop.Areas.Admin.Controllers
                 "genre_asc" => albums.OrderBy(a => a.Genre.Name),
                 _ => albums.OrderBy(a => a.Title)
             };
+        }
+
+        // Серверна перевірка полів альбому: обмеження у браузері легко обійти
+        private bool ValidateAlbumFields(string? title, decimal price, int stock, IEnumerable<(string Title, string? Duration)> songs)
+        {
+            var valid = true;
+
+            if (string.IsNullOrWhiteSpace(title))
+            {
+                ModelState.AddModelError("Title", "Вкажіть назву альбому.");
+                valid = false;
+            }
+
+            if (price < 0.01m || price > 999999.99m)
+            {
+                ModelState.AddModelError("Price", "Ціна має бути від 0.01 до 999999.99.");
+                valid = false;
+            }
+
+            if (stock < 0)
+            {
+                ModelState.AddModelError("Stock", "Кількість на складі не може бути від'ємною.");
+                valid = false;
+            }
+
+            foreach (var song in songs)
+            {
+                if (string.IsNullOrWhiteSpace(song.Title))
+                {
+                    ModelState.AddModelError(string.Empty, "Вкажіть назву для кожної пісні.");
+                    valid = false;
+                }
+                else if (!SongDuration.TryParse(song.Duration, out _))
+                {
+                    ModelState.AddModelError(string.Empty, $"Неправильна тривалість пісні \"{song.Title}\": потрібно {SongDuration.FormatHint}.");
+                    valid = false;
+                }
+            }
+
+            return valid;
         }
 
         private void PopulateDropDowns()

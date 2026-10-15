@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -39,18 +40,29 @@ namespace VinylShop.Areas.Admin.Controllers
         // POST: Admin/User/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(string email, string password, UserRoleEnum role)
+        public async Task<IActionResult> Create(string? email, string? password, UserRoleEnum role)
         {
-            if (_context.UserAdmins.Any(u => u.Email == email))
+            email = email?.Trim();
+            ValidateEmail(email);
+            if (string.IsNullOrWhiteSpace(password))
             {
-                ModelState.AddModelError("", "Такий користувач вже існує");
-                ViewBag.Roles = new SelectList(Enum.GetValues(typeof(UserRoleEnum)));
+                ModelState.AddModelError(string.Empty, "Вкажіть пароль.");
+            }
+            if (ModelState.ErrorCount == 0 && await _context.UserAdmins.AnyAsync(u => u.Email == email))
+            {
+                ModelState.AddModelError(string.Empty, "Такий користувач вже існує");
+            }
+
+            if (ModelState.ErrorCount > 0)
+            {
+                ViewBag.Roles = new SelectList(Enum.GetValues(typeof(UserRoleEnum)), role);
+                ViewBag.Email = email;
                 return View();
             }
 
             var user = new UserAdmin
             {
-                Email = email,
+                Email = email!,
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword(password),
                 Roles = new List<UserRole>
                 {
@@ -83,7 +95,7 @@ namespace VinylShop.Areas.Admin.Controllers
         // POST: Admin/User/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, string email, string password, UserRoleEnum role)
+        public async Task<IActionResult> Edit(int id, string? email, string? password, UserRoleEnum role)
         {
             var user = await _context.UserAdmins
                 .Include(u => u.Roles)
@@ -91,7 +103,20 @@ namespace VinylShop.Areas.Admin.Controllers
 
             if (user == null) return NotFound();
 
-            user.Email = email;
+            email = email?.Trim();
+            ValidateEmail(email);
+            if (ModelState.ErrorCount == 0 && await _context.UserAdmins.AnyAsync(u => u.Email == email && u.Id != id))
+            {
+                ModelState.AddModelError(string.Empty, "Користувач з таким email вже існує");
+            }
+
+            if (ModelState.ErrorCount > 0)
+            {
+                ViewBag.Roles = new SelectList(Enum.GetValues(typeof(UserRoleEnum)), role);
+                return View(user);
+            }
+
+            user.Email = email!;
             if (!string.IsNullOrWhiteSpace(password))
             {
                 user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(password);
@@ -132,6 +157,18 @@ namespace VinylShop.Areas.Admin.Controllers
             }
 
             return RedirectToAction(nameof(Index));
+        }
+
+        private void ValidateEmail(string? email)
+        {
+            if (string.IsNullOrWhiteSpace(email))
+            {
+                ModelState.AddModelError(string.Empty, "Вкажіть email.");
+            }
+            else if (!new EmailAddressAttribute().IsValid(email))
+            {
+                ModelState.AddModelError(string.Empty, "Некоректний формат email.");
+            }
         }
     }
 }
