@@ -5,6 +5,10 @@
 }
 
 <link rel="stylesheet" href="~/css/order.css" />
+@if (!string.IsNullOrEmpty(Model.CartJson) && !ViewData.ModelState.IsValid)
+{
+    <script>localStorage.setItem('cart', @Json.Serialize(Model.CartJson));</script>
+}
 <script src="~/js/createOrder.js" asp-append-version="true"></script>
 
 @await Html.PartialAsync("_Banner", (string)null)
@@ -24,11 +28,16 @@
     <form method="post" class="checkout-form" id="orderForm"
         data-buyer-email="@(User.Identity.IsAuthenticated ? User.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value : "")"
         data-user-phone="@(User.Identity.IsAuthenticated ? Model.Phone : "")">
-        <input type="hidden" name="CartJson" id="CartJsonInput" />
-        <input type="hidden" name="BuyerEmail" id="BuyerEmailInput" />
-        <input type="hidden" name="Phone" id="PhoneInput" />
+        <div asp-validation-summary="All" class="text-danger"></div>
 
-        @if (!User.Identity.IsAuthenticated)
+        <input type="hidden" name="CartJson" id="CartJsonInput" />
+
+        @if (User.Identity.IsAuthenticated)
+        {
+            <input type="hidden" name="BuyerEmail" id="BuyerEmailInput" />
+            <input type="hidden" name="Phone" id="PhoneInput" />
+        }
+        else
         {
             <input type="text" name="FullName" placeholder="ПІБ" required />
             <input type="tel" name="Phone" placeholder="Телефон" required />

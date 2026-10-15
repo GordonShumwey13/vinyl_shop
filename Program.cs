@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.EntityFrameworkCore;
 using VinylShop.Data;
 
@@ -32,6 +33,18 @@ builder.Services.AddAuthentication(options =>
     options.LoginPath = "/Admin/Login/Index";
     options.AccessDeniedPath = "/Admin/Login/AccessDenied";
     options.Cookie.Name = "AdminAuthCookie";
+    // Видалений адміністратор втрачає доступ одразу, а не після закінчення дії cookie
+    options.Events.OnValidatePrincipal = async context =>
+    {
+        var email = context.Principal?.Identity?.Name;
+        var db = context.HttpContext.RequestServices.GetRequiredService<VinylShopContext>();
+
+        if (email == null || !await db.UserAdmins.AnyAsync(u => u.Email == email))
+        {
+            context.RejectPrincipal();
+            await context.HttpContext.SignOutAsync("AdminAuth");
+        }
+    };
 });
 
 

@@ -17,7 +17,7 @@ namespace VinylShop.Areas.Shop.Pages.Orders
         }
 
         [BindProperty]
-        public string BuyerEmail { get; set; } = string.Empty;
+        public string? BuyerEmail { get; set; }
 
         [BindProperty]
         public string PaymentMethod { get; set; } = string.Empty;
@@ -26,13 +26,13 @@ namespace VinylShop.Areas.Shop.Pages.Orders
         public string City { get; set; } = string.Empty;
 
         [BindProperty]
-        public string Phone { get; set; } = string.Empty;
+        public string? Phone { get; set; }
 
         [BindProperty]
         public string Address { get; set; } = string.Empty;
 
         [BindProperty]
-        public string Comment { get; set; } = string.Empty;
+        public string? Comment { get; set; }
 
         [BindProperty]
         public string CartJson { get; set; } = string.Empty;
@@ -103,6 +103,12 @@ namespace VinylShop.Areas.Shop.Pages.Orders
                 return Page();
             }
 
+            if (cartItems.Any(i => i.Quantity <= 0))
+            {
+                ModelState.AddModelError(string.Empty, "Кількість товару має бути більшою за нуль.");
+                return Page();
+            }
+
             var (email, userId) = GetUserInfo();
             if (string.IsNullOrEmpty(email))
             {
@@ -128,10 +134,16 @@ namespace VinylShop.Areas.Shop.Pages.Orders
             if (User.Identity.IsAuthenticated && userId.HasValue)
             {
                 var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId.Value);
-                if (user != null)
+                if (!string.IsNullOrWhiteSpace(user?.PhoneNumber))
                 {
                     resolvedPhone = user.PhoneNumber;
                 }
+            }
+
+            if (string.IsNullOrWhiteSpace(resolvedPhone))
+            {
+                ModelState.AddModelError(string.Empty, "Не вказаний телефон.");
+                return Page();
             }
 
             var newOrder = new Order
@@ -142,7 +154,7 @@ namespace VinylShop.Areas.Shop.Pages.Orders
                 PaymentMethod = PaymentMethod,
                 City = City,
                 Address = Address,
-                Comment = Comment,
+                Comment = Comment ?? string.Empty,
                 TotalPrice = 0m,
                 Items = new List<OrderItem>()
             };
@@ -174,6 +186,11 @@ namespace VinylShop.Areas.Shop.Pages.Orders
             await _context.SaveChangesAsync();
 
             Response.Cookies.Delete("cart");
+
+            if (!User.Identity.IsAuthenticated)
+            {
+                return Redirect("/Shop/Orders/Success");
+            }
 
             TempData["SuccessMessage"] = "Замовлення успішно оформлено!";
             return Redirect("/Shop/Account/Profile");
