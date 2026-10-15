@@ -162,8 +162,11 @@ namespace VinylShop.Areas.Admin.Controllers
             album.ArtistId = albumDto.ArtistId;
             album.GenreId = albumDto.GenreId;
             album.Price = albumDto.Price;
+            album.Stock = albumDto.Stock;
+            string? replacedImagePath = null;
             if (albumDto.ImageFile != null)
             {
+                replacedImagePath = album.ImagePath;
                 album.ImagePath = await UploadImageAsync(albumDto.ImageFile, "albums");
             }
 
@@ -199,6 +202,7 @@ namespace VinylShop.Areas.Admin.Controllers
             }
 
             await _context.SaveChangesAsync();
+            await DeleteUploadedImageAsync(replacedImagePath);
             return RedirectToAction(nameof(Index));
         }
 
@@ -208,7 +212,10 @@ namespace VinylShop.Areas.Admin.Controllers
             if (id == null) return NotFound();
 
             var album = await _context.Albums.Include(a => a.Artist).Include(a => a.Genre).FirstOrDefaultAsync(m => m.Id == id);
-            return album == null ? NotFound() : View(album);
+            if (album == null) return NotFound();
+
+            ViewBag.HasOrders = await _context.OrderItems.AnyAsync(i => i.AlbumId == album.Id);
+            return View(album);
         }
 
         [Authorize(Roles = nameof(UserRoleEnum.Admin))]
@@ -219,8 +226,16 @@ namespace VinylShop.Areas.Admin.Controllers
             var album = await _context.Albums.FindAsync(id);
             if (album != null)
             {
+                // Альбом із замовлень видаляти не можна, щоб не втратити історію замовлень
+                if (await _context.OrderItems.AnyAsync(i => i.AlbumId == album.Id))
+                {
+                    return RedirectToAction(nameof(Delete), new { id });
+                }
+
+                var imagePath = album.ImagePath;
                 _context.Albums.Remove(album);
                 await _context.SaveChangesAsync();
+                await DeleteUploadedImageAsync(imagePath);
             }
             return RedirectToAction(nameof(Index));
         }
@@ -305,6 +320,19 @@ namespace VinylShop.Areas.Admin.Controllers
             }
 
             return $"/img/{folderName}/" + uniqueFileName;
+        }
+
+        // Видаляє лише завантажені через адмінку обкладинки, якими не користується інший альбом
+        private async Task DeleteUploadedImageAsync(string? imagePath)
+        {
+            if (string.IsNullOrEmpty(imagePath) || !imagePath.StartsWith("/img/albums/")) return;
+            if (await _context.Albums.AnyAsync(a => a.ImagePath == imagePath)) return;
+
+            var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", imagePath.TrimStart('/'));
+            if (System.IO.File.Exists(filePath))
+            {
+                System.IO.File.Delete(filePath);
+            }
         }
     }
 }

@@ -48,6 +48,13 @@ namespace VinylShop.Data
                 .HasOne(ur => ur.UserAdmin)
                 .WithMany(u => u.Roles)
                 .HasForeignKey(ur => ur.UserAdminId);
+
+            // Альбом, що є в замовленнях, не можна видалити разом з історією замовлень
+            modelBuilder.Entity<OrderItem>()
+                .HasOne(i => i.Album)
+                .WithMany()
+                .HasForeignKey(i => i.AlbumId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

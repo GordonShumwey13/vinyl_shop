@@ -10,6 +10,7 @@
 <h1>Edit Order</h1>
 
 <form asp-action="Edit" method="post">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
     <input type="hidden" asp-for="Id" />
 
     <div class="form-group">
@@ -39,7 +40,7 @@
                 <label>@item.ArtistName - @item.AlbumTitle</label>
 
                 <label>Quantity</label>
-                <input asp-for="Items[i].Quantity" class="form-control" />
+                <input asp-for="Items[i].Quantity" class="form-control" type="number" min="1" required />
 
                 <button type="submit" formaction="@Url.Action("RemoveItem", "Orders", new { area = "Admin" })"
                     formmethod="post" name="itemId" value="@item.Id" class="btn btn-danger btn-sm"

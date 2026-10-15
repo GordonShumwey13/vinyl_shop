@@ -8,6 +8,11 @@
 
 <h1>Orders</h1>
 
+@if (TempData["ErrorMessage"] != null)
+{
+    <p class="text-danger">@TempData["ErrorMessage"]</p>
+}
+
 <table class="table">
     <thead>
         <tr>

@@ -404,7 +404,7 @@ namespace MyWebApp.Migrations
                     b.HasOne("VinylShop.Models.Album", "Album")
                         .WithMany()
                         .HasForeignKey("AlbumId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("VinylShop.Models.Order", "Order")
